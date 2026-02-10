@@ -1575,6 +1575,124 @@ body.has-result .input-group {
     padding: 0.7rem 1rem;
 }
 
+.pricing-cta--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* --- Current Plan --- */
+.pricing-current-plan {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-lg);
+}
+
+.pricing-current-plan-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.pricing-plan-badge {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: var(--space-sm);
+}
+
+.pricing-current-plan-quota {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-top: var(--space-xs);
+}
+
+.pricing-current-plan-quota span {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.pricing-current-plan .pricing-features {
+    flex: 1;
+    min-width: 200px;
+}
+
+.pricing-current-plan .pricing-cta {
+    width: auto;
+    align-self: center;
+}
+
+/* --- Section Heading --- */
+.pricing-section-heading {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: var(--space-lg);
+}
+
+/* --- Info Banner --- */
+.pricing-info-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: var(--space-lg);
+}
+
+[data-theme="dark"] .pricing-info-banner {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: rgba(96, 165, 250, 0.3);
+    color: #60A5FA;
+}
+
+/* --- Card Minutes --- */
+.pricing-card-minutes {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: var(--space-xs);
+}
+
+/* --- Savings Badge --- */
+.pricing-savings-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #16A34A;
+    background: #F0FDF4;
+    border-radius: 999px;
+    padding: 0.15rem 0.5rem;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+}
+
+[data-theme="dark"] .pricing-savings-badge {
+    color: #4ADE80;
+    background: rgba(74, 222, 128, 0.1);
+}
+
 .pricing-faq {
     padding: var(--space-xl) 0 var(--space-2xl);
     border-top: 1px solid var(--border);
