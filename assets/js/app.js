@@ -515,9 +515,9 @@
         chevron.setAttribute('aria-hidden', 'true');
         chevron.appendChild(createSvgElement('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'));
 
-        toggleBtn.appendChild(thumbLink);
         toggleBtn.appendChild(titleWrap);
         toggleBtn.appendChild(chevron);
+        header.appendChild(thumbLink);
         header.appendChild(toggleBtn);
 
         // ── Card Body ──
@@ -596,7 +596,7 @@
         upgradeCta.className = 'cta-upgrade';
         upgradeCta.setAttribute('aria-label', 'View pricing plans');
         upgradeCta.appendChild(createSvgElement('<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
-        upgradeCta.appendChild(document.createTextNode(' Upgrade'));
+        upgradeCta.appendChild(document.createTextNode('Upgrade'));
 
         actions.appendChild(dlGroup);
         actions.appendChild(copyBtn);
@@ -700,7 +700,6 @@
 
         // Accordion toggle behavior
         toggleBtn.addEventListener('click', function (e) {
-            if (e.target.closest('.result-card-thumb')) return;
             var expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
             toggleBtn.setAttribute('aria-expanded', String(!expanded));
             body.hidden = expanded;

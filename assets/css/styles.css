@@ -1001,6 +1001,7 @@ body.has-result .input-group {
     margin-left: auto;
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     border: 1.5px solid #D97706;
     color: #B45309;
     background: #FFFBEB;
@@ -1798,6 +1799,11 @@ body.has-result .input-group {
 /* Card header (accordion toggle) */
 .result-card-header {
     display: flex;
+    align-items: center;
+}
+
+.result-card-header > .result-card-thumb {
+    margin-left: var(--space-lg);
 }
 
 .result-card-toggle {
