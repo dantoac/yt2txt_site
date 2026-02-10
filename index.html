@@ -84,6 +84,12 @@
                             aria-label="YouTube video URL"
                             required
                         >
+                        <button type="button" class="add-btn" id="add-btn" aria-label="Add to queue" title="Add to queue">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
                         <button type="submit" class="submit-btn" id="submit-btn" aria-label="Transcribe video">
                             <span class="btn-text">Transcribe</span>
                             <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -98,8 +104,18 @@
                             <span class="hint-error" role="alert" aria-live="polite"></span>
                         </p>
                     </div>
+                    <div class="paste-popover" id="paste-popover" role="dialog" aria-label="Multiple URLs detected" hidden>
+                        <p class="paste-popover-text">Found <strong id="paste-count">3</strong> YouTube links</p>
+                        <div class="paste-popover-actions">
+                            <button type="button" class="paste-popover-btn paste-popover-btn--primary" id="paste-all-btn">Transcribe all (<span id="paste-count-btn">3</span>)</button>
+                            <button type="button" class="paste-popover-btn" id="paste-first-btn">Just the first</button>
+                        </div>
+                    </div>
                     <noscript><p class="input-hint">JavaScript is required for transcription.</p></noscript>
                 </form>
+
+                <div class="queue" id="queue" role="list" aria-label="Transcription queue" hidden></div>
+                <div class="sr-only" id="queue-announcer" aria-live="polite" aria-atomic="true"></div>
 
                 <div class="processing" id="processing" role="status" aria-label="Processing" hidden>
                     <div class="processing-content">
@@ -114,74 +130,7 @@
 
         <section class="result" id="result" aria-label="Transcription result" hidden>
             <div class="container">
-                <div class="result-header">
-                    <div class="result-meta">
-                        <a href="#" class="result-thumb" id="result-thumb" target="_blank" rel="noopener noreferrer" aria-label="Open video on YouTube" hidden>
-                            <img id="result-thumb-img" src="" alt="" width="120" height="68" loading="lazy">
-                        </a>
-                        <div class="result-meta-text">
-                            <h2 class="result-title" id="result-title"></h2>
-                            <p class="result-info" id="result-info"></p>
-                        </div>
-                    </div>
-                    <div class="result-actions">
-                        <div class="download-group">
-                            <button class="action-btn action-btn--primary" id="download-btn" aria-label="Download transcript as text file">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                                <span>Download .txt</span>
-                            </button>
-                            <button class="action-btn action-btn--primary download-toggle" id="download-toggle" aria-label="More download options" aria-expanded="false" aria-haspopup="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </button>
-                            <div class="download-menu" id="download-menu" role="menu" hidden>
-                                <button class="download-menu-item" role="menuitem" data-format="txt">Download .txt</button>
-                                <button class="download-menu-item" role="menuitem" data-format="md">Download .md</button>
-                            </div>
-                        </div>
-                        <button class="action-btn" id="copy-btn" aria-label="Copy transcript">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            <span id="copy-label">Copy</span>
-                        </button>
-                        <a href="pricing.html" class="cta-upgrade" aria-label="View pricing plans"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Upgrade</a>
-                    </div>
-                </div>
-
-                <div class="transcript-wrapper">
-                    <div class="transcript" id="transcript" role="region" tabindex="0" aria-label="Transcript text"></div>
-                    <aside class="ai-toolbar" aria-label="AI actions">
-                        <button type="button" class="ai-action-btn" data-action="summarize" data-tooltip="Summarize" aria-label="Summarize transcript">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        </button>
-                        <button type="button" class="ai-action-btn" data-action="key-points" data-tooltip="Key points" aria-label="Extract key points">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                        </button>
-                        <button type="button" class="ai-action-btn" data-action="translate" data-tooltip="Translate" aria-label="Translate transcript">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                        </button>
-                        <button type="button" class="ai-action-btn" data-action="ask" data-tooltip="Ask AI" aria-label="Ask AI about this video">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </aside>
-                </div>
-
-                <div class="ai-result-panel" id="ai-result" hidden>
-                    <div class="ai-result-header">
-                        <span class="ai-result-badge" id="ai-result-badge"></span>
-                        <button type="button" class="ai-result-close" id="ai-result-close" aria-label="Close AI result">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </button>
-                    </div>
-                    <div class="ai-result-body" id="ai-result-body"></div>
-                </div>
+                <div class="results-list results-list--single" id="results-list" role="list"></div>
 
                 <div class="upgrade-card" aria-label="Upgrade to Pro">
                     <div class="upgrade-card-body">
@@ -205,16 +154,17 @@
                     </button>
                     <p class="api-teaser">
                         Need this in your app?
-                        <a href="pricing.html#api" class="api-teaser-link">Check out the API &rarr;</a>
+                        <a href="pricing.html#plan-api" class="api-teaser-link">Check out the API &rarr;</a>
                     </p>
                 </div>
             </div>
         </section>
+
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/openai/whisper" target="_blank" rel="noopener noreferrer" aria-label="Built on Whisper (opens GitHub)">Built on Whisper</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
+            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
         </div>
     </footer>
 
