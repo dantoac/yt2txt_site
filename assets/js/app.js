@@ -62,11 +62,17 @@
     var downloadBtn   = document.getElementById('download-btn');
     var newBtn        = document.getElementById('new-btn');
     var hintError     = inputHint ? inputHint.querySelector('.hint-error') : null;
+    var aiResultPanel = document.getElementById('ai-result');
+    var aiResultBadge = document.getElementById('ai-result-badge');
+    var aiResultBody  = document.getElementById('ai-result-body');
+    var aiResultClose = document.getElementById('ai-result-close');
+    var aiActionBtns  = document.querySelectorAll('.ai-action-btn');
 
     // ── State ───────────────────────────────────────────────────
     var currentTranscript = null;
     var currentVideoTitle = '';
     var currentVideoURL   = '';
+    var activeAIAction    = null;
 
     // ── YouTube URL Validation ──────────────────────────────────
     var YT_PATTERNS = [
@@ -161,6 +167,7 @@
     function resetUI() {
         document.body.classList.remove('has-result');
         resultEl.hidden = true;
+        closeAIResult();
         processingEl.hidden = true;
         clearElement(transcriptEl);
         urlInput.value = '';
@@ -344,6 +351,172 @@
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     }
 
+    // ── AI Actions ───────────────────────────────────────────────
+    var AI_ACTIONS = {
+        summarize: {
+            label: 'Summary',
+            icon: '\u26A1',
+            delay: 2000,
+            render: function () {
+                var frag = document.createDocumentFragment();
+                var p1 = document.createElement('p');
+                p1.textContent = 'This introductory lecture covers the fundamentals of artificial intelligence. Starting with AI\u2019s origins at the 1956 Dartmouth conference, it traces the field through periods of excitement and \u201CAI winters\u201D to the modern deep learning revolution.';
+                var p2 = document.createElement('p');
+                p2.textContent = 'Key topics include computer vision, NLP, speech recognition, and models like OpenAI\u2019s Whisper. The course will progress from basic neural networks to transformers, with practical assignments using Python, NumPy, and PyTorch.';
+                frag.appendChild(p1);
+                frag.appendChild(p2);
+                return frag;
+            }
+        },
+        'key-points': {
+            label: 'Key Points',
+            icon: '\u2261',
+            delay: 1800,
+            render: function () {
+                var ul = document.createElement('ul');
+                ['AI originated at the 1956 Dartmouth conference',
+                 'The field has gone through cycles of enthusiasm and \u201CAI winters\u201D',
+                 'Recent computational power and data availability drove breakthroughs',
+                 'Deep learning revolutionized vision, NLP, and speech recognition',
+                 'Whisper by OpenAI enables multilingual audio transcription',
+                 'Course covers neural networks \u2192 transformers',
+                 'Prerequisites: Python, NumPy, PyTorch'
+                ].forEach(function (text) {
+                    var li = document.createElement('li');
+                    li.textContent = text;
+                    ul.appendChild(li);
+                });
+                return ul;
+            }
+        },
+        translate: {
+            label: 'Translation',
+            icon: '\uD83C\uDF10',
+            delay: 2500,
+            render: function () {
+                var frag = document.createDocumentFragment();
+                var label = document.createElement('p');
+                label.style.fontSize = '0.75rem';
+                label.style.color = 'var(--text-muted)';
+                label.style.marginBottom = 'var(--space-sm)';
+                label.textContent = 'Translated to Spanish';
+                frag.appendChild(label);
+                ['Bienvenidos a esta primera clase sobre inteligencia artificial. Hoy comenzaremos con los conceptos fundamentales.',
+                 'La inteligencia artificial es un campo de la inform\u00E1tica que busca crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.',
+                 'Esto incluye el aprendizaje, el razonamiento, la percepci\u00F3n y la comprensi\u00F3n del lenguaje natural.'
+                ].forEach(function (text) {
+                    var p = document.createElement('p');
+                    p.textContent = text;
+                    frag.appendChild(p);
+                });
+                return frag;
+            }
+        },
+        ask: {
+            label: 'Ask AI',
+            icon: '\uD83D\uDCAC',
+            delay: 0,
+            render: function () {
+                var frag = document.createDocumentFragment();
+                var p = document.createElement('p');
+                p.textContent = 'Ask anything about this video\u2019s content:';
+                frag.appendChild(p);
+                var suggestions = document.createElement('div');
+                suggestions.className = 'ai-ask-suggestions';
+                ['What are the main topics covered?',
+                 'What homework was assigned?',
+                 'Explain AI winters in simple terms'
+                ].forEach(function (q) {
+                    var chip = document.createElement('button');
+                    chip.type = 'button';
+                    chip.className = 'ai-ask-chip';
+                    chip.setAttribute('data-question', q);
+                    chip.textContent = '\u201C' + q + '\u201D';
+                    suggestions.appendChild(chip);
+                });
+                frag.appendChild(suggestions);
+                return frag;
+            }
+        }
+    };
+
+    function buildLoadingIndicator() {
+        var wrap = document.createElement('div');
+        wrap.className = 'ai-result-loading';
+        var dots = document.createElement('div');
+        dots.className = 'ai-result-loading-dot';
+        for (var i = 0; i < 3; i++) dots.appendChild(document.createElement('span'));
+        wrap.appendChild(dots);
+        wrap.appendChild(document.createTextNode(' Thinking\u2026'));
+        return wrap;
+    }
+
+    function handleAIAction(action) {
+        if (activeAIAction === action) {
+            closeAIResult();
+            return;
+        }
+
+        activeAIAction = action;
+        var config = AI_ACTIONS[action];
+        if (!config) return;
+
+        aiActionBtns.forEach(function (btn) {
+            btn.classList.toggle('ai-action-btn--active', btn.getAttribute('data-action') === action);
+        });
+
+        aiResultBadge.textContent = config.icon + ' ' + config.label;
+        aiResultPanel.hidden = false;
+        clearElement(aiResultBody);
+
+        if (config.delay > 0) {
+            aiResultBody.appendChild(buildLoadingIndicator());
+            setTimeout(function () {
+                if (activeAIAction === action) {
+                    clearElement(aiResultBody);
+                    aiResultBody.appendChild(config.render());
+                    bindAskChips();
+                }
+            }, config.delay);
+        } else {
+            aiResultBody.appendChild(config.render());
+            bindAskChips();
+        }
+
+        aiResultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function closeAIResult() {
+        activeAIAction = null;
+        aiResultPanel.hidden = true;
+        clearElement(aiResultBody);
+        aiActionBtns.forEach(function (btn) {
+            btn.classList.remove('ai-action-btn--active');
+        });
+    }
+
+    function bindAskChips() {
+        var chips = aiResultPanel.querySelectorAll('.ai-ask-chip');
+        chips.forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                var q = chip.getAttribute('data-question');
+                clearElement(aiResultBody);
+                aiResultBody.appendChild(buildLoadingIndicator());
+                setTimeout(function () {
+                    clearElement(aiResultBody);
+                    var questionP = document.createElement('p');
+                    var strong = document.createElement('strong');
+                    strong.textContent = '\u201C' + q + '\u201D';
+                    questionP.appendChild(strong);
+                    var answerP = document.createElement('p');
+                    answerP.textContent = 'This feature will be available soon. AI-powered Q&A about video content is coming in a future update.';
+                    aiResultBody.appendChild(questionP);
+                    aiResultBody.appendChild(answerP);
+                }, 1500);
+            });
+        });
+    }
+
     // ── Input: clear error on typing ────────────────────────────
     if (urlInput) {
         urlInput.addEventListener('input', function () {
@@ -358,6 +531,13 @@
     if (copyBtn) copyBtn.addEventListener('click', handleCopy);
     if (downloadBtn) downloadBtn.addEventListener('click', handleDownload);
     if (newBtn) newBtn.addEventListener('click', resetUI);
+
+    aiActionBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            handleAIAction(btn.getAttribute('data-action'));
+        });
+    });
+    if (aiResultClose) aiResultClose.addEventListener('click', closeAIResult);
 
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
