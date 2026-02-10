@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>yt2txt — Transcribe YouTube videos to text</title>
-    <meta name="description" content="Convert any YouTube video to text using AI. Fast, accurate transcription powered by Whisper.">
+    <title>yt2txt — YouTube to text, transcribed by AI</title>
+    <meta name="description" content="Transcribe any YouTube video to text — even without subtitles. Whisper AI listens to the audio and generates accurate transcripts.">
 
-    <meta property="og:title" content="yt2txt — YouTube to text">
-    <meta property="og:description" content="Transcribe YouTube videos to text with AI.">
+    <meta property="og:title" content="yt2txt — Turn any YouTube video into text">
+    <meta property="og:description" content="AI-powered transcription that listens to the audio. Works on any video.">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/logo.jpg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="yt2txt — Turn any YouTube video into text">
+    <meta name="twitter:description" content="AI-powered transcription that listens to the audio. Works on any video.">
 
+    <link rel="canonical" href="index.html">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap&text=0123456789:" rel="stylesheet">
     <script>
     (function(){
       var t=localStorage.getItem('yt2txt-theme');
@@ -48,17 +54,19 @@
     <main id="main">
         <section class="hero" id="hero" aria-label="Transcribe video">
             <div class="container hero-center">
-                <a href="/" class="brand" aria-label="yt2txt home">
-                    <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="48" height="48">
-                    <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
-                </a>
-                <p class="hero-tagline" aria-live="polite" aria-atomic="true">
+                <h1>
+                    <a href="/" class="brand" aria-label="yt2txt home">
+                        <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="48" height="48">
+                        <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
+                    </a>
+                </h1>
+                <p class="hero-tagline" aria-live="off" aria-atomic="true">
                     <span class="tagline-phrase tagline-phrase--active">Reading your videos</span>
                     <span class="tagline-phrase" aria-hidden="true">Ears made of code</span>
-                    <span class="tagline-phrase" aria-hidden="true">AI watches, you read</span>
+                    <span class="tagline-phrase" aria-hidden="true">Actually listens to the audio</span>
                     <span class="tagline-phrase" aria-hidden="true">Bytes in, words out</span>
-                    <span class="tagline-phrase" aria-hidden="true">Watching so you don't</span>
-                    <span class="tagline-phrase" aria-hidden="true">Whisper did it</span>
+                    <span class="tagline-phrase" aria-hidden="true">Watching so you don't have to</span>
+                    <span class="tagline-phrase" aria-hidden="true">No subtitles? No problem</span>
                     <span class="tagline-phrase" aria-hidden="true">...I know kung-fu</span>
                 </p>
                 <noscript><p class="hero-tagline">Reading your videos.</p></noscript>
@@ -85,22 +93,20 @@
                     </div>
                     <div class="input-footer">
                         <p class="input-hint" id="input-hint">
-                            <span class="hint-default">Powered by Whisper AI</span>
+                            <span class="hint-default">Paste any YouTube link</span>
                             <span class="hint-error" role="alert" aria-live="polite"></span>
                         </p>
                     </div>
                     <noscript><p class="input-hint">JavaScript is required for transcription.</p></noscript>
                 </form>
-            </div>
-        </section>
 
-        <section class="processing" id="processing" aria-label="Processing" hidden>
-            <div class="container">
-                <div class="processing-content">
-                    <div class="processing-bar" aria-hidden="true">
-                        <div class="processing-bar-fill"></div>
+                <div class="processing" id="processing" role="status" aria-label="Processing" hidden>
+                    <div class="processing-content">
+                        <div class="processing-bar" aria-hidden="true">
+                            <div class="processing-bar-fill"></div>
+                        </div>
+                        <p class="processing-text" id="processing-text">Extracting audio from the video...</p>
                     </div>
-                    <p class="processing-text" id="processing-text">Downloading video audio...</p>
                 </div>
             </div>
         </section>
@@ -131,7 +137,19 @@
                     </div>
                 </div>
 
-                <div class="transcript" id="transcript" tabindex="0" aria-label="Transcript text"></div>
+                <div class="transcript" id="transcript" role="region" tabindex="0" aria-label="Transcript text"></div>
+
+                <div class="upgrade-card" aria-label="Upgrade to Pro">
+                    <div class="upgrade-card-body">
+                        <p class="upgrade-card-text">
+                            <span class="upgrade-card-icon" aria-hidden="true">&#9889;</span>
+                            That's <strong>1 of 5</strong> free transcriptions today. Need more? Go Pro.
+                        </p>
+                        <a href="pricing.html" class="action-btn action-btn--primary upgrade-card-cta">
+                            See plans &rarr;
+                        </a>
+                    </div>
+                </div>
 
                 <div class="result-footer">
                     <button class="new-btn" id="new-btn" aria-label="New transcription">
@@ -141,6 +159,10 @@
                         </svg>
                         New transcription
                     </button>
+                    <p class="api-teaser">
+                        Need this in your app?
+                        <a href="pricing.html#api" class="api-teaser-link">Check out the API &rarr;</a>
+                    </p>
                 </div>
             </div>
         </section>
@@ -148,7 +170,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 yt2txt &middot; <a href="https://github.com/openai/whisper" target="_blank" rel="noopener noreferrer">Whisper AI</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">Report an issue</a></p>
+            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/openai/whisper" target="_blank" rel="noopener noreferrer" aria-label="Built on Whisper (opens GitHub)">Built on Whisper</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
         </div>
     </footer>
 

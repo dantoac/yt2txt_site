@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — yt2txt</title>
+    <meta name="description" content="yt2txt pricing — start free with 5 transcriptions a day. Pro and API plans for heavier use.">
+
+    <meta property="og:title" content="Pricing — yt2txt">
+    <meta property="og:description" content="Start free. Upgrade when you need to.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/logo.jpg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Pricing — yt2txt">
+    <meta name="twitter:description" content="Start free. Upgrade when you need to.">
+
+    <link rel="canonical" href="pricing.html">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+    (function(){
+      var t=localStorage.getItem('yt2txt-theme');
+      if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+      document.documentElement.setAttribute('data-theme',t);
+    })();
+    </script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="page-pricing">
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <div class="accent-bar" aria-hidden="true"></div>
+
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <header class="pricing-header">
+        <div class="pricing-container pricing-header-inner">
+            <a href="index.html" class="brand" aria-label="yt2txt home">
+                <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="32" height="32">
+                <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
+            </a>
+            <a href="index.html" class="pricing-nav-link">&larr; Back to app</a>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="pricing-hero" aria-label="Pricing overview">
+            <div class="pricing-container">
+                <h1 class="pricing-title">Pricing that makes sense</h1>
+                <p class="pricing-subtitle">Start free. Pay when it's worth it.</p>
+            </div>
+        </section>
+
+        <section aria-label="Plans">
+            <div class="pricing-container">
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h2 class="pricing-card-name">Free</h2>
+                        <p class="pricing-card-price">$0 <span>/mo</span></p>
+                        <p class="pricing-card-desc">Plenty for occasional use.</p>
+                        <ul class="pricing-features">
+                            <li>5 transcriptions per day</li>
+                            <li>Videos up to 30 minutes</li>
+                            <li>Standard queue</li>
+                            <li>.txt download</li>
+                        </ul>
+                        <a href="index.html" class="action-btn pricing-cta">Get started</a>
+                    </div>
+
+                    <div class="pricing-card pricing-card--featured">
+                        <span class="pricing-card-badge">Most popular</span>
+                        <h2 class="pricing-card-name">Pro</h2>
+                        <p class="pricing-card-price">$9.99 <span>/mo</span></p>
+                        <p class="pricing-card-desc">For when free isn't enough.</p>
+                        <ul class="pricing-features">
+                            <li>Unlimited transcriptions</li>
+                            <li>Videos up to 4 hours</li>
+                            <li>Priority queue</li>
+                            <li>.txt, .srt, .vtt downloads</li>
+                            <li>Early access to new features</li>
+                        </ul>
+                        <button type="button" class="action-btn action-btn--primary pricing-cta">Upgrade to Pro</button>
+                    </div>
+
+                    <div class="pricing-card" id="plan-api">
+                        <h2 class="pricing-card-name">API</h2>
+                        <p class="pricing-card-price">$29.99 <span>/mo</span></p>
+                        <p class="pricing-card-desc">Transcription as an endpoint.</p>
+                        <ul class="pricing-features">
+                            <li>REST API access</li>
+                            <li>1,000 requests per month</li>
+                            <li>Webhooks for async jobs</li>
+                            <li>Model selection (Whisper variants)</li>
+                            <li>Priority support</li>
+                        </ul>
+                        <button type="button" class="action-btn pricing-cta">Get API access</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing-faq" aria-label="Questions">
+            <div class="pricing-container">
+                <h2 class="pricing-faq-title">Questions?</h2>
+                <p class="pricing-faq-text">
+                    Open an issue on
+                    <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    or email us at
+                    <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="pricing-container">
+            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/openai/whisper" target="_blank" rel="noopener noreferrer" aria-label="Built on Whisper (opens GitHub)">Built on Whisper</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js" defer></script>
+</body>
+</html>

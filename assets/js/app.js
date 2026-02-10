@@ -61,7 +61,7 @@
     var copyLabel     = document.getElementById('copy-label');
     var downloadBtn   = document.getElementById('download-btn');
     var newBtn        = document.getElementById('new-btn');
-    var hintError     = inputHint.querySelector('.hint-error');
+    var hintError     = inputHint ? inputHint.querySelector('.hint-error') : null;
 
     // ── State ───────────────────────────────────────────────────
     var currentTranscript = null;
@@ -82,12 +82,14 @@
 
     // ── UI State Transitions ────────────────────────────────────
     function showError(message) {
+        if (!hintError || !inputHint || !inputWrapper) return;
         hintError.textContent = message;
         inputHint.classList.add('show-error');
         inputWrapper.classList.add('has-error');
     }
 
     function clearError() {
+        if (!inputHint || !inputWrapper || !hintError) return;
         inputHint.classList.remove('show-error');
         inputWrapper.classList.remove('has-error');
         hintError.textContent = '';
@@ -142,9 +144,18 @@
             transcriptEl.appendChild(div);
         });
 
+        var upgradeCard = document.querySelector('.upgrade-card');
+        if (upgradeCard && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            var delay = Math.min(data.segments.length * 30, 600) + 200;
+            upgradeCard.style.animationDelay = delay + 'ms';
+        }
+
         setProcessing(false);
         resultEl.hidden = false;
         document.body.classList.add('has-result');
+
+        resultTitle.setAttribute('tabindex', '-1');
+        resultTitle.focus({ preventScroll: false });
     }
 
     function resetUI() {
@@ -192,9 +203,10 @@
 
     // ── Processing Status Messages ──────────────────────────────
     var statusMessages = [
-        'Downloading video audio...',
-        'Processing with Whisper AI...',
-        'Generating transcript...',
+        'Extracting audio from the video...',
+        'Listening to the audio...',
+        'Whisper is transcribing...',
+        'Formatting your transcript...',
     ];
 
     function cycleProcessingStatus() {
@@ -243,13 +255,13 @@
         var url = urlInput.value.trim();
 
         if (!url) {
-            showError('Enter a YouTube video URL.');
+            showError('Paste a YouTube URL to get started.');
             urlInput.focus();
             return;
         }
 
         if (!isValidYouTubeURL(url)) {
-            showError('This URL doesn\'t look like a valid YouTube video.');
+            showError('That doesn\'t look like a YouTube link. Check the URL?');
             urlInput.focus();
             return;
         }
@@ -270,7 +282,7 @@
             .catch(function () {
                 clearInterval(statusInterval);
                 setProcessing(false);
-                showError('Error transcribing the video. Please try again.');
+                showError('Something went wrong. Try again \u2014 or try a different video.');
             });
     }
 
@@ -278,15 +290,38 @@
         var text = buildPlainText();
         if (!text) return;
 
-        navigator.clipboard.writeText(text).then(function () {
+        function onCopied() {
             copyBtn.classList.add('copied');
             copyLabel.textContent = 'Copied';
+            copyBtn.setAttribute('aria-label', 'Copied to clipboard');
 
             setTimeout(function () {
                 copyBtn.classList.remove('copied');
                 copyLabel.textContent = 'Copy';
+                copyBtn.setAttribute('aria-label', 'Copy transcript');
             }, 2000);
-        });
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(onCopied).catch(function () {
+                fallbackCopy(text);
+                onCopied();
+            });
+        } else {
+            fallbackCopy(text);
+            onCopied();
+        }
+    }
+
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
     }
 
     function handleDownload() {
@@ -306,21 +341,23 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     }
 
     // ── Input: clear error on typing ────────────────────────────
-    urlInput.addEventListener('input', function () {
-        if (inputHint.classList.contains('show-error')) {
-            clearError();
-        }
-    });
+    if (urlInput) {
+        urlInput.addEventListener('input', function () {
+            if (inputHint.classList.contains('show-error')) {
+                clearError();
+            }
+        });
+    }
 
     // ── Bind Events ─────────────────────────────────────────────
-    form.addEventListener('submit', handleSubmit);
-    copyBtn.addEventListener('click', handleCopy);
-    downloadBtn.addEventListener('click', handleDownload);
-    newBtn.addEventListener('click', resetUI);
+    if (form) form.addEventListener('submit', handleSubmit);
+    if (copyBtn) copyBtn.addEventListener('click', handleCopy);
+    if (downloadBtn) downloadBtn.addEventListener('click', handleDownload);
+    if (newBtn) newBtn.addEventListener('click', resetUI);
 
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
