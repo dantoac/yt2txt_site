@@ -60,6 +60,8 @@
     var copyBtn       = document.getElementById('copy-btn');
     var copyLabel     = document.getElementById('copy-label');
     var downloadBtn   = document.getElementById('download-btn');
+    var downloadToggle = document.getElementById('download-toggle');
+    var downloadMenu   = document.getElementById('download-menu');
     var newBtn        = document.getElementById('new-btn');
     var hintError     = inputHint ? inputHint.querySelector('.hint-error') : null;
     var aiResultPanel = document.getElementById('ai-result');
@@ -84,6 +86,11 @@
 
     function isValidYouTubeURL(url) {
         return YT_PATTERNS.some(function (re) { return re.test(url.trim()); });
+    }
+
+    function extractVideoId(url) {
+        var m = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+        return m ? m[1] : null;
     }
 
     // ── UI State Transitions ────────────────────────────────────
@@ -126,6 +133,16 @@
 
         resultTitle.textContent = data.title;
         resultInfo.textContent  = data.segments.length + ' segments \u00b7 ' + data.duration;
+
+        var thumbEl  = document.getElementById('result-thumb');
+        var thumbImg = document.getElementById('result-thumb-img');
+        var videoId  = extractVideoId(currentVideoURL);
+        if (thumbEl && thumbImg && videoId) {
+            thumbImg.src = 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
+            thumbImg.alt = data.title;
+            thumbEl.href = currentVideoURL;
+            thumbEl.hidden = false;
+        }
 
         clearElement(transcriptEl);
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -177,6 +194,12 @@
         currentTranscript = null;
         currentVideoTitle = '';
         currentVideoURL   = '';
+
+        var thumbEl  = document.getElementById('result-thumb');
+        var thumbImg = document.getElementById('result-thumb-img');
+        if (thumbEl) { thumbEl.hidden = true; }
+        if (thumbImg) { thumbImg.src = ''; }
+
         urlInput.focus();
         startTagline();
     }
@@ -203,6 +226,28 @@
 
         currentTranscript.forEach(function (seg) {
             lines.push('[' + formatTime(seg.start) + '] ' + seg.text);
+        });
+
+        return lines.join('\n');
+    }
+
+    function buildMarkdownText() {
+        if (!currentTranscript) return '';
+
+        var lines = [
+            '# ' + currentVideoTitle,
+            '',
+            '> Transcribed by [yt2txt](https://yt2txt.com)',
+            '> URL: ' + currentVideoURL,
+            '> Date: ' + new Date().toLocaleDateString('en-US'),
+            '',
+            '---',
+            '',
+        ];
+
+        currentTranscript.forEach(function (seg) {
+            lines.push('**' + formatTime(seg.start) + '** ' + seg.text);
+            lines.push('');
         });
 
         return lines.join('\n');
@@ -331,8 +376,19 @@
         document.body.removeChild(ta);
     }
 
-    function handleDownload() {
-        var text = buildPlainText();
+    function handleDownload(format) {
+        format = format || 'txt';
+
+        var text, mime, ext;
+        if (format === 'md') {
+            text = buildMarkdownText();
+            mime = 'text/markdown;charset=utf-8';
+            ext  = '.md';
+        } else {
+            text = buildPlainText();
+            mime = 'text/plain;charset=utf-8';
+            ext  = '.txt';
+        }
         if (!text) return;
 
         var safeName = currentVideoTitle
@@ -340,11 +396,11 @@
             .replace(/\s+/g, '_')
             .substring(0, 60);
 
-        var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        var blob = new Blob([text], { type: mime });
         var url  = URL.createObjectURL(blob);
         var a    = document.createElement('a');
         a.href     = url;
-        a.download = (safeName || 'transcript') + '.txt';
+        a.download = (safeName || 'transcript') + ext;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -529,8 +585,43 @@
     // ── Bind Events ─────────────────────────────────────────────
     if (form) form.addEventListener('submit', handleSubmit);
     if (copyBtn) copyBtn.addEventListener('click', handleCopy);
-    if (downloadBtn) downloadBtn.addEventListener('click', handleDownload);
+    if (downloadBtn) downloadBtn.addEventListener('click', function () { handleDownload('txt'); });
     if (newBtn) newBtn.addEventListener('click', resetUI);
+
+    // ── Download Dropdown ─────────────────────────────────────────
+    function toggleDownloadMenu() {
+        if (!downloadMenu) return;
+        var open = downloadMenu.hidden;
+        downloadMenu.hidden = !open;
+        if (downloadToggle) downloadToggle.setAttribute('aria-expanded', String(open));
+    }
+
+    function closeDownloadMenu() {
+        if (!downloadMenu) return;
+        downloadMenu.hidden = true;
+        if (downloadToggle) downloadToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (downloadToggle) {
+        downloadToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleDownloadMenu();
+        });
+    }
+
+    if (downloadMenu) {
+        downloadMenu.addEventListener('click', function (e) {
+            var item = e.target.closest('.download-menu-item');
+            if (!item) return;
+            var fmt = item.getAttribute('data-format');
+            handleDownload(fmt);
+            closeDownloadMenu();
+        });
+    }
+
+    document.addEventListener('click', function () {
+        closeDownloadMenu();
+    });
 
     aiActionBtns.forEach(function (btn) {
         btn.addEventListener('click', function () {

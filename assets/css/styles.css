@@ -24,8 +24,8 @@
     --error-soft:     #FEF2F2;
 
     /* Typography */
-    --font-display: 'Sora', system-ui, sans-serif;
-    --font-body:    'Inter', system-ui, sans-serif;
+    --font-display: 'Outfit', system-ui, sans-serif;
+    --font-body:    'Satoshi', system-ui, sans-serif;
     --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
     /* Spacing */
@@ -101,7 +101,7 @@ html {
 
 body {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.6;
     color: var(--text);
     background-color: var(--bg);
@@ -469,11 +469,36 @@ body.has-result .input-group {
 
 .result-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
-    flex-wrap: wrap;
+}
+
+.result-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.result-thumb {
+    order: 1;
+    margin-left: auto;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    line-height: 0;
+    transition: opacity var(--duration-fast);
+}
+
+.result-thumb:hover {
+    opacity: 0.8;
+}
+
+.result-thumb img {
+    width: 120px;
+    height: 68px;
+    object-fit: cover;
+    display: block;
 }
 
 .result-title {
@@ -496,8 +521,8 @@ body.has-result .input-group {
 
 .result-actions {
     display: flex;
-    gap: var(--space-md);
-    flex-shrink: 0;
+    align-items: center;
+    gap: var(--space-sm);
 }
 
 .action-btn {
@@ -569,6 +594,7 @@ body.has-result .input-group {
 
 .transcript-segment {
     display: flex;
+    align-items: baseline;
     gap: var(--space-md);
     padding: var(--space-sm) 0;
     border-bottom: 1px solid transparent;
@@ -588,10 +614,11 @@ body.has-result .input-group {
     font-size: 0.75rem;
     color: var(--text-muted);
     white-space: nowrap;
-    padding-top: 0.15em;
-    min-width: 3.5em;
+    width: 5ch;
+    min-width: 5ch;
     flex-shrink: 0;
     user-select: none;
+    text-align: right;
 }
 
 .segment-text {
@@ -654,26 +681,6 @@ body.has-result .input-group {
     background: var(--accent-hover);
     border-color: var(--accent-hover);
     color: var(--accent-contrast);
-}
-
-.ai-toolbar-divider {
-    width: 24px;
-    height: 1px;
-    background: var(--border);
-    margin: var(--space-xs) auto;
-}
-
-.ai-action-btn--pro {
-    color: var(--accent);
-    border-color: var(--accent);
-    text-decoration: none;
-}
-
-.ai-action-btn--pro:hover {
-    background: var(--accent);
-    color: var(--accent-contrast);
-    border-color: var(--accent);
-    transform: scale(1.08);
 }
 
 /* Tooltip — appears to the left of buttons */
@@ -855,12 +862,6 @@ body.has-result .input-group {
         margin-top: var(--space-md);
     }
 
-    .ai-toolbar-divider {
-        width: 1px;
-        height: 24px;
-        margin: auto var(--space-xs);
-    }
-
     .ai-action-btn::after {
         right: auto;
         left: 50%;
@@ -968,6 +969,113 @@ body.has-result .input-group {
 [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
 
+/* --- CTA Upgrade --- */
+.cta-upgrade {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid #D97706;
+    color: #B45309;
+    background: #FFFBEB;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.85rem;
+    text-decoration: none;
+    transition:
+        background var(--duration-fast),
+        color var(--duration-fast),
+        border-color var(--duration-fast);
+}
+
+.cta-upgrade:hover {
+    background: #F59E0B;
+    border-color: #F59E0B;
+    color: #fff;
+}
+
+[data-theme="dark"] .cta-upgrade {
+    color: #FBBF24;
+    border-color: #FBBF24;
+    background: rgba(251, 191, 36, 0.1);
+}
+
+[data-theme="dark"] .cta-upgrade:hover {
+    background: #F59E0B;
+    border-color: #F59E0B;
+    color: #1C1917;
+}
+
+
+/* --- Download Group --- */
+.download-group {
+    position: relative;
+    display: inline-flex;
+}
+
+.download-group .action-btn--primary#download-btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.download-toggle {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.download-toggle svg {
+    display: block;
+    transition: transform var(--duration-fast);
+}
+
+.download-toggle[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+.download-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    min-width: 160px;
+    z-index: 50;
+    animation: segment-appear var(--duration-fast) var(--ease-out) both;
+}
+
+.download-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: left;
+    transition:
+        background var(--duration-fast),
+        color var(--duration-fast);
+}
+
+.download-menu-item:hover {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.download-menu-item:first-child {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.download-menu-item:last-child {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+
 /* --- Animations --- */
 @keyframes fade-in {
     from {
@@ -1055,6 +1163,10 @@ body.has-result .input-group {
         flex-direction: column;
     }
 
+    .result-thumb {
+        display: none;
+    }
+
     .result-actions {
         width: 100%;
     }
@@ -1086,6 +1198,15 @@ body.has-result .input-group {
     body.has-result .brand {
         font-size: 1.25rem;
     }
+
+    .download-group {
+        flex: 1;
+    }
+
+    .download-group .action-btn--primary#download-btn {
+        flex: 1;
+        justify-content: center;
+    }
 }
 
 @media (min-width: 1600px) {
@@ -1116,7 +1237,9 @@ body.has-result .input-group {
     position: sticky;
     bottom: var(--space-md);
     margin-top: var(--space-lg);
-    background: var(--accent-soft);
+    background: color-mix(in srgb, var(--accent-soft) 80%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1.5px solid var(--accent);
     border-radius: var(--radius-md);
     padding: var(--space-md) var(--space-lg);

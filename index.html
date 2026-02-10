@@ -18,7 +18,8 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap&text=0123456789:" rel="stylesheet">
     <script>
     (function(){
@@ -115,10 +116,34 @@
             <div class="container">
                 <div class="result-header">
                     <div class="result-meta">
-                        <h2 class="result-title" id="result-title"></h2>
-                        <p class="result-info" id="result-info"></p>
+                        <a href="#" class="result-thumb" id="result-thumb" target="_blank" rel="noopener noreferrer" aria-label="Open video on YouTube" hidden>
+                            <img id="result-thumb-img" src="" alt="" width="120" height="68" loading="lazy">
+                        </a>
+                        <div class="result-meta-text">
+                            <h2 class="result-title" id="result-title"></h2>
+                            <p class="result-info" id="result-info"></p>
+                        </div>
                     </div>
                     <div class="result-actions">
+                        <div class="download-group">
+                            <button class="action-btn action-btn--primary" id="download-btn" aria-label="Download transcript as text file">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Download .txt</span>
+                            </button>
+                            <button class="action-btn action-btn--primary download-toggle" id="download-toggle" aria-label="More download options" aria-expanded="false" aria-haspopup="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <div class="download-menu" id="download-menu" role="menu" hidden>
+                                <button class="download-menu-item" role="menuitem" data-format="txt">Download .txt</button>
+                                <button class="download-menu-item" role="menuitem" data-format="md">Download .md</button>
+                            </div>
+                        </div>
                         <button class="action-btn" id="copy-btn" aria-label="Copy transcript">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -126,14 +151,7 @@
                             </svg>
                             <span id="copy-label">Copy</span>
                         </button>
-                        <button class="action-btn action-btn--primary" id="download-btn" aria-label="Download transcript as text file">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span>Download .txt</span>
-                        </button>
+                        <a href="pricing.html" class="cta-upgrade" aria-label="View pricing plans"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Upgrade</a>
                     </div>
                 </div>
 
@@ -152,10 +170,6 @@
                         <button type="button" class="ai-action-btn" data-action="ask" data-tooltip="Ask AI" aria-label="Ask AI about this video">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         </button>
-                        <div class="ai-toolbar-divider" aria-hidden="true"></div>
-                        <a href="pricing.html" class="ai-action-btn ai-action-btn--pro" data-tooltip="Go Pro" aria-label="Upgrade to Pro">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        </a>
                     </aside>
                 </div>
 
@@ -173,7 +187,7 @@
                     <div class="upgrade-card-body">
                         <p class="upgrade-card-text">
                             <span class="upgrade-card-icon" aria-hidden="true">&#9889;</span>
-                            That's <strong>1 of 5</strong> free transcriptions today. Need more? Go Pro.
+                            That's <strong>1 of 5</strong> free transcriptions today. Need more? You can upgrade, see our price plans
                         </p>
                         <a href="pricing.html" class="action-btn action-btn--primary upgrade-card-cta">
                             See plans &rarr;
