@@ -292,6 +292,58 @@ main {
     opacity: 1;
 }
 
+/* Hero Features */
+.hero-features {
+    margin: var(--space-xl) 0 var(--space-lg);
+}
+
+.hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: var(--space-lg);
+    color: var(--text);
+}
+
+.hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.hero-badge:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.hero-badge svg {
+    flex-shrink: 0;
+    color: var(--accent);
+}
+
+/* Hide hero features when result is displayed */
+body.has-result .hero-features {
+    display: none;
+}
+
 /* Hero compressed when result is visible */
 body.has-result .hero {
     flex: none;
@@ -1170,6 +1222,15 @@ body.has-result .input-group {
     .brand-logo {
         width: 40px;
         height: 40px;
+    }
+
+    .hero-headline {
+        font-size: 1.8rem;
+    }
+
+    .hero-badge {
+        font-size: 0.78rem;
+        padding: 0.35rem 0.7rem;
     }
 
     .input-wrapper {
