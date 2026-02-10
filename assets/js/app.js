@@ -985,7 +985,9 @@
         isProcessing = false;
 
         updateQueueHint();
-        urlInput.focus();
+        var heroSection = document.getElementById('hero');
+        if (heroSection) heroSection.scrollIntoView();
+        urlInput.focus({ preventScroll: true });
         startTagline();
     }
 
@@ -1138,6 +1140,21 @@
             dismissPastePopover();
         }
     });
+
+    // ── Landing CTA & Scroll ────────────────────────────────────
+    var landingCta = document.getElementById('landing-cta');
+    var landingScrollHint = document.getElementById('landing-scroll');
+
+    function scrollToHero() {
+        var heroEl = document.getElementById('hero');
+        if (heroEl) {
+            heroEl.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(function () { urlInput.focus({ preventScroll: true }); }, 600);
+        }
+    }
+
+    if (landingCta) landingCta.addEventListener('click', scrollToHero);
+    if (landingScrollHint) landingScrollHint.addEventListener('click', scrollToHero);
 
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
