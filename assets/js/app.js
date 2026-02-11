@@ -64,6 +64,10 @@
     var pasteAllBtn   = document.getElementById('paste-all-btn');
     var pasteFirstBtn = document.getElementById('paste-first-btn');
     var queueAnnouncer = document.getElementById('queue-announcer');
+    var paywallOverlay = document.getElementById('paywall-overlay');
+    var paywallClose   = document.getElementById('paywall-close');
+    var paywallBackdrop = document.getElementById('paywall-backdrop');
+    var paywallTimer   = null;
 
     // ── State ───────────────────────────────────────────────────
     var queue = [];
@@ -450,7 +454,11 @@
     function showResultSection() {
         clearInterval(taglineTimer);
         resultEl.hidden = false;
+        document.documentElement.style.scrollSnapType = 'none';
         document.body.classList.add('has-result');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        if (paywallTimer) clearTimeout(paywallTimer);
+        paywallTimer = setTimeout(showPaywall, 3000);
         updateResultsListMode();
     }
 
@@ -540,7 +548,7 @@
         var dlSpan = document.createElement('span');
         dlSpan.textContent = 'Download .txt';
         dlBtn.appendChild(dlSpan);
-        dlBtn.addEventListener('click', function () { handleCardDownload(item.id, 'txt'); });
+        dlBtn.addEventListener('click', function () { showPaywall(true); });
 
         var dlToggle = document.createElement('button');
         dlToggle.className = 'action-btn action-btn--primary download-toggle';
@@ -558,13 +566,13 @@
         dlTxt.className = 'download-menu-item';
         dlTxt.setAttribute('role', 'menuitem');
         dlTxt.textContent = 'Download .txt';
-        dlTxt.addEventListener('click', function () { handleCardDownload(item.id, 'txt'); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
+        dlTxt.addEventListener('click', function () { showPaywall(true); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
 
         var dlMd = document.createElement('button');
         dlMd.className = 'download-menu-item';
         dlMd.setAttribute('role', 'menuitem');
         dlMd.textContent = 'Download .md';
-        dlMd.addEventListener('click', function () { handleCardDownload(item.id, 'md'); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
+        dlMd.addEventListener('click', function () { showPaywall(true); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
 
         dlMenu.appendChild(dlTxt);
         dlMenu.appendChild(dlMd);
@@ -588,14 +596,14 @@
         var copyLabel = document.createElement('span');
         copyLabel.textContent = 'Copy';
         copyBtn.appendChild(copyLabel);
-        copyBtn.addEventListener('click', function () { handleCardCopy(item.id, copyBtn, copyLabel); });
+        copyBtn.addEventListener('click', function () { showPaywall(true); });
 
         // Upgrade CTA
         var upgradeCta = document.createElement('a');
         upgradeCta.href = 'pricing.html';
         upgradeCta.className = 'cta-upgrade';
         upgradeCta.setAttribute('aria-label', 'View pricing plans');
-        upgradeCta.appendChild(createSvgElement('<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
+        upgradeCta.appendChild(createSvgElement('<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
         upgradeCta.appendChild(document.createTextNode('Upgrade'));
 
         actions.appendChild(dlGroup);
@@ -652,7 +660,7 @@
             btn.setAttribute('data-queue-id', String(item.id));
             btn.appendChild(createSvgElement(ai.svg));
             btn.addEventListener('click', function () {
-                handleCardAIAction(item.id, ai.action, card);
+                showPaywall(true);
             });
             aiToolbar.appendChild(btn);
         });
@@ -966,11 +974,33 @@
         });
     }
 
+    // ── Paywall Modal ────────────────────────────────────────────
+    function showPaywall(force) {
+        if (!paywallOverlay) return;
+        if (!force && sessionStorage.getItem('yt2txt-paywall-dismissed')) return;
+        paywallOverlay.hidden = false;
+        document.body.style.overflow = 'hidden';
+        if (paywallClose) paywallClose.focus();
+    }
+
+    function dismissPaywall() {
+        if (!paywallOverlay) return;
+        paywallOverlay.hidden = true;
+        document.body.style.overflow = '';
+        sessionStorage.setItem('yt2txt-paywall-dismissed', '1');
+    }
+
+    if (paywallClose) paywallClose.addEventListener('click', dismissPaywall);
+    if (paywallBackdrop) paywallBackdrop.addEventListener('click', dismissPaywall);
+
     // ── Reset ────────────────────────────────────────────────────
     function resetUI() {
         document.body.classList.remove('has-result');
+        document.documentElement.style.scrollSnapType = '';
         resultEl.hidden = true;
         processingEl.hidden = true;
+        if (paywallTimer) clearTimeout(paywallTimer);
+        dismissPaywall();
         if (resultsList) clearElement(resultsList);
         if (queueEl) { clearElement(queueEl); queueEl.hidden = true; }
         urlInput.value = '';
@@ -1047,8 +1077,12 @@
     }
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && pastePopover && !pastePopover.hidden) {
-            dismissPastePopover();
+        if (e.key === 'Escape') {
+            if (paywallOverlay && !paywallOverlay.hidden) {
+                dismissPaywall();
+            } else if (pastePopover && !pastePopover.hidden) {
+                dismissPastePopover();
+            }
         }
     });
 
@@ -1119,7 +1153,7 @@
 
     // ── Bind Events ─────────────────────────────────────────────
     var addBtn = document.getElementById('add-btn');
-    if (addBtn) addBtn.addEventListener('click', handleAddToQueue);
+    if (addBtn) addBtn.addEventListener('click', function () { showPaywall(true); });
 
     if (form) form.addEventListener('submit', handleSubmit);
     if (newBtn) newBtn.addEventListener('click', resetUI);
