@@ -60,42 +60,98 @@
                 <div class="landing-orb landing-orb--2"></div>
             </div>
             <div class="landing-content">
-                <div class="landing-badge">
-                    <img src="assets/img/logo.jpg" alt="" class="landing-badge-logo" width="28" height="28">
-                    <span class="landing-badge-text">
-                        <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
-                    </span>
+                <div class="landing-text">
+                    <div class="landing-badge">
+                        <img src="assets/img/logo.jpg" alt="" class="landing-badge-logo" width="28" height="28">
+                        <span class="landing-badge-text">
+                            <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
+                        </span>
+                    </div>
+                    <h1 class="landing-headline">Read any<br>YouTube video</h1>
+                    <p class="landing-sub">
+                        Paste a YouTube link. Get a transcript, AI insights, and more.
+                    </p>
+                    <div class="landing-narrative" role="list" aria-label="How it works">
+                        <div class="narrative-step" role="listitem">
+                            <div class="narrative-step-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            </div>
+                            <div class="narrative-step-body">
+                                <span class="narrative-step-label">Transcribe</span>
+                                <span class="narrative-step-desc">Paste a link, get the full text. No subtitles needed.</span>
+                            </div>
+                        </div>
+                        <div class="narrative-step" role="listitem">
+                            <div class="narrative-step-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </div>
+                            <div class="narrative-step-body">
+                                <span class="narrative-step-label">Understand</span>
+                                <span class="narrative-step-desc">Summarize, extract key points, translate, or ask AI anything.</span>
+                            </div>
+                            <div class="narrative-step-badges" aria-hidden="true">
+                                <span class="narrative-badge" title="Summarize">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                </span>
+                                <span class="narrative-badge" title="Key points">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                </span>
+                                <span class="narrative-badge" title="Translate">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                </span>
+                                <span class="narrative-badge" title="Ask AI">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="narrative-step" role="listitem">
+                            <div class="narrative-step-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </div>
+                            <div class="narrative-step-body">
+                                <span class="narrative-step-label">Use</span>
+                                <span class="narrative-step-desc">Download as .txt or .md, copy, or share instantly.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="landing-cta" id="landing-cta" type="button">
+                        Start transcribing
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
                 </div>
-                <h1 class="landing-headline">Read any<br>YouTube video</h1>
-                <p class="landing-sub">
-                    AI-powered transcription that actually listens to the audio.<br>
-                    Works even without subtitles or captions.
-                </p>
-                <div class="landing-features" role="list" aria-label="Key features">
-                    <span class="landing-pill" role="listitem">
-                        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        No subtitles needed
-                    </span>
-                    <span class="landing-pill" role="listitem">
-                        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        AI-powered
-                    </span>
-                    <span class="landing-pill" role="listitem">
-                        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        Multiple formats
-                    </span>
-                    <span class="landing-pill" role="listitem">
-                        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7v10"/><path d="M16 7v10"/><path d="M2 12h20"/></svg>
-                        Batch transcription
-                    </span>
+                <div class="morph-vis" aria-hidden="true">
+                    <div class="morph-frame">
+                        <div class="morph-screen">
+                            <div class="morph-play"></div>
+                            <div class="morph-bar">
+                                <div class="morph-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="morph-doc">
+                            <div class="morph-line morph-line--title"></div>
+                            <div class="morph-line morph-line--spacer"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--med"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--short"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--med"></div>
+                            <div class="morph-line morph-line--spacer"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--short"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--med"></div>
+                            <div class="morph-line"></div>
+                            <div class="morph-line morph-line--short"></div>
+                        </div>
+                    </div>
+                    <div class="morph-dot morph-dot--1"></div>
+                    <div class="morph-dot morph-dot--2"></div>
+                    <div class="morph-dot morph-dot--3"></div>
                 </div>
-                <button class="landing-cta" id="landing-cta" type="button">
-                    Start transcribing
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </button>
             </div>
             <div class="landing-scroll-hint" id="landing-scroll" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -109,7 +165,7 @@
             <div class="container hero-center">
                 <div class="hero-brand">
                     <a href="index.html" class="brand" aria-label="yt2txt home">
-                        <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="48" height="48">
+                        <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="56" height="56">
                         <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
                     </a>
                 </div>
@@ -123,6 +179,11 @@
                     <span class="tagline-phrase" aria-hidden="true">...I know kung-fu</span>
                 </p>
                 <noscript><p class="hero-tagline">Reading your videos.</p></noscript>
+
+                <div class="hero-plan-badge">
+                    <span class="plan-badge">FREE</span>
+                    <span class="hero-plan-detail">30 min / month</span>
+                </div>
 
                 <form class="input-group" id="transcribe-form" aria-label="Video URL">
                     <div class="input-wrapper" id="input-wrapper">
@@ -211,6 +272,44 @@
                 </div>
             </div>
         </section>
+
+        <div class="paywall-overlay" id="paywall-overlay" role="dialog" aria-modal="true" aria-label="Upgrade your plan" hidden>
+            <div class="paywall-backdrop" id="paywall-backdrop"></div>
+            <div class="paywall-modal">
+                <button class="paywall-close" id="paywall-close" type="button" aria-label="Close upgrade dialog">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <h2 class="paywall-title">Unlock more transcriptions</h2>
+                <p class="paywall-subtitle">You've used your free quota. Choose a plan to keep going.</p>
+                <div class="paywall-plans">
+                    <div class="paywall-plan">
+                        <h3 class="paywall-plan-name">Starter</h3>
+                        <p class="paywall-plan-price">$4<span>/mo</span></p>
+                        <p class="paywall-plan-desc">60 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Starter</a>
+                    </div>
+                    <div class="paywall-plan paywall-plan--featured">
+                        <span class="paywall-plan-badge">Popular</span>
+                        <h3 class="paywall-plan-name">Standard</h3>
+                        <p class="paywall-plan-price">$9<span>/mo</span></p>
+                        <p class="paywall-plan-desc">300 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Standard</a>
+                    </div>
+                    <div class="paywall-plan">
+                        <h3 class="paywall-plan-name">Bulk</h3>
+                        <p class="paywall-plan-price">$19<span>/mo</span></p>
+                        <p class="paywall-plan-desc">1200 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Bulk</a>
+                    </div>
+                </div>
+                <p class="paywall-footer">
+                    <a href="pricing.html">Compare all plans &rarr;</a>
+                </p>
+            </div>
+        </div>
 
     </main>
 
