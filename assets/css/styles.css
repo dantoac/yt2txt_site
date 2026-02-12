@@ -22,6 +22,16 @@
     --success:        #22C55E;
     --error:          #DC2626;
     --error-soft:     #FEF2F2;
+    --warning:        #D97706;
+    --warning-hover:  #F59E0B;
+    --warning-text:   #B45309;
+    --warning-soft:   #FFFBEB;
+    --success-text:   #16A34A;
+    --success-soft:   #F0FDF4;
+    --accent-30:      color-mix(in srgb, var(--accent) 30%, transparent);
+    --accent-15:      color-mix(in srgb, var(--accent) 15%, transparent);
+    --border-w:       1.5px;
+    --border-w-thick: 2px;
 
     /* Typography */
     --font-display: 'Outfit', system-ui, sans-serif;
@@ -75,6 +85,12 @@
     --success:        #4ADE80;
     --error:          #F87171;
     --error-soft:     rgba(248,113,113,0.08);
+    --warning:        #FBBF24;
+    --warning-hover:  #F59E0B;
+    --warning-text:   #FBBF24;
+    --warning-soft:   rgba(251, 191, 36, 0.1);
+    --success-text:   #4ADE80;
+    --success-soft:   rgba(74, 222, 128, 0.1);
 
     --shadow-sm:  0 1px 2px rgba(0,0,0,0.20);
     --shadow-md:  0 4px 16px rgba(0,0,0,0.30);
@@ -352,7 +368,7 @@ main {
     gap: 0.5rem;
     padding: 0.4rem 1rem 0.4rem 0.4rem;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: 999px;
     font-family: var(--font-display);
     font-size: 1.05rem;
@@ -409,7 +425,7 @@ main {
     align-items: center;
     gap: 0.75rem;
     padding: 0.6rem 0.85rem;
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-sm);
     background: var(--surface);
     text-align: left;
@@ -500,7 +516,7 @@ main {
     background: var(--accent);
     color: var(--accent-contrast);
     border-radius: var(--radius-md);
-    box-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 30%, transparent);
+    box-shadow: 0 4px 24px var(--accent-30);
     animation: cta-glow 3s ease-in-out 1.5s infinite;
     transition:
         background var(--duration-fast),
@@ -509,7 +525,7 @@ main {
 }
 
 @keyframes cta-glow {
-    0%, 100% { box-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 30%, transparent); }
+    0%, 100% { box-shadow: 0 4px 24px var(--accent-30); }
     50% { box-shadow: 0 4px 32px color-mix(in srgb, var(--accent) 50%, transparent), 0 0 16px 2px color-mix(in srgb, var(--accent) 20%, transparent); }
 }
 
@@ -650,7 +666,7 @@ main {
 .morph-line {
     height: 3px;
     width: 100%;
-    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    background: var(--accent-30);
     border-radius: 2px;
 }
 
@@ -1000,7 +1016,7 @@ body.has-result .landing {
     font-family: var(--font-body);
     color: var(--text-secondary);
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: 999px;
     transition: border-color 0.2s ease, color 0.2s ease;
 }
@@ -1147,7 +1163,7 @@ body.has-result .queue {
     justify-content: center;
     padding: 0 0.7rem;
     color: var(--text-muted);
-    border-left: 1.5px solid var(--border);
+    border-left: var(--border-w) solid var(--border);
     flex-shrink: 0;
     transition:
         color var(--duration-fast),
@@ -1325,7 +1341,7 @@ body.has-result .input-upgrade-hint {
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     background: var(--surface);
     color: var(--text-secondary);
     transition:
@@ -1361,7 +1377,7 @@ body.has-result .input-upgrade-hint {
 /* --- Transcript --- */
 .transcript {
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
     padding: var(--space-lg) var(--space-xl);
     max-height: 60vh;
@@ -1450,7 +1466,7 @@ body.has-result .input-upgrade-hint {
     align-items: center;
     justify-content: center;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: 50%;
     color: var(--text-muted);
     box-shadow: var(--shadow-sm);
@@ -1511,7 +1527,7 @@ body.has-result .input-upgrade-hint {
 .ai-result-panel {
     margin-top: var(--space-md);
     background: var(--surface);
-    border: 1.5px solid var(--accent);
+    border: var(--border-w) solid var(--accent);
     border-radius: var(--radius-md);
     padding: var(--space-md) var(--space-lg);
     box-shadow: var(--shadow-md);
@@ -1740,7 +1756,7 @@ body.has-result .input-upgrade-hint {
     align-items: center;
     justify-content: center;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
     cursor: pointer;
@@ -1775,9 +1791,9 @@ body.has-result .input-upgrade-hint {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    border: 1.5px solid #D97706;
-    color: #B45309;
-    background: #FFFBEB;
+    border: var(--border-w) solid var(--warning);
+    color: var(--warning-text);
+    background: var(--warning-soft);
     border-radius: var(--radius-sm);
     font-family: var(--font-display);
     font-size: 1rem;
@@ -1797,21 +1813,9 @@ body.has-result .input-upgrade-hint {
 }
 
 .cta-upgrade:hover {
-    background: #F59E0B;
-    border-color: #F59E0B;
-    color: #fff;
-}
-
-[data-theme="dark"] .cta-upgrade {
-    color: #FBBF24;
-    border-color: #FBBF24;
-    background: rgba(251, 191, 36, 0.1);
-}
-
-[data-theme="dark"] .cta-upgrade:hover {
-    background: #F59E0B;
-    border-color: #F59E0B;
-    color: #1C1917;
+    background: var(--warning-hover);
+    border-color: var(--warning-hover);
+    color: var(--accent-contrast);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1854,7 +1858,7 @@ body.has-result .input-upgrade-hint {
     top: calc(100% + 4px);
     right: 0;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-md);
     min-width: 160px;
@@ -1977,7 +1981,7 @@ body.has-result .input-upgrade-hint {
 
     .add-btn {
         border-left: none;
-        border-top: 1.5px solid var(--border);
+        border-top: var(--border-w) solid var(--border);
         padding: 0.6rem;
     }
 
@@ -2085,7 +2089,7 @@ body.has-result .input-upgrade-hint {
     background: color-mix(in srgb, var(--accent-soft) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid var(--accent);
+    border: var(--border-w) solid var(--accent);
     border-radius: var(--radius-md);
     padding: var(--space-md) var(--space-lg);
     box-shadow: var(--shadow-md);
@@ -2224,7 +2228,7 @@ body.has-result .input-upgrade-hint {
 .pricing-card {
     position: relative;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
     padding: var(--space-xl) var(--space-lg);
     box-shadow: var(--shadow-sm);
@@ -2335,7 +2339,7 @@ body.has-result .input-upgrade-hint {
 /* --- Current Plan --- */
 .pricing-current-plan {
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
     padding: var(--space-xl);
     margin-bottom: var(--space-xl);
@@ -2412,9 +2416,9 @@ body.has-result .input-upgrade-hint {
 }
 
 [data-theme="dark"] .pricing-info-banner {
-    background: rgba(37, 99, 235, 0.1);
-    border-color: rgba(96, 165, 250, 0.3);
-    color: #60A5FA;
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 /* --- Card Minutes --- */
@@ -2431,17 +2435,12 @@ body.has-result .input-upgrade-hint {
     display: inline-block;
     font-size: 0.72rem;
     font-weight: 600;
-    color: #16A34A;
-    background: #F0FDF4;
+    color: var(--success-text);
+    background: var(--success-soft);
     border-radius: 999px;
     padding: 0.15rem 0.5rem;
     margin-left: 0.35rem;
     vertical-align: middle;
-}
-
-[data-theme="dark"] .pricing-savings-badge {
-    color: #4ADE80;
-    background: rgba(74, 222, 128, 0.1);
 }
 
 .pricing-faq {
@@ -2511,7 +2510,7 @@ body.has-result .input-upgrade-hint {
     align-items: center;
     gap: 0.4rem;
     padding: 0.3rem 0.55rem;
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: 999px;
     background: var(--surface);
     font-size: 0.8rem;
@@ -2628,7 +2627,7 @@ body.has-result .input-upgrade-hint {
     left: 50%;
     transform: translateX(-50%);
     background: var(--surface);
-    border: 1.5px solid var(--accent);
+    border: var(--border-w) solid var(--accent);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
     padding: var(--space-md) var(--space-lg);
@@ -2676,7 +2675,7 @@ body.has-result .input-upgrade-hint {
     font-size: 0.85rem;
     font-weight: 500;
     border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     background: var(--surface);
     color: var(--text-secondary);
     transition:
@@ -2713,7 +2712,7 @@ body.has-result .input-upgrade-hint {
 
 .result-card {
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
@@ -3011,7 +3010,7 @@ body.has-result .input-upgrade-hint {
     max-width: 560px;
     padding: 0.6rem 1rem;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-md);
 }
@@ -3049,11 +3048,11 @@ body.has-result .input-upgrade-hint {
 }
 
 .plan-strip-meter-fill--warning {
-    background: linear-gradient(90deg, var(--accent), #F59E0B);
+    background: linear-gradient(90deg, var(--accent), var(--warning-hover));
 }
 
 .plan-strip-meter-fill--critical {
-    background: linear-gradient(90deg, #F59E0B, var(--error));
+    background: linear-gradient(90deg, var(--warning-hover), var(--error));
 }
 
 .plan-strip-upgrade {
@@ -3125,7 +3124,7 @@ body.has-result .plan-strip {
 .paywall-modal {
     position: relative;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-lg);
     padding: var(--space-xl) var(--space-2xl);
     box-shadow: var(--shadow-lg);
@@ -3181,7 +3180,7 @@ body.has-result .plan-strip {
 .paywall-plan {
     position: relative;
     background: var(--surface);
-    border: 1.5px solid var(--border);
+    border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
     padding: var(--space-lg);
     display: flex;

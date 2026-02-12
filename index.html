@@ -9,13 +9,17 @@
     <meta property="og:title" content="yt2txt — Read any YouTube video">
     <meta property="og:description" content="Read any YouTube video. Works without subtitles or previous transcripts.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="assets/img/logo.jpg">
+    <meta property="og:image" content="https://yt2txt.com/assets/img/logo.jpg">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="yt2txt — Read any YouTube video">
     <meta name="twitter:description" content="Read any YouTube video. Works without subtitles or previous transcripts.">
+    <meta name="twitter:image" content="https://yt2txt.com/assets/img/logo.jpg">
 
-    <link rel="canonical" href="index.html">
+    <link rel="canonical" href="https://yt2txt.com/">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/img/logo.jpg">
+    <meta name="theme-color" content="#FAFBFC" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0C0F14" media="(prefers-color-scheme: dark)">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,13 +33,67 @@
     })();
     </script>
     <link rel="stylesheet" href="assets/css/styles.css">
+    <script type="application/ld+json">
+    [{
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "yt2txt",
+      "url": "https://yt2txt.com",
+      "description": "Paste a YouTube link, read the full transcript. Works even without subtitles — AI listens to the audio.",
+      "applicationCategory": "Multimedia",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "30 free minutes of transcription every month"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "yt2txt",
+      "url": "https://yt2txt.com",
+      "logo": "https://yt2txt.com/assets/img/logo.jpg"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can yt2txt transcribe videos without subtitles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. yt2txt uses AI-powered speech recognition to transcribe directly from the audio, so it works even when no subtitles or captions are available."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many free minutes do I get?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every account gets 30 free minutes of transcription per month. You can purchase additional minutes if you need more."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What formats can I download transcripts in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can download transcripts as plain text (.txt) or Markdown (.md) files."
+          }
+        }
+      ]
+    }]
+    </script>
 </head>
 <body>
     <a href="#hero" class="skip-link">Skip to content</a>
 
     <div class="accent-bar" aria-hidden="true"></div>
 
-    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -197,6 +255,7 @@
                             autocomplete="off"
                             spellcheck="false"
                             aria-label="YouTube video URL"
+                            aria-describedby="input-hint"
                             required
                         >
                         <button type="button" class="add-btn" id="add-btn" aria-label="Add to queue" title="Add to queue">

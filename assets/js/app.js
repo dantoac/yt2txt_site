@@ -11,10 +11,18 @@
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('yt2txt-theme', theme);
+        var toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+            toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        }
     }
 
     var themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
+        // Initialize aria-label based on current theme
+        var initTheme = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
+        themeToggle.setAttribute('aria-label', initTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
         themeToggle.addEventListener('click', function () {
             var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
             setTheme(current === 'dark' ? 'light' : 'dark');
@@ -26,6 +34,45 @@
             setTheme(e.matches ? 'dark' : 'light');
         }
     });
+
+    // ── Focus Trap Utility ──────────────────────────────────────
+    var activeFocusTrap = null;
+
+    function trapFocus(container) {
+        var focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+        function handleKeydown(e) {
+            if (e.key !== 'Tab') return;
+            var focusables = Array.prototype.slice.call(container.querySelectorAll(focusableSelector)).filter(function (el) {
+                return el.offsetParent !== null;
+            });
+            if (focusables.length === 0) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        }
+
+        container.addEventListener('keydown', handleKeydown);
+        activeFocusTrap = { container: container, handler: handleKeydown };
+    }
+
+    function releaseFocusTrap() {
+        if (activeFocusTrap) {
+            activeFocusTrap.container.removeEventListener('keydown', activeFocusTrap.handler);
+            activeFocusTrap = null;
+        }
+    }
 
     // ── Rotating Tagline ─────────────────────────────────────────
     var taglinePhrases = document.querySelectorAll('.tagline-phrase');
@@ -85,6 +132,26 @@
 
     function isValidYouTubeURL(url) {
         return YT_PATTERNS.some(function (re) { return re.test(url.trim()); });
+    }
+
+    function isURL(str) {
+        try { new URL(str); return true; } catch (_) { return false; }
+    }
+
+    function isYouTubeDomain(url) {
+        try {
+            var host = new URL(url).hostname.replace('www.', '');
+            return host === 'youtube.com' || host === 'youtu.be';
+        } catch (_) { return false; }
+    }
+
+    function getURLValidationError(input) {
+        var trimmed = input.trim();
+        if (!trimmed) return 'Paste a YouTube URL to get started.';
+        if (!isURL(trimmed)) return 'Paste a full YouTube URL (e.g. https://youtube.com/watch?v=...)';
+        if (!isYouTubeDomain(trimmed)) return "That's a valid URL, but not a YouTube link.";
+        if (!isValidYouTubeURL(trimmed)) return "Looks like a YouTube URL, but we couldn't find a video ID.";
+        return null;
     }
 
     function extractVideoId(url) {
@@ -206,7 +273,43 @@
         }, 2200);
     }
 
-    // ── Mock Transcription API ──────────────────────────────────
+    // ── Transcription API ──────────────────────────────────────
+    var API_BASE = ''; // Set to API URL when ready; empty = use mock fallback
+    var API_TIMEOUT_MS = 30000;
+    var activeControllers = {};
+
+    var API_ERROR = {
+        NETWORK:   'NETWORK',
+        TIMEOUT:   'TIMEOUT',
+        RATE_LIMIT:'RATE_LIMIT',
+        SERVER:    'SERVER',
+        MALFORMED: 'MALFORMED',
+        NOT_FOUND: 'NOT_FOUND'
+    };
+
+    var API_ERROR_MESSAGES = {};
+    API_ERROR_MESSAGES[API_ERROR.NETWORK]    = 'Network error. Check your connection and try again.';
+    API_ERROR_MESSAGES[API_ERROR.TIMEOUT]    = 'The request timed out. The video may be too long — try again later.';
+    API_ERROR_MESSAGES[API_ERROR.RATE_LIMIT] = 'Too many requests. Please wait a moment and try again.';
+    API_ERROR_MESSAGES[API_ERROR.SERVER]     = 'Server error. Our team has been notified — please try again later.';
+    API_ERROR_MESSAGES[API_ERROR.MALFORMED]  = 'Received an unexpected response from the server.';
+    API_ERROR_MESSAGES[API_ERROR.NOT_FOUND]  = 'Video not found. It may be private or unavailable.';
+
+    function ApiError(type, message) {
+        this.type = type;
+        this.message = message || API_ERROR_MESSAGES[type] || 'Unknown error';
+    }
+
+    function validateTranscriptResponse(data) {
+        if (!data || typeof data !== 'object') return false;
+        if (typeof data.title !== 'string' || !data.title) return false;
+        if (typeof data.duration !== 'string') return false;
+        if (!Array.isArray(data.segments) || data.segments.length === 0) return false;
+        return data.segments.every(function (seg) {
+            return typeof seg.start === 'number' && typeof seg.text === 'string';
+        });
+    }
+
     function mockTranscribe(_url) {
         return new Promise(function (resolve) {
             setTimeout(function () {
@@ -231,6 +334,54 @@
                 });
             }, 4500);
         });
+    }
+
+    function transcribe(url, queueId) {
+        // Use mock fallback when no API is configured
+        if (!API_BASE) return mockTranscribe(url);
+
+        var controller = new AbortController();
+        activeControllers[queueId] = controller;
+
+        var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
+
+        return fetch(API_BASE + '/transcribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url }),
+            signal: controller.signal
+        })
+        .then(function (res) {
+            clearTimeout(timeoutId);
+            delete activeControllers[queueId];
+
+            if (res.status === 404) throw new ApiError(API_ERROR.NOT_FOUND);
+            if (res.status === 429) throw new ApiError(API_ERROR.RATE_LIMIT);
+            if (res.status >= 500) throw new ApiError(API_ERROR.SERVER);
+            if (!res.ok) throw new ApiError(API_ERROR.SERVER, 'Unexpected status: ' + res.status);
+
+            return res.json();
+        })
+        .then(function (data) {
+            if (!validateTranscriptResponse(data)) throw new ApiError(API_ERROR.MALFORMED);
+            return data;
+        })
+        .catch(function (err) {
+            clearTimeout(timeoutId);
+            delete activeControllers[queueId];
+
+            if (err instanceof ApiError) throw err;
+            if (err.name === 'AbortError') throw new ApiError(API_ERROR.TIMEOUT);
+            throw new ApiError(API_ERROR.NETWORK);
+        });
+    }
+
+    function cancelTranscription(queueId) {
+        var controller = activeControllers[queueId];
+        if (controller) {
+            controller.abort();
+            delete activeControllers[queueId];
+        }
     }
 
     // ── SVG Icon Helpers (static, hardcoded) ─────────────────────
@@ -281,7 +432,10 @@
     function removeFromQueue(id) {
         var item = getItemById(id);
         if (!item) return;
-        if (item.status === 'processing') return;
+        if (item.status === 'processing') {
+            cancelTranscription(id);
+            isProcessing = false;
+        }
 
         queue = queue.filter(function (q) { return q.id !== id; });
 
@@ -326,7 +480,7 @@
         processingEl.hidden = false;
         var statusInterval = cycleProcessingStatus();
 
-        mockTranscribe(next.url)
+        transcribe(next.url, next.id)
             .then(function (data) {
                 clearInterval(statusInterval);
                 next.status = 'done';
@@ -339,12 +493,12 @@
                 isProcessing = false;
                 processNextInQueue();
             })
-            .catch(function () {
+            .catch(function (err) {
                 clearInterval(statusInterval);
                 next.status = 'error';
-                next.error = 'Transcription failed. Try again.';
+                next.error = (err instanceof ApiError) ? err.message : 'Transcription failed. Try again.';
                 updateChipStatus(next);
-                announce('Error transcribing video');
+                announce('Error: ' + next.error);
                 isProcessing = false;
                 processNextInQueue();
             });
@@ -565,23 +719,67 @@
         var dlTxt = document.createElement('button');
         dlTxt.className = 'download-menu-item';
         dlTxt.setAttribute('role', 'menuitem');
+        dlTxt.setAttribute('tabindex', '-1');
         dlTxt.textContent = 'Download .txt';
-        dlTxt.addEventListener('click', function () { showPaywall(true); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
+        dlTxt.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlToggle); });
 
         var dlMd = document.createElement('button');
         dlMd.className = 'download-menu-item';
         dlMd.setAttribute('role', 'menuitem');
+        dlMd.setAttribute('tabindex', '-1');
         dlMd.textContent = 'Download .md';
-        dlMd.addEventListener('click', function () { showPaywall(true); dlMenu.hidden = true; dlToggle.setAttribute('aria-expanded', 'false'); });
+        dlMd.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlToggle); });
 
         dlMenu.appendChild(dlTxt);
         dlMenu.appendChild(dlMd);
 
+        function openDownloadMenu() {
+            dlMenu.hidden = false;
+            dlToggle.setAttribute('aria-expanded', 'true');
+            var firstItem = dlMenu.querySelector('[role="menuitem"]');
+            if (firstItem) firstItem.focus();
+        }
+
+        function closeDownloadMenu(menu, toggle) {
+            menu.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+
         dlToggle.addEventListener('click', function (e) {
             e.stopPropagation();
-            var open = dlMenu.hidden;
-            dlMenu.hidden = !open;
-            dlToggle.setAttribute('aria-expanded', String(open));
+            if (dlMenu.hidden) {
+                openDownloadMenu();
+            } else {
+                closeDownloadMenu(dlMenu, dlToggle);
+            }
+        });
+
+        dlToggle.addEventListener('keydown', function (e) {
+            if ((e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') && dlMenu.hidden) {
+                e.preventDefault();
+                openDownloadMenu();
+            }
+        });
+
+        dlMenu.addEventListener('keydown', function (e) {
+            var items = Array.prototype.slice.call(dlMenu.querySelectorAll('[role="menuitem"]'));
+            var idx = items.indexOf(document.activeElement);
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                var next = idx + 1 < items.length ? idx + 1 : 0;
+                items[next].focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                var prev = idx - 1 >= 0 ? idx - 1 : items.length - 1;
+                items[prev].focus();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeDownloadMenu(dlMenu, dlToggle);
+                dlToggle.focus();
+            } else if (e.key === 'Tab') {
+                closeDownloadMenu(dlMenu, dlToggle);
+            }
         });
 
         dlGroup.appendChild(dlBtn);
@@ -975,19 +1173,28 @@
     }
 
     // ── Paywall Modal ────────────────────────────────────────────
+    var paywallTrigger = null;
+
     function showPaywall(force) {
         if (!paywallOverlay) return;
         if (!force && sessionStorage.getItem('yt2txt-paywall-dismissed')) return;
+        paywallTrigger = document.activeElement;
         paywallOverlay.hidden = false;
         document.body.style.overflow = 'hidden';
+        trapFocus(paywallOverlay);
         if (paywallClose) paywallClose.focus();
     }
 
     function dismissPaywall() {
         if (!paywallOverlay) return;
+        releaseFocusTrap();
         paywallOverlay.hidden = true;
         document.body.style.overflow = '';
         sessionStorage.setItem('yt2txt-paywall-dismissed', '1');
+        if (paywallTrigger && paywallTrigger.focus) {
+            paywallTrigger.focus();
+            paywallTrigger = null;
+        }
     }
 
     if (paywallClose) paywallClose.addEventListener('click', dismissPaywall);
@@ -1098,14 +1305,9 @@
             return;
         }
 
-        if (!url) {
-            showError('Paste a YouTube URL to get started.');
-            urlInput.focus();
-            return;
-        }
-
-        if (!isValidYouTubeURL(url)) {
-            showError('That doesn\'t look like a YouTube link. Check the URL?');
+        var validationError = getURLValidationError(url);
+        if (validationError) {
+            showError(validationError);
             urlInput.focus();
             return;
         }
@@ -1120,16 +1322,14 @@
     function handleAddToQueue() {
         clearError();
         var url = urlInput.value.trim();
-        if (!url) {
-            showError('Paste a YouTube URL to get started.');
+
+        var validationError = getURLValidationError(url);
+        if (validationError) {
+            showError(validationError);
             urlInput.focus();
             return;
         }
-        if (!isValidYouTubeURL(url)) {
-            showError('That doesn\'t look like a YouTube link. Check the URL?');
-            urlInput.focus();
-            return;
-        }
+
         var added = addToQueue(url, true);
         if (added) {
             urlInput.value = '';
@@ -1186,6 +1386,14 @@
     }
 
     if (landingCta) landingCta.addEventListener('click', scrollToHero);
+
+    // ── Cleanup on page unload ─────────────────────────────────
+    window.addEventListener('beforeunload', function () {
+        Object.keys(activeControllers).forEach(function (id) {
+            activeControllers[id].abort();
+        });
+        activeControllers = {};
+    });
 
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
