@@ -336,7 +336,6 @@ main {
 .landing-text > :nth-child(2) { animation-delay: 0.15s; }
 .landing-text > :nth-child(3) { animation-delay: 0.25s; }
 .landing-text > :nth-child(4) { animation-delay: 0.35s; }
-.landing-text > :nth-child(5) { animation-delay: 0.45s; }
 
 .morph-vis {
     animation: landing-up 0.7s var(--ease-out) 0.3s both;
@@ -399,6 +398,10 @@ main {
     gap: var(--space-sm);
     max-width: 420px;
     margin-bottom: var(--space-xl);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    animation: landing-up 0.7s var(--ease-out) 0.45s both;
 }
 
 .narrative-step {
@@ -482,9 +485,9 @@ main {
 }
 
 /* Staggered entry animation */
-.narrative-step:nth-child(1) { animation: landing-up 0.5s var(--ease-out) 0.4s both; }
-.narrative-step:nth-child(2) { animation: landing-up 0.5s var(--ease-out) 0.5s both; }
-.narrative-step:nth-child(3) { animation: landing-up 0.5s var(--ease-out) 0.6s both; }
+.narrative-step:nth-child(1) { animation: landing-up 0.5s var(--ease-out) 0.50s both; }
+.narrative-step:nth-child(2) { animation: landing-up 0.5s var(--ease-out) 0.60s both; }
+.narrative-step:nth-child(3) { animation: landing-up 0.5s var(--ease-out) 0.70s both; }
 
 .landing-cta {
     display: inline-flex;
@@ -754,6 +757,7 @@ body.has-result .landing {
 
     .landing-narrative {
         max-width: none;
+        align-self: center;
     }
 
     .narrative-step-badges {
@@ -829,6 +833,111 @@ body.has-result .landing {
 
     .morph-play {
         border-width: 11px 0 11px 19px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .landing {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr auto;
+        align-items: center;
+        padding: 0;
+    }
+
+    .landing-content {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        max-width: none;
+        width: 100%;
+        gap: 0;
+    }
+
+    .landing-text {
+        padding: var(--space-3xl) var(--space-2xl) var(--space-3xl) clamp(3rem, 8vw, 8rem);
+    }
+
+    .landing-headline {
+        font-size: clamp(3.2rem, 4.5vw, 5.5rem);
+    }
+
+    .landing-sub {
+        max-width: 520px;
+    }
+
+    .morph-vis {
+        justify-self: center;
+        align-self: center;
+        width: clamp(420px, 28vw, 560px);
+        height: clamp(370px, 25vw, 480px);
+        --screen-w: clamp(360px, 24vw, 480px);
+        --screen-h: clamp(230px, 15vw, 306px);
+        --doc-w: clamp(250px, 16vw, 334px);
+        --doc-h: clamp(322px, 21vw, 430px);
+    }
+
+    .morph-play {
+        border-width: 18px 0 18px 30px;
+    }
+
+    .morph-doc {
+        padding: 26px 24px;
+        gap: 9px;
+    }
+
+    .morph-line { height: 4px; }
+    .morph-line--title { height: 6px; }
+
+    .landing-narrative {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-direction: row;
+        max-width: none;
+        width: 100%;
+        gap: 0;
+        margin: 0;
+        padding: var(--space-md) clamp(2rem, 6vw, 6rem);
+        background: color-mix(in srgb, var(--surface) 80%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border);
+    }
+
+    .narrative-step {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: var(--space-md) var(--space-lg);
+        gap: var(--space-sm);
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        border-right: 1px solid var(--border);
+    }
+
+    .narrative-step:last-child { border-right: none; }
+
+    .narrative-step:hover {
+        border-color: var(--border);
+        box-shadow: none;
+        background: color-mix(in srgb, var(--accent-soft) 50%, transparent);
+    }
+
+    .narrative-step-icon { width: 44px; height: 44px; }
+    .narrative-step-body { align-items: center; text-align: center; }
+    .narrative-step-label { font-size: 1.05rem; }
+    .narrative-step-badges {
+        margin-left: 0;
+        margin-top: var(--space-xs);
+        justify-content: center;
+    }
+
+    .landing-scroll-hint {
+        position: absolute;
     }
 }
 
@@ -1921,6 +2030,23 @@ body.has-result .queue {
 @media (min-width: 1600px) {
     :root {
         --container-max: 780px;
+    }
+
+    .landing-text {
+        padding-left: clamp(6rem, 10vw, 12rem);
+    }
+
+    .morph-vis {
+        width: 560px;
+        height: 480px;
+        --screen-w: 480px;
+        --screen-h: 306px;
+        --doc-w: 334px;
+        --doc-h: 430px;
+    }
+
+    .landing-headline {
+        font-size: clamp(4rem, 4.5vw, 6rem);
     }
 }
 
