@@ -1176,7 +1176,6 @@
 
     // ── Landing CTA & Scroll ────────────────────────────────────
     var landingCta = document.getElementById('landing-cta');
-    var landingScrollHint = document.getElementById('landing-scroll');
 
     function scrollToHero() {
         var heroEl = document.getElementById('hero');
@@ -1187,7 +1186,6 @@
     }
 
     if (landingCta) landingCta.addEventListener('click', scrollToHero);
-    if (landingScrollHint) landingScrollHint.addEventListener('click', scrollToHero);
 
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();

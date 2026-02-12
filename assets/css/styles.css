@@ -492,19 +492,25 @@ main {
 .landing-cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.95rem 2rem;
+    gap: 0.7rem;
+    padding: 1.1rem 2.4rem;
     font-family: var(--font-display);
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 600;
     background: var(--accent);
     color: var(--accent-contrast);
     border-radius: var(--radius-md);
     box-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 30%, transparent);
+    animation: cta-glow 3s ease-in-out 1.5s infinite;
     transition:
         background var(--duration-fast),
         transform var(--duration-fast),
         box-shadow var(--duration-fast);
+}
+
+@keyframes cta-glow {
+    0%, 100% { box-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 30%, transparent); }
+    50% { box-shadow: 0 4px 32px color-mix(in srgb, var(--accent) 50%, transparent), 0 0 16px 2px color-mix(in srgb, var(--accent) 20%, transparent); }
 }
 
 .landing-cta:hover {
@@ -525,28 +531,6 @@ main {
     transform: translateX(3px);
 }
 
-.landing-scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    margin-left: -10px;
-    color: var(--text-muted);
-    opacity: 0;
-    cursor: pointer;
-    z-index: 1;
-    animation:
-        landing-scroll-appear 0.5s var(--ease-out) 1.2s forwards,
-        landing-scroll-bounce 2.5s ease-in-out 1.7s infinite;
-}
-
-@keyframes landing-scroll-appear {
-    to { opacity: 0.5; }
-}
-
-@keyframes landing-scroll-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
-}
 
 /* --- Morph Illustration: Screen → Document --- */
 .morph-vis {
@@ -936,9 +920,6 @@ body.has-result .landing {
         justify-content: center;
     }
 
-    .landing-scroll-hint {
-        position: absolute;
-    }
 }
 
 
@@ -1209,6 +1190,35 @@ body.has-result .queue {
 
 .input-hint.show-error .hint-error {
     display: inline;
+}
+
+.input-upgrade-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: var(--space-xs);
+    padding-left: 2px;
+}
+
+.input-upgrade-hint svg {
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.input-upgrade-hint a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.input-upgrade-hint a:hover {
+    text-decoration: underline;
+}
+
+body.has-result .input-upgrade-hint {
+    display: none;
 }
 
 
@@ -2978,14 +2988,7 @@ body.has-result .queue {
     }
 }
 
-/* --- Hero Plan Badge --- */
-.hero-plan-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-}
-
+/* --- Plan Badge (reusable) --- */
 .plan-badge {
     display: inline-block;
     font-family: var(--font-display);
@@ -2999,13 +3002,101 @@ body.has-result .queue {
     padding: 0.25rem 0.75rem;
 }
 
-.hero-plan-detail {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+/* --- Plan Strip --- */
+.plan-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    width: 100%;
+    max-width: 560px;
+    padding: 0.6rem 1rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
 }
 
-body.has-result .hero-plan-badge {
+.plan-strip-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+}
+
+.plan-strip-quota {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.plan-strip-quota strong {
+    color: var(--text);
+}
+
+.plan-strip-meter {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 60px;
+}
+
+.plan-strip-meter-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #06B6D4);
+    transition: width var(--duration-normal) var(--ease-out);
+}
+
+.plan-strip-meter-fill--warning {
+    background: linear-gradient(90deg, var(--accent), #F59E0B);
+}
+
+.plan-strip-meter-fill--critical {
+    background: linear-gradient(90deg, #F59E0B, var(--error));
+}
+
+.plan-strip-upgrade {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: color var(--duration-fast);
+}
+
+.plan-strip-upgrade:hover {
+    color: var(--accent);
+}
+
+.plan-strip-upgrade-label {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+body.has-result .plan-strip {
     display: none;
+}
+
+@media (max-width: 600px) {
+    .plan-strip {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        padding: 0.5rem 0.75rem;
+    }
+
+    .plan-strip-info {
+        width: 100%;
+    }
+
+    .plan-strip-meter {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .plan-strip-upgrade {
+        margin-left: auto;
+    }
 }
 
 /* --- Paywall Modal --- */
