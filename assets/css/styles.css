@@ -556,10 +556,20 @@ main {
     --doc-h: 286px;
     --screen-r: 14px;
     --doc-r: 10px;
+    --morph-color: #E5A000;
+    --morph-color-30: color-mix(in srgb, var(--morph-color) 30%, transparent);
+    --morph-secondary: #F97316;
+    --morph-tertiary: #EF4444;
     position: relative;
     width: 360px;
     height: 310px;
     flex-shrink: 0;
+}
+
+[data-theme="dark"] .morph-vis {
+    --morph-color: #FBBF24;
+    --morph-secondary: #FB923C;
+    --morph-tertiary: #F87171;
 }
 
 .morph-frame {
@@ -567,11 +577,11 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid var(--accent);
-    background: color-mix(in srgb, var(--accent) 4%, transparent);
+    border: 2px solid var(--morph-color);
+    background: color-mix(in srgb, var(--morph-color) 4%, transparent);
     box-shadow:
-        0 0 40px color-mix(in srgb, var(--accent) 15%, transparent),
-        inset 0 0 30px color-mix(in srgb, var(--accent) 3%, transparent);
+        0 0 40px color-mix(in srgb, var(--morph-color) 15%, transparent),
+        inset 0 0 30px color-mix(in srgb, var(--morph-color) 3%, transparent);
     overflow: hidden;
     will-change: width, height, border-radius;
     animation: morph-frame 7s var(--ease-in-out) infinite;
@@ -618,14 +628,14 @@ main {
     height: 0;
     border-style: solid;
     border-width: 14px 0 14px 24px;
-    border-color: transparent transparent transparent var(--accent);
-    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 50%, transparent));
+    border-color: transparent transparent transparent var(--morph-color);
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--morph-color) 50%, transparent));
 }
 
 .morph-bar {
     width: 68%;
     height: 3px;
-    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    background: color-mix(in srgb, var(--morph-color) 18%, transparent);
     border-radius: 2px;
     overflow: hidden;
 }
@@ -633,7 +643,7 @@ main {
 .morph-bar-fill {
     height: 100%;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--accent), #06B6D4);
+    background: linear-gradient(90deg, var(--morph-color), var(--morph-secondary));
     animation: morph-bar-slide 7s var(--ease-in-out) infinite;
 }
 
@@ -666,14 +676,14 @@ main {
 .morph-line {
     height: 3px;
     width: 100%;
-    background: var(--accent-30);
+    background: var(--morph-color-30);
     border-radius: 2px;
 }
 
 .morph-line--title {
     height: 5px;
     width: 60%;
-    background: linear-gradient(90deg, var(--accent), #8B5CF6);
+    background: linear-gradient(90deg, var(--morph-color), var(--morph-tertiary));
 }
 
 .morph-line--spacer {
@@ -700,7 +710,7 @@ main {
     height: 6px;
     top: 8%;
     right: 6%;
-    background: var(--accent);
+    background: var(--morph-color);
     opacity: 0.5;
     animation: morph-float-a 4.5s ease-in-out infinite;
 }
@@ -710,7 +720,7 @@ main {
     height: 4px;
     bottom: 12%;
     left: 7%;
-    background: #8B5CF6;
+    background: var(--morph-secondary);
     opacity: 0.4;
     animation: morph-float-b 5.5s ease-in-out infinite;
 }
@@ -720,7 +730,7 @@ main {
     height: 5px;
     top: 48%;
     left: 2%;
-    background: #06B6D4;
+    background: var(--morph-tertiary);
     opacity: 0.45;
     animation: morph-float-c 3.8s ease-in-out infinite;
 }
@@ -772,6 +782,35 @@ body.has-result .landing {
         width: 290px;
         height: 250px;
     }
+}
+
+@media (min-width: 601px) and (max-width: 768px) {
+    .narrative-step-badges {
+        display: flex;
+    }
+    .morph-vis {
+        width: clamp(290px, 40vw, 350px);
+        height: clamp(250px, 35vw, 300px);
+        --screen-w: clamp(260px, 36vw, 300px);
+        --screen-h: clamp(166px, 23vw, 190px);
+        --doc-w: clamp(180px, 25vw, 210px);
+        --doc-h: clamp(232px, 32vw, 270px);
+    }
+    .landing-narrative {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-sm);
+        max-width: none;
+    }
+    .narrative-step {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0.75rem;
+    }
+    .narrative-step-icon { margin-bottom: 0.25rem; }
+    .narrative-step-badges { margin-left: 0; margin-top: 0.5rem; }
+    .narrative-step-body { align-items: center; }
 }
 
 @media (max-width: 600px) {
@@ -833,6 +872,21 @@ body.has-result .landing {
 
     .morph-play {
         border-width: 11px 0 11px 19px;
+    }
+}
+
+@media (max-height: 700px) and (max-width: 600px) {
+    .landing {
+        padding: var(--space-lg) var(--space-md);
+    }
+    .morph-vis {
+        height: 145px;
+        --screen-h: 95px;
+        --doc-h: 135px;
+    }
+    .landing-narrative {
+        margin-bottom: var(--space-md);
+        gap: 0.35rem;
     }
 }
 
@@ -1379,7 +1433,7 @@ body.has-result .input-upgrade-hint {
     background: var(--surface);
     border: var(--border-w) solid var(--border);
     border-radius: var(--radius-md);
-    padding: var(--space-lg) var(--space-xl);
+    padding: var(--space-lg) var(--space-xl) 5rem;
     max-height: 60vh;
     overflow-y: auto;
     box-shadow: var(--shadow-sm);
@@ -1669,6 +1723,10 @@ body.has-result .input-upgrade-hint {
 
 /* Mobile: toolbar becomes horizontal bar */
 @media (max-width: 860px) {
+    .transcript-wrapper {
+        flex-direction: column;
+    }
+
     .ai-toolbar {
         position: static;
         transform: none;
@@ -1676,6 +1734,11 @@ body.has-result .input-upgrade-hint {
         justify-content: center;
         gap: var(--space-md);
         margin-top: var(--space-md);
+    }
+
+    .ai-action-btn {
+        width: 44px;
+        height: 44px;
     }
 
     .ai-action-btn::after {
@@ -1783,6 +1846,13 @@ body.has-result .input-upgrade-hint {
 
 [data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
 [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+@media (max-width: 768px) {
+    .theme-toggle {
+        width: 44px;
+        height: 44px;
+    }
+}
 
 
 /* --- CTA Upgrade --- */
@@ -1993,6 +2063,7 @@ body.has-result .input-upgrade-hint {
 
     .result-header {
         flex-direction: column;
+        padding-right: 52px;
     }
 
     .result-thumb {
@@ -2558,6 +2629,7 @@ body.has-result .input-upgrade-hint {
 }
 
 .queue-chip-remove {
+    position: relative;
     flex-shrink: 0;
     width: 20px;
     height: 20px;
@@ -2569,6 +2641,13 @@ body.has-result .input-upgrade-hint {
     transition:
         color var(--duration-fast),
         background var(--duration-fast);
+}
+
+.queue-chip-remove::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
 }
 
 .queue-chip-remove:hover {
@@ -2989,30 +3068,44 @@ body.has-result .input-upgrade-hint {
 
 /* --- Plan Badge (reusable) --- */
 .plan-badge {
+    --morph-color: #E5A000;
     display: inline-block;
     font-family: var(--font-display);
     font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--accent);
-    background: var(--accent-soft);
+    color: var(--morph-color);
+    background: color-mix(in srgb, var(--morph-color) 12%, transparent);
     border-radius: 999px;
     padding: 0.25rem 0.75rem;
 }
 
+[data-theme="dark"] .plan-badge {
+    --morph-color: #FBBF24;
+}
+
 /* --- Plan Strip --- */
 .plan-strip {
+    --morph-color: #E5A000;
+    --morph-secondary: #F97316;
     display: flex;
     align-items: center;
     gap: var(--space-md);
     width: 100%;
     max-width: 560px;
     padding: 0.6rem 1rem;
-    background: var(--surface);
-    border: var(--border-w) solid var(--border);
+    background: rgba(229, 160, 0, 0.08);
+    border: var(--border-w) solid rgba(229, 160, 0, 0.25);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-md);
+}
+
+[data-theme="dark"] .plan-strip {
+    --morph-color: #FBBF24;
+    --morph-secondary: #FB923C;
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.2);
 }
 
 .plan-strip-info {
@@ -3043,12 +3136,12 @@ body.has-result .input-upgrade-hint {
 .plan-strip-meter-fill {
     height: 100%;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--accent), #06B6D4);
+    background: linear-gradient(90deg, var(--morph-color), var(--morph-secondary));
     transition: width var(--duration-normal) var(--ease-out);
 }
 
 .plan-strip-meter-fill--warning {
-    background: linear-gradient(90deg, var(--accent), var(--warning-hover));
+    background: linear-gradient(90deg, var(--morph-color), var(--warning-hover));
 }
 
 .plan-strip-meter-fill--critical {
@@ -3065,16 +3158,21 @@ body.has-result .input-upgrade-hint {
 }
 
 .plan-strip-upgrade:hover {
-    color: var(--accent);
+    color: var(--morph-color);
 }
 
 .plan-strip-upgrade-label {
-    color: var(--accent);
+    color: var(--morph-color);
     font-weight: 600;
 }
 
 body.has-result .plan-strip {
     display: none;
+}
+
+@media (min-width: 601px) and (max-width: 768px) {
+    .plan-strip { gap: var(--space-sm); }
+    .plan-strip-meter { min-width: 100px; }
 }
 
 @media (max-width: 600px) {
@@ -3265,12 +3363,14 @@ body.has-result .plan-strip {
     color: var(--accent);
 }
 
+@media (max-width: 768px) {
+    .paywall-plans {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 600px) {
     .paywall-modal {
         padding: var(--space-lg);
-    }
-
-    .paywall-plans {
-        grid-template-columns: 1fr;
     }
 }
