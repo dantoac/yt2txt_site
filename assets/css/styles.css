@@ -474,6 +474,7 @@ main {
 /* Mini-badges for AI actions (step 2) */
 .narrative-step-badges {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.35rem;
     margin-left: auto;
     align-self: center;
@@ -1505,8 +1506,8 @@ body.has-result .input-upgrade-hint {
 .ai-toolbar {
     position: static;
     transform: none;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 42px);
     gap: var(--space-sm);
     flex-shrink: 0;
     padding-top: var(--space-lg);
@@ -1552,14 +1553,15 @@ body.has-result .input-upgrade-hint {
     color: var(--accent-contrast);
 }
 
-/* Tooltip — appears to the left of buttons */
+/* Tooltip — appears above buttons */
 .ai-action-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    left: auto;
-    right: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
     background: var(--text);
     color: var(--bg);
     font-size: 0.75rem;
@@ -1730,23 +1732,16 @@ body.has-result .input-upgrade-hint {
     .ai-toolbar {
         position: static;
         transform: none;
-        flex-direction: row;
+        display: grid;
+        grid-template-columns: repeat(4, 44px);
         justify-content: center;
-        gap: var(--space-md);
+        gap: var(--space-sm);
         margin-top: var(--space-md);
     }
 
     .ai-action-btn {
         width: 44px;
         height: 44px;
-    }
-
-    .ai-action-btn::after {
-        right: auto;
-        left: 50%;
-        top: auto;
-        bottom: calc(100% + 10px);
-        transform: translateX(-50%);
     }
 }
 
