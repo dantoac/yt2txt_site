@@ -1538,6 +1538,7 @@ body.has-result .input-upgrade-hint {
     color: var(--accent);
     box-shadow: var(--shadow-md);
     transform: scale(1.08);
+    z-index: 1;
 }
 
 .ai-action-btn--active {
