@@ -1554,15 +1554,15 @@ body.has-result .input-upgrade-hint {
     color: var(--accent-contrast);
 }
 
-/* Tooltip — appears above buttons */
+/* Tooltip — appears to the left of buttons */
 .ai-action-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    left: 50%;
-    right: auto;
-    top: auto;
-    bottom: calc(100% + 10px);
-    transform: translateX(-50%);
+    right: calc(100% + 10px);
+    left: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
     background: var(--text);
     color: var(--bg);
     font-size: 0.75rem;
