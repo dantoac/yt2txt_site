@@ -1490,4 +1490,78 @@
     // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
 
+    // ── Features Carousel ────────────────────────────────────────
+    var featureTabs = document.querySelectorAll('.features-tab');
+    var featurePanels = document.querySelectorAll('.features-panel');
+    var featuresProgressFill = document.querySelector('.features-progress-fill');
+    var featureIndex = 0;
+    var FEATURE_INTERVAL = 5000;
+    var featureTimer = null;
+
+    function activateFeature(index) {
+        featureTabs.forEach(function (t, i) {
+            t.classList.toggle('features-tab--active', i === index);
+            t.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        });
+        featurePanels.forEach(function (p, i) {
+            p.classList.toggle('features-panel--active', i === index);
+            if (i === index) p.removeAttribute('hidden');
+            else p.setAttribute('hidden', '');
+        });
+        featureIndex = index;
+    }
+
+    function startFeatureProgress() {
+        if (!featuresProgressFill) return;
+        featuresProgressFill.style.transition = 'none';
+        featuresProgressFill.style.width = '0%';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                featuresProgressFill.style.transition = 'width ' + FEATURE_INTERVAL + 'ms linear';
+                featuresProgressFill.style.width = '100%';
+            });
+        });
+    }
+
+    function startFeatureCarousel() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        clearInterval(featureTimer);
+        startFeatureProgress();
+        featureTimer = setInterval(function () {
+            var next = (featureIndex + 1) % featureTabs.length;
+            activateFeature(next);
+            startFeatureProgress();
+        }, FEATURE_INTERVAL);
+    }
+
+    function stopFeatureCarousel() {
+        clearInterval(featureTimer);
+        featureTimer = null;
+        if (featuresProgressFill) {
+            featuresProgressFill.style.transition = 'none';
+            featuresProgressFill.style.width = '0%';
+        }
+    }
+
+    var featuresSection = document.getElementById('features');
+    if (featuresSection && featureTabs.length > 0) {
+        featuresSection.addEventListener('mouseenter', stopFeatureCarousel);
+        featuresSection.addEventListener('mouseleave', startFeatureCarousel);
+        featuresSection.addEventListener('focusin', stopFeatureCarousel);
+        featuresSection.addEventListener('focusout', function (e) {
+            if (!featuresSection.contains(e.relatedTarget)) {
+                startFeatureCarousel();
+            }
+        });
+
+        featureTabs.forEach(function (tab, i) {
+            tab.addEventListener('click', function () {
+                activateFeature(i);
+                startFeatureCarousel();
+            });
+        });
+
+        startFeatureCarousel();
+    }
+
 })();

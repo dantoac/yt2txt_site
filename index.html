@@ -91,24 +91,34 @@
 <body>
     <a href="#hero" class="skip-link">Skip to content</a>
 
-    <div class="accent-bar" aria-hidden="true"></div>
-
-    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </button>
+    <nav class="navbar" aria-label="Navegación principal">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand" aria-label="yt2txt home">
+                <img src="assets/img/logo.jpg" alt="" class="navbar-brand-logo" width="28" height="28" aria-hidden="true">
+                <span class="navbar-brand-text">
+                    <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
+                </span>
+            </a>
+            <div class="navbar-actions">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
 
     <main id="main">
         <section class="landing" id="landing" aria-label="Welcome to yt2txt">
@@ -119,12 +129,6 @@
             </div>
             <div class="landing-content">
                 <div class="landing-text">
-                    <div class="landing-badge">
-                        <img src="assets/img/logo.jpg" alt="" class="landing-badge-logo" width="28" height="28">
-                        <span class="landing-badge-text">
-                            <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
-                        </span>
-                    </div>
                     <h1 class="landing-headline">Read any<br>YouTube video</h1>
                     <p class="landing-sub">
                         Paste a YouTube link. Get a transcript, AI insights, and more.
@@ -225,14 +229,150 @@
             </div>
         </section>
 
+        <section class="features" id="features" aria-label="What yt2txt can do">
+            <div class="features-inner">
+
+                <div class="features-header">
+                    <h2 class="features-title">One link. Four superpowers.</h2>
+                    <p class="features-sub">Everything you need to get more from any YouTube video.</p>
+                </div>
+
+                <div class="features-tabs" role="tablist" aria-label="Features">
+                    <button class="features-tab features-tab--active" role="tab" id="tab-transcript"
+                            aria-selected="true" aria-controls="panel-transcript" data-feature="transcript">
+                        Transcript
+                    </button>
+                    <button class="features-tab" role="tab" id="tab-summary"
+                            aria-selected="false" aria-controls="panel-summary" data-feature="summary">
+                        Summary
+                    </button>
+                    <button class="features-tab" role="tab" id="tab-keypoints"
+                            aria-selected="false" aria-controls="panel-keypoints" data-feature="keypoints">
+                        Key Points
+                    </button>
+                    <button class="features-tab" role="tab" id="tab-translate"
+                            aria-selected="false" aria-controls="panel-translate" data-feature="translate">
+                        Translate
+                    </button>
+                </div>
+
+                <div class="features-progress" aria-hidden="true">
+                    <div class="features-progress-fill"></div>
+                </div>
+
+                <div class="features-panels">
+
+                    <div class="features-panel features-panel--active" id="panel-transcript" role="tabpanel"
+                         aria-labelledby="tab-transcript">
+                        <div class="features-desc">
+                            <h3 class="features-desc-title">Full Transcript</h3>
+                            <p class="features-desc-body">Every word, with timestamps. Search, copy, and download in seconds.</p>
+                        </div>
+                        <div class="features-vis features-vis--transcript" aria-hidden="true">
+                            <div class="fv-morph-frame">
+                                <div class="fv-morph-screen">
+                                    <div class="fv-morph-play"></div>
+                                    <div class="fv-morph-bar"><div class="fv-morph-bar-fill"></div></div>
+                                </div>
+                                <div class="fv-morph-doc">
+                                    <div class="fv-line fv-line--title"></div>
+                                    <div class="fv-line fv-line--spacer"></div>
+                                    <div class="fv-line"></div>
+                                    <div class="fv-line fv-line--med"></div>
+                                    <div class="fv-line fv-line--short"></div>
+                                    <div class="fv-line"></div>
+                                    <div class="fv-line fv-line--med"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-panel" id="panel-summary" role="tabpanel"
+                         aria-labelledby="tab-summary" hidden>
+                        <div class="features-desc">
+                            <h3 class="features-desc-title">AI Summary</h3>
+                            <p class="features-desc-body">Get the gist in 3 sentences. No fluff, no filler.</p>
+                        </div>
+                        <div class="features-vis features-vis--summary" aria-hidden="true">
+                            <div class="fv-summary-frame">
+                                <div class="fv-summary-lines">
+                                    <div class="fv-sline"></div>
+                                    <div class="fv-sline fv-sline--med"></div>
+                                    <div class="fv-sline fv-sline--short"></div>
+                                    <div class="fv-sline"></div>
+                                    <div class="fv-sline fv-sline--med"></div>
+                                </div>
+                                <div class="fv-summary-bullets">
+                                    <div class="fv-bullet"><span class="fv-bullet-dot"></span><div class="fv-bullet-text"></div></div>
+                                    <div class="fv-bullet"><span class="fv-bullet-dot"></span><div class="fv-bullet-text fv-bullet-text--med"></div></div>
+                                    <div class="fv-bullet"><span class="fv-bullet-dot"></span><div class="fv-bullet-text fv-bullet-text--short"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-panel" id="panel-keypoints" role="tabpanel"
+                         aria-labelledby="tab-keypoints" hidden>
+                        <div class="features-desc">
+                            <h3 class="features-desc-title">Key Points</h3>
+                            <p class="features-desc-body">The most important ideas, extracted and listed clearly.</p>
+                        </div>
+                        <div class="features-vis features-vis--keypoints" aria-hidden="true">
+                            <div class="fv-kp-frame">
+                                <div class="fv-kp-item fv-kp-item--1">
+                                    <span class="fv-kp-check">✓</span>
+                                    <div class="fv-kp-text"></div>
+                                </div>
+                                <div class="fv-kp-item fv-kp-item--2">
+                                    <span class="fv-kp-check">✓</span>
+                                    <div class="fv-kp-text fv-kp-text--med"></div>
+                                </div>
+                                <div class="fv-kp-item fv-kp-item--3">
+                                    <span class="fv-kp-check">✓</span>
+                                    <div class="fv-kp-text fv-kp-text--short"></div>
+                                </div>
+                                <div class="fv-kp-item fv-kp-item--4">
+                                    <span class="fv-kp-check">✓</span>
+                                    <div class="fv-kp-text"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-panel" id="panel-translate" role="tabpanel"
+                         aria-labelledby="tab-translate" hidden>
+                        <div class="features-desc">
+                            <h3 class="features-desc-title">Translate</h3>
+                            <p class="features-desc-body">Turn any transcript into any language instantly.</p>
+                        </div>
+                        <div class="features-vis features-vis--translate" aria-hidden="true">
+                            <div class="fv-translate-frame">
+                                <div class="fv-translate-header">
+                                    <div class="fv-translate-lang fv-translate-lang--from">EN</div>
+                                    <div class="fv-translate-arrow">&rarr;</div>
+                                    <div class="fv-translate-lang fv-translate-lang--to">ES</div>
+                                </div>
+                                <div class="fv-translate-text fv-translate-text--source">
+                                    <div class="fv-tline"></div>
+                                    <div class="fv-tline fv-tline--med"></div>
+                                    <div class="fv-tline fv-tline--short"></div>
+                                </div>
+                                <div class="fv-translate-text fv-translate-text--target">
+                                    <div class="fv-tline"></div>
+                                    <div class="fv-tline fv-tline--med"></div>
+                                    <div class="fv-tline fv-tline--short"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         <section class="hero" id="hero" aria-label="Transcribe video">
             <div class="container hero-center">
-                <div class="hero-brand">
-                    <a href="index.html" class="brand" aria-label="yt2txt home">
-                        <img src="assets/img/logo.jpg" alt="yt2txt logo" class="brand-logo" width="56" height="56">
-                        <span class="brand-yt">yt</span><span class="brand-arrow">&rarr;</span><span class="brand-txt">txt</span>
-                    </a>
-                </div>
+                <p class="hero-source-label">youtube &rarr; text</p>
                 <p class="hero-tagline" aria-live="off" aria-atomic="true">
                     <span class="tagline-phrase tagline-phrase--active">Reading your videos</span>
                     <span class="tagline-phrase" aria-hidden="true">Ears made of code</span>
