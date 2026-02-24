@@ -306,6 +306,11 @@ main {
         width var(--duration-slow) var(--ease-out);
 }
 
+a.island-step {
+    text-decoration: none;
+    color: inherit;
+}
+
 .island-step {
     display: flex;
     align-items: center;
@@ -365,7 +370,7 @@ main {
     background: var(--accent);
     border-radius: 1px;
     box-shadow: 0 0 8px var(--accent-30);
-    transition: left 300ms var(--ease-out), width 300ms var(--ease-out);
+    transition: left 300ms var(--ease-out), width 300ms var(--ease-out), opacity 300ms var(--ease-out);
     pointer-events: none;
 }
 
@@ -405,70 +410,6 @@ main {
     flex-shrink: 0;
 }
 
-/* Dropdown panels */
-.island-panel {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 260px;
-    max-width: 360px;
-    padding: var(--space-md) var(--space-lg);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(-50%) translateY(6px);
-    transition:
-        opacity var(--duration-normal) var(--ease-out),
-        transform var(--duration-normal) var(--ease-out),
-        visibility var(--duration-normal);
-    z-index: 201;
-}
-
-.island-panel:not([hidden]) {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-}
-
-.island-panel p {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin: 0;
-}
-
-.island-panel-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.75rem;
-}
-
-.island-badge {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    background: var(--surface-alt);
-    color: var(--text-muted);
-    transition:
-        color var(--duration-fast),
-        border-color var(--duration-fast);
-}
-
-.island-badge:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-
 /* body.has-result morph — steps contract out */
 body.has-result .island-steps {
     opacity: 0;
@@ -493,7 +434,6 @@ body.has-result .navbar-island {
     .island-step { transition: none; }
     .island-step:hover { transform: none; }
     .island-indicator { transition: none; }
-    .island-panel { transition: none; }
     body.has-result .island-steps { transition: none; }
     body.has-result .navbar-island { transition: none; }
 }
@@ -519,14 +459,6 @@ body.has-result .navbar-island {
     .island-link { display: none; }
 }
 
-/* Island responsive overrides for pricing page — keep "App" link visible on mobile */
-@media (max-width: 480px) {
-    .page-pricing .island-link:first-child { display: inline-flex; align-items: center; gap: 0.3rem; }
-}
-@media (min-width: 481px) and (max-width: 768px) {
-    .page-pricing .island-link:first-child { display: inline-flex; align-items: center; gap: 0.3rem; }
-    .page-pricing .island-divider { display: block; }
-}
 
 
 /* --- Brand (used in pricing.html) --- */
