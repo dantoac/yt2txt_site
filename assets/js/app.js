@@ -183,6 +183,7 @@
         hintError.textContent = message;
         inputHint.classList.add('show-error');
         inputWrapper.classList.add('has-error');
+        if (urlInput) urlInput.setAttribute('aria-invalid', 'true');
     }
 
     function clearError() {
@@ -190,6 +191,7 @@
         inputHint.classList.remove('show-error');
         inputWrapper.classList.remove('has-error');
         hintError.textContent = '';
+        if (urlInput) urlInput.removeAttribute('aria-invalid');
     }
 
     function clearElement(el) {
@@ -199,7 +201,11 @@
     }
 
     function announce(msg) {
-        if (queueAnnouncer) queueAnnouncer.textContent = msg;
+        if (!queueAnnouncer) return;
+        queueAnnouncer.textContent = '';
+        setTimeout(function () {
+            queueAnnouncer.textContent = msg;
+        }, 50);
     }
 
     // ── Helpers ─────────────────────────────────────────────────
@@ -435,6 +441,7 @@
         if (item.status === 'processing') {
             cancelTranscription(id);
             isProcessing = false;
+            processingEl.hidden = true;
         }
 
         queue = queue.filter(function (q) { return q.id !== id; });
@@ -455,6 +462,7 @@
         }
 
         announce('Video removed from queue');
+        processNextInQueue();
     }
 
     function processNextInQueue() {
@@ -489,6 +497,7 @@
                 next.segments = data.segments;
                 updateChipStatus(next);
                 renderResultCard(next);
+                announce('Transcription complete: ' + data.title);
                 showResultSection();
                 isProcessing = false;
                 processNextInQueue();
@@ -578,6 +587,9 @@
                         if (toggle) toggle.setAttribute('aria-expanded', 'true');
                     }
                     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(function () {
+                        if (toggle) toggle.focus();
+                    }, 400);
                 }
             }
         });
@@ -601,6 +613,9 @@
         var label = chip.querySelector('.queue-chip-label');
         if (label && item.title) {
             label.textContent = item.title;
+        }
+        if (label && item.status === 'error' && item.error) {
+            label.textContent = item.error;
         }
     }
 
@@ -895,6 +910,7 @@
         var aiBody = document.createElement('div');
         aiBody.className = 'ai-result-body';
         aiBody.id = 'ai-result-body-' + item.id;
+        aiBody.setAttribute('aria-live', 'polite');
 
         aiPanel.appendChild(aiHeader);
         aiPanel.appendChild(aiBody);
@@ -1308,6 +1324,10 @@
         clearError();
         dismissPastePopover();
 
+        Object.keys(activeControllers).forEach(function (id) {
+            activeControllers[id].abort();
+        });
+        activeControllers = {};
         queue = [];
         queueIdCounter = 0;
         isProcessing = false;
@@ -1330,6 +1350,8 @@
         if (pasteCount) pasteCount.textContent = count;
         if (pasteCountBtn) pasteCountBtn.textContent = count;
         pastePopover.hidden = false;
+        trapFocus(pastePopover);
+        if (pasteAllBtn) pasteAllBtn.focus();
 
         clearTimeout(pastePopoverTimeout);
         pastePopoverTimeout = setTimeout(dismissPastePopover, 8000);
@@ -1337,9 +1359,11 @@
 
     function dismissPastePopover() {
         if (!pastePopover) return;
+        releaseFocusTrap();
         pastePopover.hidden = true;
         pendingPasteUrls = [];
         clearTimeout(pastePopoverTimeout);
+        if (urlInput) urlInput.focus();
     }
 
     function handlePaste(e) {
@@ -1504,6 +1528,7 @@
         featureTabs.forEach(function (t, i) {
             t.classList.toggle('features-tab--active', i === index);
             t.setAttribute('aria-selected', i === index ? 'true' : 'false');
+            t.setAttribute('tabindex', i === index ? '0' : '-1');
         });
         featurePanels.forEach(function (p, i) {
             p.classList.toggle('features-panel--active', i === index);
@@ -1560,6 +1585,35 @@
             tab.addEventListener('click', function () {
                 activateFeature(i);
                 startFeatureCarousel();
+            });
+        });
+
+        featureTabs.forEach(function (tab, i) {
+            tab.setAttribute('tabindex', i === featureIndex ? '0' : '-1');
+            tab.addEventListener('keydown', function (e) {
+                var len = featureTabs.length;
+                var newIndex = -1;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    newIndex = (i + 1) % len;
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    newIndex = (i - 1 + len) % len;
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    newIndex = 0;
+                } else if (e.key === 'End') {
+                    e.preventDefault();
+                    newIndex = len - 1;
+                }
+                if (newIndex >= 0) {
+                    featureTabs.forEach(function (t, j) {
+                        t.setAttribute('tabindex', j === newIndex ? '0' : '-1');
+                    });
+                    featureTabs[newIndex].focus();
+                    activateFeature(newIndex);
+                    startFeatureCarousel();
+                }
             });
         });
 

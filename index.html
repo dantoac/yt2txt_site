@@ -10,7 +10,11 @@
     <meta property="og:description" content="Read any YouTube video. Works without subtitles or previous transcripts.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://yt2txt.com/assets/img/logo.jpg">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:url" content="https://yt2txt.com/">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="yt2txt — Read any YouTube video">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="yt2txt — Read any YouTube video">
     <meta name="twitter:description" content="Read any YouTube video. Works without subtitles or previous transcripts.">
     <meta name="twitter:image" content="https://yt2txt.com/assets/img/logo.jpg">
@@ -55,41 +59,11 @@
       "name": "yt2txt",
       "url": "https://yt2txt.com",
       "logo": "https://yt2txt.com/assets/img/logo.jpg"
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Can yt2txt transcribe videos without subtitles?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. yt2txt uses AI-powered speech recognition to transcribe directly from the audio, so it works even when no subtitles or captions are available."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How many free minutes do I get?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Every account gets 30 free minutes of transcription per month. You can purchase additional minutes if you need more."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What formats can I download transcripts in?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "You can download transcripts as plain text (.txt) or Markdown (.md) files."
-          }
-        }
-      ]
     }]
     </script>
 </head>
 <body>
-    <a href="#hero" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link">Skip to content</a>
 
     <nav class="navbar navbar--island" aria-label="Main navigation">
         <div class="navbar-island">
@@ -340,7 +314,7 @@
         <section class="hero" id="hero" aria-label="Transcribe video">
             <div class="container hero-center">
                 <p class="hero-source-label">youtube &rarr; text</p>
-                <p class="hero-tagline" aria-live="off" aria-atomic="true">
+                <p class="hero-tagline" aria-live="off">
                     <span class="tagline-phrase tagline-phrase--active">Reading your videos</span>
                     <span class="tagline-phrase" aria-hidden="true">Ears made of code</span>
                     <span class="tagline-phrase" aria-hidden="true">Actually listens to the audio</span>
@@ -397,7 +371,7 @@
                             <span class="hint-error" role="alert" aria-live="polite"></span>
                         </p>
                     </div>
-                    <div class="paste-popover" id="paste-popover" role="dialog" aria-label="Multiple URLs detected" hidden>
+                    <div class="paste-popover" id="paste-popover" role="dialog" aria-modal="true" aria-label="Multiple URLs detected" hidden>
                         <p class="paste-popover-text">Found <strong id="paste-count">3</strong> YouTube links</p>
                         <div class="paste-popover-actions">
                             <button type="button" class="paste-popover-btn paste-popover-btn--primary" id="paste-all-btn">Transcribe all (<span id="paste-count-btn">3</span>)</button>
@@ -421,7 +395,7 @@
                         <div class="processing-bar" aria-hidden="true">
                             <div class="processing-bar-fill"></div>
                         </div>
-                        <p class="processing-text" id="processing-text">Extracting audio from the video...</p>
+                        <p class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Extracting audio from the video...</p>
                     </div>
                 </div>
             </div>
@@ -431,7 +405,7 @@
             <div class="container">
                 <div class="results-list results-list--single" id="results-list" role="list"></div>
 
-                <div class="upgrade-card" aria-label="Upgrade to Pro">
+                <aside class="upgrade-card" aria-label="Upgrade to Pro">
                     <div class="upgrade-card-body">
                         <p class="upgrade-card-text">
                             <span class="upgrade-card-icon" aria-hidden="true">&#9889;</span>
@@ -441,10 +415,10 @@
                             See plans &rarr;
                         </a>
                     </div>
-                </div>
+                </aside>
 
                 <div class="result-footer">
-                    <button class="new-btn" id="new-btn" aria-label="New transcription">
+                    <button class="new-btn" id="new-btn" type="button" aria-label="New transcription">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
@@ -459,7 +433,7 @@
             </div>
         </section>
 
-        <div class="paywall-overlay" id="paywall-overlay" role="dialog" aria-modal="true" aria-label="Upgrade your plan" hidden>
+        <div class="paywall-overlay" id="paywall-overlay" role="dialog" aria-modal="true" aria-labelledby="paywall-title" aria-describedby="paywall-subtitle" hidden>
             <div class="paywall-backdrop" id="paywall-backdrop"></div>
             <div class="paywall-modal">
                 <button class="paywall-close" id="paywall-close" type="button" aria-label="Close upgrade dialog">
@@ -468,8 +442,8 @@
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-                <h2 class="paywall-title">Unlock more transcriptions</h2>
-                <p class="paywall-subtitle">You've used your free quota. Choose a plan to keep going.</p>
+                <h2 class="paywall-title" id="paywall-title">Unlock more transcriptions</h2>
+                <p class="paywall-subtitle" id="paywall-subtitle">You've used your free quota. Choose a plan to keep going.</p>
                 <div class="paywall-plans">
                     <div class="paywall-plan">
                         <h3 class="paywall-plan-name">Starter</h3>
