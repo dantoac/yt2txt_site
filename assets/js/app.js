@@ -1379,8 +1379,10 @@
         if (e.key === 'Escape') {
             if (paywallOverlay && !paywallOverlay.hidden) {
                 dismissPaywall();
+                e.stopImmediatePropagation();
             } else if (pastePopover && !pastePopover.hidden) {
                 dismissPastePopover();
+                e.stopImmediatePropagation();
             }
         }
     });
@@ -1563,5 +1565,99 @@
 
         startFeatureCarousel();
     }
+
+    // ── Floating Island: Scroll-linked Active State ──────────────
+    var islandSteps = document.querySelectorAll('.island-step');
+    var islandIndicator = document.querySelector('.island-indicator');
+    var islandPanels = document.querySelectorAll('.island-panel');
+    var islandPanelTimer = null;
+
+    var stepSectionMap = {
+        transcribe: document.getElementById('landing'),
+        process: document.getElementById('features'),
+        consume: document.getElementById('hero')
+    };
+
+    function updateIslandIndicator(activeBtn) {
+        if (!islandIndicator || !activeBtn) return;
+        var stepsContainer = activeBtn.parentElement;
+        if (!stepsContainer) return;
+        var containerRect = stepsContainer.getBoundingClientRect();
+        var btnRect = activeBtn.getBoundingClientRect();
+        islandIndicator.style.left = (btnRect.left - containerRect.left) + 'px';
+        islandIndicator.style.width = btnRect.width + 'px';
+    }
+
+    function setActiveIslandStep(stepName) {
+        islandSteps.forEach(function (btn) {
+            var isActive = btn.getAttribute('data-step') === stepName;
+            btn.classList.toggle('island-step--active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            if (isActive) updateIslandIndicator(btn);
+        });
+    }
+
+    function updateIslandActive() {
+        var scrollY = window.scrollY + window.innerHeight * 0.35;
+        var active = 'transcribe';
+        var entries = [
+            { name: 'consume', el: stepSectionMap.consume },
+            { name: 'process', el: stepSectionMap.process },
+            { name: 'transcribe', el: stepSectionMap.transcribe }
+        ];
+        for (var i = 0; i < entries.length; i++) {
+            if (entries[i].el && entries[i].el.offsetTop <= scrollY) {
+                active = entries[i].name;
+                break;
+            }
+        }
+        setActiveIslandStep(active);
+    }
+
+    if (islandSteps.length > 0) {
+        window.addEventListener('scroll', updateIslandActive, { passive: true });
+        // Initial indicator position
+        requestAnimationFrame(function () { updateIslandActive(); });
+    }
+
+    // ── Island Panel Toggle ──────────────────────────────────────
+    function closeAllIslandPanels() {
+        islandPanels.forEach(function (panel) {
+            panel.hidden = true;
+        });
+        if (islandPanelTimer) {
+            clearTimeout(islandPanelTimer);
+            islandPanelTimer = null;
+        }
+    }
+
+    islandSteps.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var panelId = btn.getAttribute('aria-controls');
+            var panel = panelId ? document.getElementById(panelId) : null;
+            if (!panel) return;
+
+            var wasOpen = !panel.hidden;
+            closeAllIslandPanels();
+
+            if (!wasOpen) {
+                panel.hidden = false;
+                islandPanelTimer = setTimeout(closeAllIslandPanels, 4000);
+            }
+        });
+    });
+
+    // Escape closes panels
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAllIslandPanels();
+    });
+
+    // Click outside closes panels
+    document.addEventListener('click', function (e) {
+        var island = document.querySelector('.navbar--island');
+        if (island && !island.contains(e.target)) {
+            closeAllIslandPanels();
+        }
+    });
 
 })();
