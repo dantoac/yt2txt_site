@@ -35,6 +35,113 @@
         }
     });
 
+    // ── Island Navbar: Scroll Morph (standard → island) ─────────
+    (function () {
+        var hero = document.querySelector('.landing') || document.querySelector('.pricing-hero');
+        var nav = document.querySelector('.navbar--island');
+        var island = document.querySelector('.navbar-island');
+        if (!hero || !nav || !island) return;
+        var morphClass = 'scrolled-past-hero';
+        var isScrolled = false;
+
+        nav.classList.add('navbar--no-transition');
+
+        function measureIslandWidth() {
+            island.style.removeProperty('--island-scroll-width');
+            var wasScrolled = document.body.classList.contains(morphClass);
+            if (!wasScrolled) document.body.classList.add(morphClass);
+            var w = island.getBoundingClientRect().width;
+            if (!wasScrolled) document.body.classList.remove(morphClass);
+            island.style.setProperty('--island-scroll-width', w + 'px');
+        }
+
+        measureIslandWidth();
+
+        function checkScroll() {
+            var pastHero = window.scrollY > hero.offsetHeight * 0.6;
+            if (pastHero !== isScrolled) {
+                isScrolled = pastHero;
+                document.body.classList.toggle(morphClass, isScrolled);
+            }
+        }
+
+        checkScroll();
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                nav.classList.remove('navbar--no-transition');
+            });
+        });
+
+        window.addEventListener('scroll', checkScroll, { passive: true });
+
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                nav.classList.add('navbar--no-transition');
+                measureIslandWidth();
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        nav.classList.remove('navbar--no-transition');
+                    });
+                });
+            }, 150);
+        });
+    })();
+
+    // ── Island Navbar: Mobile Hamburger Menu ────────────────────
+    (function () {
+        var hamburger = document.querySelector('.island-hamburger');
+        var navbarIsland = document.querySelector('.navbar-island');
+        var navbarNav = document.querySelector('.navbar--island');
+        var menuItems = document.querySelectorAll('.island-menu-item');
+        if (!hamburger || !navbarIsland) return;
+
+        var scrollGuard = 0;
+
+        function openMenu() {
+            navbarIsland.classList.add('island-open');
+            hamburger.classList.add('is-open');
+            hamburger.setAttribute('aria-expanded', 'true');
+            hamburger.setAttribute('aria-label', 'Close navigation menu');
+            scrollGuard = Date.now();
+        }
+
+        function closeMenu() {
+            navbarIsland.classList.remove('island-open');
+            hamburger.classList.remove('is-open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.setAttribute('aria-label', 'Open navigation menu');
+            hamburger.focus();
+        }
+
+        function isOpen() {
+            return navbarIsland.classList.contains('island-open');
+        }
+
+        hamburger.addEventListener('click', function () {
+            if (isOpen()) closeMenu(); else openMenu();
+        });
+
+        menuItems.forEach(function (item) {
+            item.addEventListener('click', function () { closeMenu(); });
+        });
+
+        window.addEventListener('scroll', function () {
+            if (isOpen() && Date.now() - scrollGuard > 150) closeMenu();
+        }, { passive: true });
+
+        document.addEventListener('click', function (e) {
+            var container = navbarNav || navbarIsland;
+            if (isOpen() && !container.contains(e.target)) closeMenu();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && isOpen()) closeMenu();
+        });
+    })();
+
     // ── Focus Trap Utility ──────────────────────────────────────
     var activeFocusTrap = null;
 
@@ -121,6 +228,14 @@
     var queueIdCounter = 0;
     var isProcessing = false;
     var MAX_QUEUE = 10;
+
+    // ── Demo Mode ──────────────────────────────────────────────
+    var DEMO_URL = 'https://youtu.be/aircAruvnKk';
+    var DEMO_CHAR_DELAY_MIN = 45;
+    var DEMO_CHAR_DELAY_MAX = 85;
+    var DEMO_POST_TYPE_DELAY = 700;
+    var demoPlayed = false;
+    var demoInProgress = false;
 
     // ── YouTube URL Validation ──────────────────────────────────
     var YT_PATTERNS = [
@@ -238,7 +353,7 @@
             '',
         ];
         item.segments.forEach(function (seg) {
-            lines.push('[' + formatTime(seg.start) + '] ' + seg.text);
+            lines.push(typeof seg.start === 'number' ? '[' + formatTime(seg.start) + '] ' + seg.text : seg.text);
         });
         return lines.join('\n');
     }
@@ -256,7 +371,7 @@
             '',
         ];
         item.segments.forEach(function (seg) {
-            lines.push('**' + formatTime(seg.start) + '** ' + seg.text);
+            lines.push(typeof seg.start === 'number' ? '**' + formatTime(seg.start) + '** ' + seg.text : seg.text);
             lines.push('');
         });
         return lines.join('\n');
@@ -312,7 +427,7 @@
         if (typeof data.duration !== 'string') return false;
         if (!Array.isArray(data.segments) || data.segments.length === 0) return false;
         return data.segments.every(function (seg) {
-            return typeof seg.start === 'number' && typeof seg.text === 'string';
+            return typeof seg.text === 'string' && (seg.start === undefined || typeof seg.start === 'number');
         });
     }
 
@@ -320,22 +435,31 @@
         return new Promise(function (resolve) {
             setTimeout(function () {
                 resolve({
-                    title: 'Introduction to Artificial Intelligence \u2014 Lesson 1',
-                    duration: '12:34',
+                    title: 'But what is a neural network? | Deep learning, chapter 1',
+                    duration: '19:13',
                     segments: [
-                        { start: 0,   text: 'Welcome to this first class on artificial intelligence. Today we will begin with the fundamental concepts.' },
-                        { start: 8,   text: 'Artificial intelligence is a field of computer science that seeks to create systems capable of performing tasks that normally require human intelligence.' },
-                        { start: 19,  text: 'This includes learning, reasoning, perception, and natural language understanding.' },
-                        { start: 28,  text: 'The history of AI begins in 1956, at the Dartmouth conference, where the term was coined for the first time.' },
-                        { start: 38,  text: 'Since then, the field has experienced several cycles of enthusiasm and disappointment, known as AI winters.' },
-                        { start: 49,  text: 'But in the last decade, thanks to increased computational power and the availability of large amounts of data, we have seen extraordinary advances.' },
-                        { start: 61,  text: 'Deep learning has revolutionized areas such as computer vision, natural language processing, and speech recognition.' },
-                        { start: 74,  text: 'AI models can transcribe audio with remarkable accuracy in multiple languages.' },
-                        { start: 85,  text: 'In this course, we will explore the theoretical foundations and practical applications of these technologies.' },
-                        { start: 95,  text: 'We will start with basic neural networks and gradually move towards more complex architectures like transformers.' },
-                        { start: 106, text: 'For the next class, I ask you to review the reading material available on the course platform.' },
-                        { start: 115, text: 'I also recommend installing Python and getting familiar with the NumPy and PyTorch libraries.' },
-                        { start: 125, text: 'If you have any questions, don\'t hesitate to reach out. See you next week. Thank you for your attention.' },
+                        { text: 'This is a 3. It\u2019s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. This, this, and this are also recognizable as 3s, even though the specific values of each pixel are very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3. But something in that crazy-smart visual cortex of yours resolves these as representing the same idea while recognizing other images as their own distinct ideas.' },
+                        { text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math. My hope is that you come away feeling like the structure itself is motivated and that you know what it means when you read or hear about a neural network quote-unquote learning. This video is just going to be devoted to the structure component of that, and the following one will tackle learning.' },
+                        { text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer. There are many variants of neural networks, and in recent years there\u2019s been a boom in research towards these variants. But in these two introductory videos, we are just going to look at the simplest plain vanilla form with no added frills. This is a necessary prerequisite for understanding any of the more powerful modern variants, and trust me, it still has plenty of complexity for us to wrap our minds around. Even in this simplest form, it can learn to recognize handwritten digits, which is a pretty cool thing for a computer to be able to do. At the same time, you\u2019ll see how it does fall short of a couple of hopes that we might have for it.' },
+                        { text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that. For example, the network starts with a bunch of neurons corresponding to each of the 28x28 pixels of the input image, which is 784 neurons in total. Each one of these holds a number that represents the grayscale value of the corresponding pixel, ranging from 0 for black pixels up to 1 for white pixels. This number inside the neuron is called its activation, and the image you might have in mind here is that each neuron is lit up when its activation is a high number. So all of these 784 neurons make up the first layer of our network.' },
+                        { text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit. There are also a couple of layers in between called the hidden layers, which for the time being should just be a giant question mark for how on earth this process of recognizing digits is going to be handled. In this network, I chose two hidden layers, each with 16 neurons, and admittedly that\u2019s kind of an arbitrary choice. I chose two layers based on how I want to motivate the structure in just a moment, and 16 was just a nice number to fit on the screen. In practice, there is a lot of room for experimentation with a specific structure here.' },
+                        { text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer. It\u2019s meant to be loosely analogous to how in biological networks of neurons, some groups of neurons firing cause certain others to fire. The network I\u2019m showing here has already been trained to recognize digits, and let me show you what I mean by that. It means if you feed in an image, lighting up all 784 neurons of the input layer according to the brightness of each pixel in the image, that pattern of activations causes some very specific pattern in the next layer, which causes some pattern in the one after it, which finally gives some pattern in the output layer. The brightest neuron of that output layer is the network\u2019s choice, so to speak, for what digit this image represents.' },
+                        { text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently. What are we expecting here? What is the best hope for what those middle layers might be doing? When you or I recognize digits, we piece together various components. A 9 has a loop up top and a line on the right. An 8 also has a loop up top, but it\u2019s paired with another loop down low. A 4 basically breaks down into three specific lines, and things like that. In a perfect world, we might hope that each neuron in the second to last layer corresponds with one of these subcomponents. Anytime you feed in an image with, say, a loop up top, like a 9 or an 8, there\u2019s some specific neuron whose activation is going to be close to 1. I don\u2019t mean this specific loop of pixels; the hope would be that any generally loopy pattern towards the top sets off this neuron. That way, going from the third layer to the last one just requires learning which combination of subcomponents corresponds to which digits.' },
+                        { text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be? Recognizing a loop can also break down into subproblems. One reasonable way to do this would be to first recognize the various little edges that make it up. Similarly, a long line, like the kind you might see in the digits 1, 4, or 7, is really just a long edge, or maybe you think of it as a certain pattern of several smaller edges. So maybe our hope is that each neuron in the second layer of the network corresponds with the various relevant little edges. When an image like this one comes in, it lights up all of the neurons associated with around 8 to 10 specific little edges, which in turn lights up the neurons associated with the upper loop and a long vertical line, and those light up the neuron associated with a 9.' },
+                        { text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network. But this is a hope that we might have, a sort of goal with the layered structure like this. Moreover, you can imagine how being able to detect edges and patterns like this would be really useful for other image recognition tasks. Beyond image recognition, there are all sorts of intelligent things you might want to do that break down into layers of abstraction. Parsing speech, for example, involves taking raw audio and picking out distinct sounds, which combine to make certain syllables, which combine to form words, which combine to make up phrases and more abstract thoughts.' },
+                        { text: 'Getting back to how any of this actually works, picture yourself designing how exactly the activations in one layer might determine the activations in the next. The goal is to have some mechanism that could conceivably combine pixels into edges, or edges into patterns, or patterns into digits. To zoom in on one very specific example, let\u2019s say the hope is for one particular neuron in the second layer to pick up on whether or not the image has an edge in this region here. The question at hand is what parameters should the network have? What dials and knobs should you be able to tweak so that it\u2019s expressive enough to potentially capture this pattern, or any other pixel pattern, or the pattern that several edges can make a loop, and other such things?' },
+                        { text: 'We will assign a weight to each one of the connections between our neuron and the neurons from the first layer. These weights are just numbers. Then we take all of those activations from the first layer and compute their weighted sum according to these weights. I find it helpful to think of these weights as being organized into a little grid of their own. I\u2019m going to use green pixels to indicate positive weights and red pixels to indicate negative weights, where the brightness of that pixel is a loose depiction of the weight\u2019s value. If we made the weights associated with almost all of the pixels zero except for some positive weights in this region that we care about, then taking the weighted sum of all the pixel values really just amounts to adding up the values of the pixels in the region that we care about.' },
+                        { text: 'If you really wanted to pick up on whether there\u2019s an edge here, you might have some negative weights associated with the surrounding pixels. Then the sum is largest when those middle pixels are bright but the surrounding pixels are darker. When you compute a weighted sum like this, you might come out with any number, but for this network, we want activations to be some value between 0 and 1. A common thing to do is to pump this weighted sum into some function that squishes the real number line into the range between 0 and 1. A common function that does this is called the sigmoid function, also known as a logistic curve. Very negative inputs end up close to 0, positive inputs end up close to 1, and it steadily increases around the input 0.' },
+                        { text: 'The activation of the neuron here is basically a measure of how positive the relevant weighted sum is. Maybe you don\u2019t want the neuron to light up when the weighted sum is bigger than 0. Maybe you only want it to be active when the sum is bigger than, say, 10. You want some bias for it to be inactive. What we\u2019ll do then is just add in some other number, like negative 10, to this weighted sum before plugging it through the sigmoid squishification function. That additional number is called the bias. The weights tell you what pixel pattern this neuron in the second layer is picking up on, and the bias tells you how high the weighted sum needs to be before the neuron starts getting meaningfully active.' },
+                        { text: 'That is just one neuron. Every other neuron in this layer is going to be connected to all 784 pixel neurons from the first layer, and each one of those 784 connections has its own weight associated with it. Each one also has some bias, some other number that you add on to the weighted sum before squishing it with the sigmoid. That\u2019s a lot to think about! With this hidden layer of 16 neurons, that\u2019s a total of 784 times 16 weights, along with 16 biases. All of that is just the connections from the first layer to the second. The connections between the other layers also have a bunch of weights and biases associated with them. All said and done, this network has almost exactly 13,000 total weights and biases\u201413,000 knobs and dials that can be tweaked and turned to make this network behave in different ways.' },
+                        { text: 'When we talk about learning, that refers to getting the computer to find a valid setting for all of these many numbers so that it\u2019ll actually solve the problem at hand. One thought experiment that is at once fun and kind of horrifying is to imagine sitting down and setting all of these weights and biases by hand, purposefully tweaking the numbers so that the second layer picks up on edges, the third layer picks up on patterns, etc. I personally find this satisfying rather than just treating the network as a total black box. When the network doesn\u2019t perform the way you anticipate, if you\u2019ve built up a little bit of a relationship with what those weights and biases actually mean, you have a starting place for experimenting with how to change the structure to improve. When the network does work but not for the reasons you might expect, digging into what the weights and biases are doing is a good way to challenge your assumptions and really expose the full space of possible solutions.' },
+                        { text: 'By the way, the actual function here is a little cumbersome to write down, don\u2019t you think? Let me show you a more notationally compact way that these connections are represented. This is how you\u2019d see it if you choose to read up more about neural networks. Organize all of the activations from one layer into a column as a vector. Then organize all of the weights as a matrix, where each row of that matrix corresponds to the connections between one layer and a particular neuron in the next layer. Taking the weighted sum of the activations in the first layer according to these weights corresponds to one of the terms in the matrix vector product of everything we have on the left here.' },
+                        { text: 'So much of machine learning just comes down to having a good grasp of linear algebra. For any of you who want a nice visual understanding of matrices and what matrix vector multiplication means, take a look at the series I did on linear algebra, especially chapter 3. Back to our expression, instead of talking about adding the bias to each of these values independently, we represent it by organizing all those biases into a vector and adding the entire vector to the previous matrix vector product. As a final step, I\u2019ll wrap a sigmoid around the outside here, and what that\u2019s supposed to represent is that you\u2019re going to apply the sigmoid function to each specific component of the resulting vector inside.' },
+                        { text: 'Once you write down this weight matrix and these vectors as their own symbols, you can communicate the full transition of activations from one layer to the next in an extremely tight and neat little expression. This makes the relevant code both a lot simpler and a lot faster since many libraries optimize matrix multiplication. Remember how earlier I said these neurons are simply things that hold numbers? The specific numbers they hold depend on the image you feed in, so it\u2019s more accurate to think of each neuron as a function\u2014one that takes in the outputs of all the neurons in the previous layer and spits out a number between 0 and 1. The entire network is just a function, one that takes in 784 numbers as an input and spits out 10 numbers as an output. It\u2019s an absurdly complicated function, one that involves 13,000 parameters in the forms of these weights and biases that pick up on certain patterns, and which involves iterating many matrix vector products and the sigmoid squishification function, but it\u2019s just a function nonetheless.' },
+                        { text: 'In a way, it\u2019s kind of reassuring that it looks complicated. If it were any simpler, what hope would we have that it could take on the challenge of recognizing digits? How does this network learn the appropriate weights and biases just by looking at data? That\u2019s what I\u2019ll show in the next video, and I\u2019ll also dig a little more into what this particular network we\u2019re seeing is really doing. Now is the point I suppose I should say subscribe to stay notified about when that video or any new videos come out. Realistically, most of you don\u2019t actually receive notifications from YouTube, do you? Maybe more honestly, I should say subscribe so that the neural networks that underlie YouTube\u2019s recommendation algorithm are primed to believe that you want to see content from this channel recommended to you.' },
+                        { text: 'Anyway, stay posted for more. Thank you very much to everyone supporting these videos on Patreon. I\u2019ve been a little slow to progress in the probability series this summer, but I\u2019m jumping back into it after this project, so patrons, you can look out for updates there. To close things off here, I have with me Lisha Li, who did her PhD work on the theoretical side of deep learning and who currently works at a venture capital firm called Amplify Partners, which kindly provided some of the funding for this video. Lisha, one thing I think we should quickly bring up is this sigmoid function. As I understand it, early networks used this to squish the relevant weighted sum into that interval between zero and one, motivated by this biological analogy of neurons either being inactive or active.' },
+                        { text: 'Exactly. But relatively few modern networks actually use sigmoid anymore. Yeah, it\u2019s kind of old school, right? Yeah, or rather ReLU seems to be much easier to train. And ReLU stands for rectified linear unit? Yes, it\u2019s this kind of function where you\u2019re just taking a max of zero and a, where a is given by what you were explaining in the video. This was motivated partially by a biological analogy with how neurons would either be activated or not. If it passes a certain threshold, it would be the identity function, but if it did not, then it would just not be activated, so it\u2019d be zero. It\u2019s kind of a simplification. Using sigmoids didn\u2019t help training or it was very difficult to train at some point, and people just tried ReLU, and it happened to work very well for these incredibly deep neural networks.' },
+                        { text: 'All right, thank you, Lisha.' },
                     ],
                 });
             }, 4500);
@@ -499,6 +623,12 @@
                 renderResultCard(next);
                 announce('Transcription complete: ' + data.title);
                 showResultSection();
+                var newCard = document.getElementById('card-' + next.id);
+                if (newCard) {
+                    requestAnimationFrame(function () {
+                        newCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                }
                 isProcessing = false;
                 processNextInQueue();
             })
@@ -625,10 +755,10 @@
         resultEl.hidden = false;
         document.documentElement.style.scrollSnapType = 'none';
         document.body.classList.add('has-result');
-        window.scrollTo({ top: 0, behavior: 'instant' });
         if (paywallTimer) clearTimeout(paywallTimer);
         paywallTimer = setTimeout(showPaywall, 3000);
         updateResultsListMode();
+        resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function updateResultsListMode() {
@@ -682,7 +812,8 @@
 
         var infoEl = document.createElement('p');
         infoEl.className = 'result-card-info';
-        infoEl.textContent = item.segments.length + ' segments \u00b7 ' + item.duration;
+        var hasTimestamps = item.segments.some(function (s) { return typeof s.start === 'number'; });
+        infoEl.textContent = item.segments.length + (hasTimestamps ? ' segments' : ' paragraphs') + ' \u00b7 ' + item.duration;
 
         titleWrap.appendChild(titleEl);
         titleWrap.appendChild(infoEl);
@@ -840,13 +971,17 @@
             if (!reducedMotion) {
                 div.style.animationDelay = Math.min(i * 30, 600) + 'ms';
             }
-            var timeSpan = document.createElement('span');
-            timeSpan.className = 'segment-time';
-            timeSpan.textContent = formatTime(seg.start);
+            if (typeof seg.start === 'number') {
+                var timeSpan = document.createElement('span');
+                timeSpan.className = 'segment-time';
+                timeSpan.textContent = formatTime(seg.start);
+                div.appendChild(timeSpan);
+            } else {
+                div.classList.add('transcript-segment--no-time');
+            }
             var textSpan = document.createElement('span');
             textSpan.className = 'segment-text';
             textSpan.textContent = seg.text;
-            div.appendChild(timeSpan);
             div.appendChild(textSpan);
             transcript.appendChild(div);
         });
@@ -1312,6 +1447,7 @@
     function resetUI() {
         document.body.classList.remove('has-result');
         document.documentElement.style.scrollSnapType = '';
+        if (form) form.classList.remove('demo-mode');
         resultEl.hidden = true;
         processingEl.hidden = true;
         if (paywallTimer) clearTimeout(paywallTimer);
@@ -1414,6 +1550,7 @@
     // ── Submit Handler ───────────────────────────────────────────
     function handleSubmit(e) {
         e.preventDefault();
+        if (demoInProgress) return;
         clearError();
 
         var url = urlInput.value.trim();
@@ -1499,7 +1636,9 @@
         var heroEl = document.getElementById('hero');
         if (heroEl) {
             heroEl.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(function () { urlInput.focus({ preventScroll: true }); }, 600);
+            if (demoPlayed) {
+                setTimeout(function () { urlInput.focus({ preventScroll: true }); }, 600);
+            }
         }
     }
 
@@ -1639,11 +1778,17 @@
         islandIndicator.style.width = btnRect.width + 'px';
     }
 
+    var islandMenuItems = document.querySelectorAll('.island-menu-item[data-section]');
+
     function setActiveIslandStep(sectionName) {
         islandSteps.forEach(function (link) {
             var isActive = sectionName && link.getAttribute('data-section') === sectionName;
             link.classList.toggle('island-step--active', isActive);
             if (isActive) updateIslandIndicator(link);
+        });
+        islandMenuItems.forEach(function (item) {
+            var isActive = sectionName && item.getAttribute('data-section') === sectionName;
+            item.classList.toggle('island-menu-item--active', isActive);
         });
         if (islandIndicator) {
             islandIndicator.style.opacity = sectionName ? '1' : '0';
@@ -1670,5 +1815,85 @@
         window.addEventListener('scroll', updateIslandActive, { passive: true });
         requestAnimationFrame(function () { updateIslandActive(); });
     }
+
+    // ── Demo Mode: Typewriter + Auto-submit ────────────────────
+    function runDemo() {
+        if (demoPlayed || demoInProgress) return;
+        if (!urlInput || !form) return;
+        demoPlayed = true;
+        demoInProgress = true;
+
+        urlInput.setAttribute('readonly', '');
+        urlInput.placeholder = '';
+        form.classList.add('demo-mode');
+
+        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reducedMotion) {
+            urlInput.value = DEMO_URL;
+            setTimeout(demoSubmit, 300);
+            return;
+        }
+
+        // Create blinking cursor
+        var cursor = document.createElement('span');
+        cursor.className = 'demo-cursor';
+        cursor.setAttribute('aria-hidden', 'true');
+        if (inputWrapper) inputWrapper.appendChild(cursor);
+
+        // Canvas for measuring text width
+        var measureCanvas = document.createElement('canvas');
+        var ctx = measureCanvas.getContext('2d');
+        var inputStyles = window.getComputedStyle(urlInput);
+        ctx.font = inputStyles.fontSize + ' ' + inputStyles.fontFamily;
+
+        var charIndex = 0;
+
+        function positionCursor() {
+            var textWidth = ctx.measureText(urlInput.value).width;
+            var inputPadding = parseFloat(inputStyles.paddingLeft) || 0;
+            cursor.style.left = (inputPadding + textWidth) + 'px';
+        }
+
+        function typeNextChar() {
+            if (charIndex < DEMO_URL.length) {
+                urlInput.value += DEMO_URL[charIndex];
+                charIndex++;
+                positionCursor();
+                var delay = DEMO_CHAR_DELAY_MIN + Math.random() * (DEMO_CHAR_DELAY_MAX - DEMO_CHAR_DELAY_MIN);
+                setTimeout(typeNextChar, delay);
+            } else {
+                // Typing complete
+                if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+                setTimeout(demoSubmit, DEMO_POST_TYPE_DELAY);
+            }
+        }
+
+        positionCursor();
+        typeNextChar();
+    }
+
+    function demoSubmit() {
+        if (form) form.classList.remove('demo-mode');
+        addToQueue(DEMO_URL);
+        demoInProgress = false;
+    }
+
+    // ── Demo Trigger: IntersectionObserver on #hero ────────────
+    (function () {
+        var heroEl = document.getElementById('hero');
+        if (!heroEl || typeof IntersectionObserver === 'undefined') return;
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting && !demoPlayed) {
+                    setTimeout(runDemo, 400);
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        observer.observe(heroEl);
+    })();
 
 })();
