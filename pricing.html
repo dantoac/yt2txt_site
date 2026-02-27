@@ -104,12 +104,21 @@
                     </span>
                     <span class="island-step-label">Transcribe</span>
                 </a>
+                <div class="island-indicator" aria-hidden="true"></div>
             </div>
             <div class="island-divider" aria-hidden="true"></div>
 
+            <a href="pricing.html" class="island-link island-link--active" aria-current="page">Pricing</a>
+            <a href="#faq" class="island-link">FAQ</a>
+
+            <div class="island-divider" aria-hidden="true"></div>
+
             <div class="island-actions">
-                <a href="pricing.html" class="island-link island-link--active" aria-current="page">Pricing</a>
-                <a href="#faq" class="island-link">FAQ</a>
+                <button class="island-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="island-menu">
+                    <span class="island-hamburger-bar"></span>
+                    <span class="island-hamburger-bar"></span>
+                    <span class="island-hamburger-bar"></span>
+                </button>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="5"></circle>
@@ -127,6 +136,33 @@
                     </svg>
                 </button>
             </div>
+        </div>
+
+        <div class="island-menu" id="island-menu" aria-label="Navigation menu">
+            <a href="index.html#features" class="island-menu-item" data-section="features">
+                <span class="island-menu-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </span>
+                <span class="island-menu-label">Features</span>
+            </a>
+            <a href="index.html#hero" class="island-menu-item" data-section="hero">
+                <span class="island-menu-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+                <span class="island-menu-label">Transcribe</span>
+            </a>
+            <a href="pricing.html" class="island-menu-item island-menu-item--active" aria-current="page">
+                <span class="island-menu-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+                <span class="island-menu-label">Pricing</span>
+            </a>
+            <a href="#faq" class="island-menu-item">
+                <span class="island-menu-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="island-menu-label">FAQ</span>
+            </a>
         </div>
     </nav>
 
