@@ -1785,7 +1785,8 @@ a.island-step {
     flex: 1;
     min-width: 0;
     padding: 0.9rem 1.15rem;
-    font-size: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
     color: var(--text);
 }
 
