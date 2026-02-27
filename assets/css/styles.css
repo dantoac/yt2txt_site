@@ -2484,6 +2484,7 @@ body.has-result .input-upgrade-hint {
 .theme-toggle {
     width: 36px;
     height: 36px;
+    margin-right: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
