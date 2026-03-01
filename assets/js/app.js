@@ -964,6 +964,12 @@
         transcript.setAttribute('tabindex', '0');
         transcript.setAttribute('aria-label', 'Transcript text');
 
+        var cleanBadge = document.createElement('span');
+        cleanBadge.className = 'transcript-clean-badge';
+        cleanBadge.textContent = '\u2726 Auto-enhanced';
+        cleanBadge.setAttribute('data-tooltip', 'Corrected punctuation, filler words removed, and formatting improved');
+        transcript.appendChild(cleanBadge);
+
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         item.segments.forEach(function (seg, i) {
             var div = document.createElement('div');
@@ -995,11 +1001,7 @@
             { action: 'summarize', tooltip: 'Summarize', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' },
             { action: 'key-points', tooltip: 'Key points', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
             { action: 'translate', tooltip: 'Translate', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
-            { action: 'ask', tooltip: 'Ask AI', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
-            { action: 'cleanup', tooltip: 'Clean up', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>' },
-            { action: 'chapters', tooltip: 'Chapters', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>' },
-            { action: 'action-items', tooltip: 'Action items', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' },
-            { action: 'rewrite', tooltip: 'Rewrite as article', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>' },
+            { action: 'rewrite', tooltip: 'Rewrite as article', comingSoon: true, svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>' },
         ];
 
         aiActionDefs.forEach(function (ai) {
@@ -1007,13 +1009,22 @@
             btn.type = 'button';
             btn.className = 'ai-action-btn';
             btn.setAttribute('data-action', ai.action);
-            btn.setAttribute('data-tooltip', ai.tooltip);
+            btn.setAttribute('data-tooltip', ai.comingSoon ? 'Coming soon' : ai.tooltip);
             btn.setAttribute('aria-label', ai.tooltip + ' transcript');
             btn.setAttribute('data-queue-id', String(item.id));
             btn.appendChild(createSvgElement(ai.svg));
-            btn.addEventListener('click', function () {
-                showPaywall(true);
-            });
+            if (ai.comingSoon) {
+                btn.classList.add('ai-action-btn--coming-soon');
+                btn.setAttribute('aria-disabled', 'true');
+                var badge = document.createElement('span');
+                badge.className = 'ai-coming-soon-badge';
+                badge.textContent = 'Soon';
+                btn.appendChild(badge);
+            } else {
+                btn.addEventListener('click', function () {
+                    showPaywall(true);
+                });
+            }
             aiToolbar.appendChild(btn);
         });
 
@@ -1210,101 +1221,6 @@
                 return frag;
             }
         },
-        ask: {
-            label: 'Ask AI',
-            icon: '\uD83D\uDCAC',
-            delay: 0,
-            render: function (queueId, cardEl) {
-                var frag = document.createDocumentFragment();
-                var p = document.createElement('p');
-                p.textContent = 'Ask anything about this video\u2019s content:';
-                frag.appendChild(p);
-                var suggestions = document.createElement('div');
-                suggestions.className = 'ai-ask-suggestions';
-                ['What are the main topics covered?',
-                 'What homework was assigned?',
-                 'Explain AI winters in simple terms'
-                ].forEach(function (q) {
-                    var chip = document.createElement('button');
-                    chip.type = 'button';
-                    chip.className = 'ai-ask-chip';
-                    chip.setAttribute('data-question', q);
-                    chip.textContent = '\u201C' + q + '\u201D';
-                    chip.addEventListener('click', function () {
-                        handleAskChipClick(queueId, q, cardEl);
-                    });
-                    suggestions.appendChild(chip);
-                });
-                frag.appendChild(suggestions);
-                return frag;
-            }
-        },
-        cleanup: {
-            label: 'Clean Up',
-            icon: '\u2728',
-            delay: 2200,
-            render: function () {
-                var frag = document.createDocumentFragment();
-                var p1 = document.createElement('p');
-                p1.textContent = 'Welcome to this first lecture on artificial intelligence. Today we will begin with the fundamental concepts that underpin the entire field.';
-                var p2 = document.createElement('p');
-                p2.textContent = 'Artificial intelligence is a branch of computer science that aims to create systems capable of performing tasks that normally require human intelligence. This includes learning, reasoning, perception, and natural language understanding.';
-                var p3 = document.createElement('p');
-                p3.textContent = 'The field originated at the 1956 Dartmouth conference and has since gone through cycles of excitement and so-called AI winters. Recent advances in computational power and data availability have driven a deep learning revolution that transformed computer vision, natural language processing, and speech recognition.';
-                frag.appendChild(p1);
-                frag.appendChild(p2);
-                frag.appendChild(p3);
-                return frag;
-            }
-        },
-        chapters: {
-            label: 'Chapters',
-            icon: '\uD83D\uDCD6',
-            delay: 2000,
-            render: function () {
-                var ul = document.createElement('ul');
-                [
-                    { time: '0:00', title: 'Introduction & Course Overview' },
-                    { time: '3:24', title: 'What Is Artificial Intelligence?' },
-                    { time: '8:15', title: 'History: From Dartmouth to AI Winters' },
-                    { time: '14:02', title: 'The Deep Learning Revolution' },
-                    { time: '19:47', title: 'Computer Vision & NLP Breakthroughs' },
-                    { time: '25:30', title: 'Course Roadmap & Prerequisites' }
-                ].forEach(function (ch) {
-                    var li = document.createElement('li');
-                    var ts = document.createElement('span');
-                    ts.style.fontFamily = 'var(--font-mono)';
-                    ts.style.color = 'var(--accent)';
-                    ts.style.marginRight = '0.6rem';
-                    ts.textContent = ch.time;
-                    li.appendChild(ts);
-                    li.appendChild(document.createTextNode(ch.title));
-                    ul.appendChild(li);
-                });
-                return ul;
-            }
-        },
-        'action-items': {
-            label: 'Action Items',
-            icon: '\u2705',
-            delay: 1800,
-            render: function () {
-                var ul = document.createElement('ul');
-                [
-                    'Install Python 3.10+ and set up a virtual environment',
-                    'Install NumPy and PyTorch following the course guide',
-                    'Read Chapter 1 of the recommended textbook before next class',
-                    'Complete the introductory survey on the course portal',
-                    'Join the course Slack channel for Q&A and announcements',
-                    'Review linear algebra basics (vectors, matrices, dot products)'
-                ].forEach(function (text) {
-                    var li = document.createElement('li');
-                    li.textContent = text;
-                    ul.appendChild(li);
-                });
-                return ul;
-            }
-        },
         rewrite: {
             label: 'Rewrite',
             icon: '\u270F\uFE0F',
@@ -1328,24 +1244,6 @@
             }
         }
     };
-
-    function handleAskChipClick(queueId, question, cardEl) {
-        var aiBody = cardEl.querySelector('.ai-result-body');
-        if (!aiBody) return;
-        clearElement(aiBody);
-        aiBody.appendChild(buildLoadingIndicator());
-        setTimeout(function () {
-            clearElement(aiBody);
-            var questionP = document.createElement('p');
-            var strong = document.createElement('strong');
-            strong.textContent = '\u201C' + question + '\u201D';
-            questionP.appendChild(strong);
-            var answerP = document.createElement('p');
-            answerP.textContent = 'This feature will be available soon. AI-powered Q&A about video content is coming in a future update.';
-            aiBody.appendChild(questionP);
-            aiBody.appendChild(answerP);
-        }, 1500);
-    }
 
     function buildLoadingIndicator() {
         var wrap = document.createElement('div');
@@ -1554,6 +1452,11 @@
         clearError();
 
         var url = urlInput.value.trim();
+
+        if (!url && document.body.classList.contains('has-result')) {
+            resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+        }
 
         if (!url && getQueuedCount() > 0) {
             processNextInQueue();
