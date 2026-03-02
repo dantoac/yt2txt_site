@@ -2164,8 +2164,7 @@ body.has-result .input-upgrade-hint {
     pointer-events: none;
 }
 
-.demo-mode .add-btn,
-.demo-mode .submit-btn {
+.demo-mode .add-btn {
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--duration-fast);
@@ -2199,6 +2198,7 @@ body.has-result .input-upgrade-hint {
     gap: var(--space-sm);
     flex-shrink: 0;
     padding-top: var(--space-lg);
+    padding-right: 6px;
 }
 
 .ai-action-btn {
@@ -2429,6 +2429,8 @@ body.has-result .input-upgrade-hint {
         justify-content: center;
         gap: var(--space-sm);
         margin-top: var(--space-md);
+        padding-top: 6px;
+        padding-right: 6px;
     }
 
     .ai-action-btn {
