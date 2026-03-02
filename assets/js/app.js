@@ -211,23 +211,16 @@
     var resultsList   = document.getElementById('results-list');
     var newBtn        = document.getElementById('new-btn');
     var hintError     = inputHint ? inputHint.querySelector('.hint-error') : null;
-    var queueEl       = document.getElementById('queue');
-    var pastePopover  = document.getElementById('paste-popover');
-    var pasteCount    = document.getElementById('paste-count');
-    var pasteCountBtn = document.getElementById('paste-count-btn');
-    var pasteAllBtn   = document.getElementById('paste-all-btn');
-    var pasteFirstBtn = document.getElementById('paste-first-btn');
-    var queueAnnouncer = document.getElementById('queue-announcer');
+    var announcer      = document.getElementById('status-announcer');
     var paywallOverlay = document.getElementById('paywall-overlay');
     var paywallClose   = document.getElementById('paywall-close');
     var paywallBackdrop = document.getElementById('paywall-backdrop');
     var paywallTimer   = null;
 
     // ── State ───────────────────────────────────────────────────
-    var queue = [];
-    var queueIdCounter = 0;
+    var currentItem = null;
+    var currentController = null;
     var isProcessing = false;
-    var MAX_QUEUE = 10;
 
     // ── Demo Mode ──────────────────────────────────────────────
     var DEMO_URL = 'https://youtu.be/aircAruvnKk';
@@ -274,24 +267,6 @@
         return m ? m[1] : null;
     }
 
-    // Global regex for extracting all YouTube URLs from text
-    var YT_GLOBAL_RE = /https?:\/\/(?:(?:www\.)?youtube\.com\/(?:watch\?[^\s]*v=|embed\/|shorts\/)|youtu\.be\/)[\w-]{11}[^\s]*/gi;
-
-    function extractAllYouTubeURLs(text) {
-        var matches = text.match(YT_GLOBAL_RE);
-        if (!matches) return [];
-        var seen = {};
-        var result = [];
-        matches.forEach(function (url) {
-            var vid = extractVideoId(url);
-            if (vid && !seen[vid]) {
-                seen[vid] = true;
-                result.push(url);
-            }
-        });
-        return result;
-    }
-
     // ── UI State Transitions ────────────────────────────────────
     function showError(message) {
         if (!hintError || !inputHint || !inputWrapper) return;
@@ -316,10 +291,10 @@
     }
 
     function announce(msg) {
-        if (!queueAnnouncer) return;
-        queueAnnouncer.textContent = '';
+        if (!announcer) return;
+        announcer.textContent = '';
         setTimeout(function () {
-            queueAnnouncer.textContent = msg;
+            announcer.textContent = msg;
         }, 50);
     }
 
@@ -328,17 +303,6 @@
         var m = Math.floor(seconds / 60);
         var s = Math.floor(seconds % 60);
         return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    }
-
-    function getItemById(id) {
-        for (var i = 0; i < queue.length; i++) {
-            if (queue[i].id === id) return queue[i];
-        }
-        return null;
-    }
-
-    function getDoneItems() {
-        return queue.filter(function (item) { return item.status === 'done'; });
     }
 
     function buildPlainTextForItem(item) {
@@ -397,8 +361,6 @@
     // ── Transcription API ──────────────────────────────────────
     var API_BASE = ''; // Set to API URL when ready; empty = use mock fallback
     var API_TIMEOUT_MS = 30000;
-    var activeControllers = {};
-
     var API_ERROR = {
         NETWORK:   'NETWORK',
         TIMEOUT:   'TIMEOUT',
@@ -466,12 +428,12 @@
         });
     }
 
-    function transcribe(url, queueId) {
+    function transcribe(url) {
         // Use mock fallback when no API is configured
         if (!API_BASE) return mockTranscribe(url);
 
         var controller = new AbortController();
-        activeControllers[queueId] = controller;
+        currentController = controller;
 
         var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
 
@@ -483,7 +445,7 @@
         })
         .then(function (res) {
             clearTimeout(timeoutId);
-            delete activeControllers[queueId];
+            currentController = null;
 
             if (res.status === 404) throw new ApiError(API_ERROR.NOT_FOUND);
             if (res.status === 429) throw new ApiError(API_ERROR.RATE_LIMIT);
@@ -498,20 +460,12 @@
         })
         .catch(function (err) {
             clearTimeout(timeoutId);
-            delete activeControllers[queueId];
+            currentController = null;
 
             if (err instanceof ApiError) throw err;
             if (err.name === 'AbortError') throw new ApiError(API_ERROR.TIMEOUT);
             throw new ApiError(API_ERROR.NETWORK);
         });
-    }
-
-    function cancelTranscription(queueId) {
-        var controller = activeControllers[queueId];
-        if (controller) {
-            controller.abort();
-            delete activeControllers[queueId];
-        }
     }
 
     // ── SVG Icon Helpers (static, hardcoded) ─────────────────────
@@ -521,28 +475,15 @@
         return temp.firstElementChild;
     }
 
-    // ── Queue Management ─────────────────────────────────────────
-    function addToQueue(url, skipProcessing) {
+    // ── Single Transcription ─────────────────────────────────────
+    function runTranscription(url) {
         var videoId = extractVideoId(url);
 
-        if (queue.length >= MAX_QUEUE) {
-            showError('Queue is full (max ' + MAX_QUEUE + '). Wait for some to finish or remove items.');
-            return null;
-        }
-
-        var isDup = queue.some(function (item) {
-            return item.videoId === videoId && item.status !== 'error';
-        });
-        if (isDup) {
-            showError('This video is already in the queue.');
-            return null;
-        }
-
-        var item = {
-            id: ++queueIdCounter,
+        currentItem = {
+            id: 1,
             url: url,
             videoId: videoId,
-            status: 'queued',
+            status: 'processing',
             title: null,
             duration: null,
             segments: null,
@@ -550,203 +491,34 @@
             activeAI: null
         };
 
-        queue.push(item);
-        renderQueueChip(item);
-        updateQueueVisibility();
-        announce('Video added to queue');
-        updateQueueHint();
-        if (!skipProcessing) processNextInQueue();
-        return item;
-    }
-
-    function removeFromQueue(id) {
-        var item = getItemById(id);
-        if (!item) return;
-        if (item.status === 'processing') {
-            cancelTranscription(id);
-            isProcessing = false;
-            processingEl.hidden = true;
-        }
-
-        queue = queue.filter(function (q) { return q.id !== id; });
-
-        var chip = document.getElementById('chip-' + id);
-        if (chip) chip.remove();
-
-        var card = document.getElementById('card-' + id);
-        if (card) card.remove();
-
-        updateQueueVisibility();
-        updateResultsListMode();
-        updateQueueHint();
-
-        if (getDoneItems().length === 0) {
-            resultEl.hidden = true;
-            document.body.classList.remove('has-result');
-        }
-
-        announce('Video removed from queue');
-        processNextInQueue();
-    }
-
-    function processNextInQueue() {
-        if (isProcessing) return;
-
-        var next = null;
-        for (var i = 0; i < queue.length; i++) {
-            if (queue[i].status === 'queued') {
-                next = queue[i];
-                break;
-            }
-        }
-        if (!next) {
-            processingEl.hidden = true;
-            return;
-        }
-
         isProcessing = true;
-        next.status = 'processing';
-        updateChipStatus(next);
-        updateQueueHint();
-
+        submitBtn.disabled = true;
         processingEl.hidden = false;
         var statusInterval = cycleProcessingStatus();
 
-        transcribe(next.url, next.id)
+        transcribe(url)
             .then(function (data) {
                 clearInterval(statusInterval);
-                next.status = 'done';
-                next.title = data.title;
-                next.duration = data.duration;
-                next.segments = data.segments;
-                updateChipStatus(next);
-                renderResultCard(next);
+                processingEl.hidden = true;
+                currentItem.status = 'done';
+                currentItem.title = data.title;
+                currentItem.duration = data.duration;
+                currentItem.segments = data.segments;
+                renderResultCard(currentItem);
                 announce('Transcription complete: ' + data.title);
                 showResultSection();
-                var newCard = document.getElementById('card-' + next.id);
-                if (newCard) {
-                    requestAnimationFrame(function () {
-                        newCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
-                }
                 isProcessing = false;
-                processNextInQueue();
             })
             .catch(function (err) {
                 clearInterval(statusInterval);
-                next.status = 'error';
-                next.error = (err instanceof ApiError) ? err.message : 'Transcription failed. Try again.';
-                updateChipStatus(next);
-                announce('Error: ' + next.error);
+                processingEl.hidden = true;
+                var msg = (err instanceof ApiError) ? err.message : 'Transcription failed. Try again.';
+                showError(msg);
+                announce('Error: ' + msg);
+                currentItem = null;
                 isProcessing = false;
-                processNextInQueue();
+                submitBtn.disabled = false;
             });
-    }
-
-    function updateQueueVisibility() {
-        if (!queueEl) return;
-        queueEl.hidden = queue.length < 1;
-    }
-
-    function getQueuedCount() {
-        return queue.filter(function (i) { return i.status === 'queued'; }).length;
-    }
-
-    function updateQueueHint() {
-        if (!inputHint) return;
-        var hintDefault = inputHint.querySelector('.hint-default');
-        if (!hintDefault) return;
-        var count = getQueuedCount();
-        if (count > 0) {
-            hintDefault.textContent = count + ' video' + (count > 1 ? 's' : '') + ' queued \u2014 paste another or hit Transcribe';
-        } else {
-            hintDefault.textContent = 'Paste any YouTube link';
-        }
-    }
-
-    // ── Queue Chip Rendering ─────────────────────────────────────
-    function renderQueueChip(item) {
-        if (!queueEl) return;
-
-        var chip = document.createElement('div');
-        chip.className = 'queue-chip';
-        chip.id = 'chip-' + item.id;
-        chip.setAttribute('role', 'listitem');
-        chip.setAttribute('data-status', item.status);
-        chip.setAttribute('data-id', item.id);
-
-        var thumb = document.createElement('img');
-        thumb.className = 'queue-chip-thumb';
-        thumb.src = 'https://img.youtube.com/vi/' + item.videoId + '/default.jpg';
-        thumb.alt = '';
-        thumb.width = 40;
-        thumb.height = 30;
-        thumb.setAttribute('aria-hidden', 'true');
-
-        var label = document.createElement('span');
-        label.className = 'queue-chip-label';
-        label.textContent = item.videoId;
-
-        var dot = document.createElement('span');
-        dot.className = 'queue-chip-dot';
-        dot.setAttribute('aria-hidden', 'true');
-
-        var removeBtn = document.createElement('button');
-        removeBtn.className = 'queue-chip-remove';
-        removeBtn.setAttribute('aria-label', 'Remove from queue');
-        var removeSvg = createSvgElement('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>');
-        removeBtn.appendChild(removeSvg);
-        removeBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            removeFromQueue(item.id);
-        });
-
-        chip.appendChild(dot);
-        chip.appendChild(thumb);
-        chip.appendChild(label);
-        chip.appendChild(removeBtn);
-
-        chip.addEventListener('click', function () {
-            if (item.status === 'done') {
-                var card = document.getElementById('card-' + item.id);
-                if (card) {
-                    var body = card.querySelector('.result-card-body');
-                    var toggle = card.querySelector('.result-card-toggle');
-                    if (body && body.hidden) {
-                        body.hidden = false;
-                        if (toggle) toggle.setAttribute('aria-expanded', 'true');
-                    }
-                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    setTimeout(function () {
-                        if (toggle) toggle.focus();
-                    }, 400);
-                }
-            }
-        });
-
-        chip.setAttribute('tabindex', '0');
-        chip.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                chip.click();
-            }
-        });
-
-        queueEl.appendChild(chip);
-    }
-
-    function updateChipStatus(item) {
-        var chip = document.getElementById('chip-' + item.id);
-        if (!chip) return;
-        chip.setAttribute('data-status', item.status);
-
-        var label = chip.querySelector('.queue-chip-label');
-        if (label && item.title) {
-            label.textContent = item.title;
-        }
-        if (label && item.status === 'error' && item.error) {
-            label.textContent = item.error;
-        }
     }
 
     // ── Result Card Rendering ────────────────────────────────────
@@ -755,20 +527,10 @@
         resultEl.hidden = false;
         document.documentElement.style.scrollSnapType = 'none';
         document.body.classList.add('has-result');
+        submitBtn.disabled = false;
         if (paywallTimer) clearTimeout(paywallTimer);
         paywallTimer = setTimeout(showPaywall, 3000);
-        updateResultsListMode();
         resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function updateResultsListMode() {
-        if (!resultsList) return;
-        var doneItems = getDoneItems();
-        if (doneItems.length <= 1) {
-            resultsList.classList.add('results-list--single');
-        } else {
-            resultsList.classList.remove('results-list--single');
-        }
     }
 
     function renderResultCard(item) {
@@ -1011,7 +773,6 @@
             btn.setAttribute('data-action', ai.action);
             btn.setAttribute('data-tooltip', ai.comingSoon ? 'Coming soon' : ai.tooltip);
             btn.setAttribute('aria-label', ai.tooltip + ' transcript');
-            btn.setAttribute('data-queue-id', String(item.id));
             btn.appendChild(createSvgElement(ai.svg));
             if (ai.comingSoon) {
                 btn.classList.add('ai-action-btn--coming-soon');
@@ -1048,7 +809,7 @@
         aiClose.setAttribute('aria-label', 'Close AI result');
         aiClose.appendChild(createSvgElement('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'));
         aiClose.addEventListener('click', function () {
-            closeCardAIResult(item.id, card);
+            closeCardAIResult(card);
         });
         aiHeader.appendChild(aiBadge);
         aiHeader.appendChild(aiClose);
@@ -1078,19 +839,15 @@
         });
 
         resultsList.appendChild(card);
-        updateResultsListMode();
 
-        // Focus the title of the first result
-        if (getDoneItems().length === 1) {
-            titleEl.setAttribute('tabindex', '-1');
-            titleEl.focus({ preventScroll: false });
-        }
+        titleEl.setAttribute('tabindex', '-1');
+        titleEl.focus({ preventScroll: false });
     }
 
     // ── Per-card Actions ─────────────────────────────────────────
-    function handleCardCopy(queueId, btn, label) {
-        var item = getItemById(queueId);
-        if (!item) return;
+    function handleCardCopy(btn, label) {
+        if (!currentItem) return;
+        var item = currentItem;
         var text = buildPlainTextForItem(item);
         if (!text) return;
 
@@ -1127,9 +884,9 @@
         document.body.removeChild(ta);
     }
 
-    function handleCardDownload(queueId, format) {
-        var item = getItemById(queueId);
-        if (!item) return;
+    function handleCardDownload(format) {
+        if (!currentItem) return;
+        var item = currentItem;
 
         format = format || 'txt';
         var text, mime, ext;
@@ -1256,12 +1013,12 @@
         return wrap;
     }
 
-    function handleCardAIAction(queueId, action, cardEl) {
-        var item = getItemById(queueId);
-        if (!item) return;
+    function handleCardAIAction(action, cardEl) {
+        if (!currentItem) return;
+        var item = currentItem;
 
         if (item.activeAI === action) {
-            closeCardAIResult(queueId, cardEl);
+            closeCardAIResult(cardEl);
             return;
         }
 
@@ -1288,19 +1045,18 @@
             setTimeout(function () {
                 if (item.activeAI === action) {
                     clearElement(aiBody);
-                    aiBody.appendChild(config.render(queueId, cardEl));
+                    aiBody.appendChild(config.render());
                 }
             }, config.delay);
         } else {
-            aiBody.appendChild(config.render(queueId, cardEl));
+            aiBody.appendChild(config.render());
         }
 
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function closeCardAIResult(queueId, cardEl) {
-        var item = getItemById(queueId);
-        if (item) item.activeAI = null;
+    function closeCardAIResult(cardEl) {
+        if (currentItem) currentItem.activeAI = null;
 
         var panel = cardEl.querySelector('.ai-result-panel');
         var aiBody = cardEl.querySelector('.ai-result-body');
@@ -1351,95 +1107,25 @@
         if (paywallTimer) clearTimeout(paywallTimer);
         dismissPaywall();
         if (resultsList) clearElement(resultsList);
-        if (queueEl) { clearElement(queueEl); queueEl.hidden = true; }
         urlInput.value = '';
         urlInput.removeAttribute('readonly');
         submitBtn.disabled = false;
         clearError();
-        dismissPastePopover();
 
-        Object.keys(activeControllers).forEach(function (id) {
-            activeControllers[id].abort();
-        });
-        activeControllers = {};
-        queue = [];
-        queueIdCounter = 0;
+        if (currentController) { currentController.abort(); currentController = null; }
+        currentItem = null;
         isProcessing = false;
 
-        updateQueueHint();
         var heroSection = document.getElementById('hero');
         if (heroSection) heroSection.scrollIntoView();
         urlInput.focus({ preventScroll: true });
         startTagline();
     }
 
-    // ── Smart Paste ──────────────────────────────────────────────
-    var pastePopoverTimeout = null;
-    var pendingPasteUrls = [];
-
-    function showPastePopover(urls) {
-        if (!pastePopover) return;
-        pendingPasteUrls = urls;
-        var count = urls.length;
-        if (pasteCount) pasteCount.textContent = count;
-        if (pasteCountBtn) pasteCountBtn.textContent = count;
-        pastePopover.hidden = false;
-        trapFocus(pastePopover);
-        if (pasteAllBtn) pasteAllBtn.focus();
-
-        clearTimeout(pastePopoverTimeout);
-        pastePopoverTimeout = setTimeout(dismissPastePopover, 8000);
-    }
-
-    function dismissPastePopover() {
-        if (!pastePopover) return;
-        releaseFocusTrap();
-        pastePopover.hidden = true;
-        pendingPasteUrls = [];
-        clearTimeout(pastePopoverTimeout);
-        if (urlInput) urlInput.focus();
-    }
-
-    function handlePaste(e) {
-        var text = (e.clipboardData || window.clipboardData).getData('text');
-        if (!text) return;
-
-        var urls = extractAllYouTubeURLs(text);
-        if (urls.length > 1) {
-            e.preventDefault();
-            showPastePopover(urls);
-        }
-    }
-
-    if (pasteAllBtn) {
-        pasteAllBtn.addEventListener('click', function () {
-            var urls = pendingPasteUrls.slice();
-            dismissPastePopover();
-            urlInput.value = '';
-            clearError();
-            urls.forEach(function (url) {
-                addToQueue(url);
-            });
-        });
-    }
-
-    if (pasteFirstBtn) {
-        pasteFirstBtn.addEventListener('click', function () {
-            var urls = pendingPasteUrls.slice();
-            dismissPastePopover();
-            if (urls.length > 0) {
-                urlInput.value = urls[0];
-            }
-        });
-    }
-
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             if (paywallOverlay && !paywallOverlay.hidden) {
                 dismissPaywall();
-                e.stopImmediatePropagation();
-            } else if (pastePopover && !pastePopover.hidden) {
-                dismissPastePopover();
                 e.stopImmediatePropagation();
             }
         }
@@ -1451,36 +1137,14 @@
         if (demoInProgress) return;
         clearError();
 
-        var url = urlInput.value.trim();
-
-        if (!url && document.body.classList.contains('has-result')) {
+        if (currentItem && currentItem.status === 'done') {
             resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
             return;
         }
 
-        if (!url && getQueuedCount() > 0) {
-            processNextInQueue();
-            return;
-        }
+        if (isProcessing) return;
 
-        var validationError = getURLValidationError(url);
-        if (validationError) {
-            showError(validationError);
-            urlInput.focus();
-            return;
-        }
-
-        var added = addToQueue(url);
-        if (added) {
-            urlInput.value = '';
-            clearError();
-        }
-    }
-
-    function handleAddToQueue() {
-        clearError();
         var url = urlInput.value.trim();
-
         var validationError = getURLValidationError(url);
         if (validationError) {
             showError(validationError);
@@ -1488,12 +1152,7 @@
             return;
         }
 
-        var added = addToQueue(url, true);
-        if (added) {
-            urlInput.value = '';
-            clearError();
-            urlInput.focus();
-        }
+        runTranscription(url);
     }
 
     // ── Input: clear error on typing ────────────────────────────
@@ -1502,11 +1161,7 @@
             if (inputHint && inputHint.classList.contains('show-error')) {
                 clearError();
             }
-            if (pastePopover && !pastePopover.hidden) {
-                dismissPastePopover();
-            }
         });
-        urlInput.addEventListener('paste', handlePaste);
     }
 
     // ── Bind Events ─────────────────────────────────────────────
@@ -1516,7 +1171,7 @@
     if (form) form.addEventListener('submit', handleSubmit);
     if (newBtn) newBtn.addEventListener('click', resetUI);
 
-    // Close download menus and paste popover on outside click
+    // Close download menus on outside click
     document.addEventListener('click', function (e) {
         var openMenus = document.querySelectorAll('.result-card .download-menu:not([hidden])');
         openMenus.forEach(function (menu) {
@@ -1526,10 +1181,6 @@
                 if (toggle) toggle.setAttribute('aria-expanded', 'false');
             }
         });
-
-        if (pastePopover && !pastePopover.hidden && !pastePopover.contains(e.target) && e.target !== urlInput) {
-            dismissPastePopover();
-        }
     });
 
     // ── Landing CTA & Scroll ────────────────────────────────────
@@ -1549,10 +1200,7 @@
 
     // ── Cleanup on page unload ─────────────────────────────────
     window.addEventListener('beforeunload', function () {
-        Object.keys(activeControllers).forEach(function (id) {
-            activeControllers[id].abort();
-        });
-        activeControllers = {};
+        if (currentController) { currentController.abort(); currentController = null; }
     });
 
     // ── Start Tagline Rotation ──────────────────────────────────
@@ -1729,6 +1377,7 @@
         urlInput.setAttribute('readonly', '');
         urlInput.placeholder = '';
         form.classList.add('demo-mode');
+        submitBtn.disabled = true;
 
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1778,8 +1427,8 @@
 
     function demoSubmit() {
         if (form) form.classList.remove('demo-mode');
-        addToQueue(DEMO_URL);
         demoInProgress = false;
+        runTranscription(DEMO_URL);
     }
 
     // ── Demo Trigger: IntersectionObserver on #hero ────────────

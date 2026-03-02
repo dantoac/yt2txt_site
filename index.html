@@ -385,7 +385,7 @@
                             aria-describedby="input-hint"
                             required
                         >
-                        <button type="button" class="add-btn" id="add-btn" aria-label="Add to queue" title="Add to queue">
+                        <button type="button" class="add-btn" id="add-btn" aria-label="Add another video" title="Add another video">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -405,13 +405,6 @@
                             <span class="hint-error" role="alert" aria-live="polite"></span>
                         </p>
                     </div>
-                    <div class="paste-popover" id="paste-popover" role="dialog" aria-modal="true" aria-label="Multiple URLs detected" hidden>
-                        <p class="paste-popover-text">Found <strong id="paste-count">3</strong> YouTube links</p>
-                        <div class="paste-popover-actions">
-                            <button type="button" class="paste-popover-btn paste-popover-btn--primary" id="paste-all-btn">Transcribe all (<span id="paste-count-btn">3</span>)</button>
-                            <button type="button" class="paste-popover-btn" id="paste-first-btn">Just the first</button>
-                        </div>
-                    </div>
                     <noscript><p class="input-hint">JavaScript is required for transcription.</p></noscript>
                 </form>
                 <p class="input-upgrade-hint">
@@ -421,8 +414,7 @@
                     <a href="pricing.html">Upgrade</a> for AI summaries, longer videos &amp; batch processing
                 </p>
 
-                <div class="queue" id="queue" role="list" aria-label="Transcription queue" hidden></div>
-                <div class="sr-only" id="queue-announcer" aria-live="polite" aria-atomic="true"></div>
+                <div class="sr-only" id="status-announcer" aria-live="polite" aria-atomic="true"></div>
 
                 <div class="processing" id="processing" role="status" aria-label="Processing" hidden>
                     <div class="processing-content">
