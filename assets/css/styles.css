@@ -83,6 +83,7 @@
     --island-accent-15: var(--accent-15);
     --island-accent-30: var(--accent-30);
     --island-top-offset: 0px;
+    --navbar-height: 48px;
 }
 
 /* --- Dark Theme --- */
@@ -1187,7 +1188,7 @@ a.island-step {
     }
 
     .landing-text {
-        padding: var(--space-3xl) clamp(3rem, 8vw, 8rem);
+        padding: var(--space-3xl) clamp(2rem, 5vw, 4rem);
     }
 
     .landing-headline {
@@ -1767,7 +1768,7 @@ body.has-result .video-info {
     }
 
     body.has-result .result-card-body {
-        height: calc(100vh - 60px);
+        height: calc(100dvh - var(--navbar-height));
     }
 
     body.has-result .transcript-wrapper {
@@ -1786,12 +1787,12 @@ body.has-result .video-info {
     body.has-result .landing-result-panel {
         overflow-y: visible;
         max-height: none;
-        padding: 60px clamp(3rem, 8vw, 8rem) 0 0;
+        padding: var(--navbar-height) clamp(2rem, 5vw, 4rem) 0 0;
         align-self: stretch;
     }
 
     body.has-result .result-card-body {
-        height: calc(100vh - 60px);
+        height: calc(100dvh - var(--navbar-height));
     }
 
     body.has-result .transcript-wrapper {
@@ -3067,12 +3068,12 @@ body.has-result .input-upgrade-hint {
     }
 
     .landing-text {
-        padding-left: clamp(6rem, 10vw, 12rem);
-        padding-right: clamp(6rem, 10vw, 12rem);
+        padding-left: clamp(3rem, 6vw, 6rem);
+        padding-right: clamp(3rem, 6vw, 6rem);
     }
 
     body.has-result .landing-result-panel {
-        padding-right: clamp(6rem, 10vw, 12rem);
+        padding-right: clamp(3rem, 6vw, 6rem);
     }
 
     .morph-vis {
