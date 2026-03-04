@@ -1,6 +1,470 @@
 (function () {
     'use strict';
 
+    // ── Internationalization ──────────────────────────────────────
+    var translations = {
+        en: {
+            // Page titles
+            'title.index': 'yt2txt \u2014 Read any YouTube video',
+            'title.pricing': 'Pricing \u2014 yt2txt',
+
+            // Skip link
+            'skip-link': 'Skip to content',
+
+            // Navbar
+            'nav.transcribe': 'Transcribe',
+            'nav.features': 'Features',
+            'nav.pricing': 'Pricing',
+            'nav.faq': 'FAQ',
+
+            // Theme toggle
+            'theme.to-light': 'Switch to light mode',
+            'theme.to-dark': 'Switch to dark mode',
+
+            // Lang toggle
+            'lang.to-es': 'Cambiar a espa\u00f1ol',
+            'lang.to-en': 'Switch to English',
+
+            // Hamburger
+            'hamburger.open': 'Open navigation menu',
+            'hamburger.close': 'Close navigation menu',
+
+            // Hero
+            'hero.headline': 'Read any<br>YouTube video',
+            'hero.tagline-1': 'Reading your videos',
+            'hero.tagline-2': 'Ears made of code',
+            'hero.tagline-3': 'Actually listens to the audio',
+            'hero.tagline-4': 'Bytes in, words out',
+            'hero.tagline-5': 'Watching so you don\'t have to',
+            'hero.tagline-6': 'No subtitles? No problem',
+            'hero.tagline-7': '...I know kung-fu',
+
+            // Plan strip
+            'plan.badge': 'FREE',
+            'plan.quota': '<strong>12 min</strong> of 30 min used',
+
+            // Input
+            'input.placeholder': 'https://youtube.com/watch?v=...',
+            'input.aria': 'YouTube video URL',
+            'input.hint': 'Paste any YouTube link',
+            'btn.transcribe': 'Transcribe',
+            'btn.transcribe-aria': 'Transcribe video',
+            'btn.add-aria': 'Add another video',
+            'upgrade.hint': '<a href="pricing.html">Upgrade</a> for AI summaries, longer videos &amp; batch processing',
+
+            // Validation errors
+            'validation.empty': 'Paste a YouTube URL to get started.',
+            'validation.invalid': 'Paste a full YouTube URL (e.g. https://youtube.com/watch?v=...)',
+            'validation.not-youtube': 'That\'s a valid URL, but not a YouTube link.',
+            'validation.no-id': 'Looks like a YouTube URL, but we couldn\'t find a video ID.',
+
+            // API errors
+            'error.network': 'Network error. Check your connection and try again.',
+            'error.timeout': 'The request timed out. The video may be too long \u2014 try again later.',
+            'error.rate-limit': 'Too many requests. Please wait a moment and try again.',
+            'error.server': 'Server error. Our team has been notified \u2014 please try again later.',
+            'error.malformed': 'Received an unexpected response from the server.',
+            'error.not-found': 'Video not found. It may be private or unavailable.',
+            'error.generic': 'Transcription failed. Try again.',
+
+            // Processing status
+            'status.extracting': 'Extracting audio from the video...',
+            'status.listening': 'Listening to the audio...',
+            'status.transcribing': 'Transcribing the audio...',
+            'status.formatting': 'Formatting your transcript...',
+
+            // Export
+            'export.header': 'yt2txt \u2014 Transcript',
+            'export.video': 'Video: ',
+            'export.url': 'URL: ',
+            'export.date': 'Date: ',
+
+            // Result card
+            'result.open-yt': 'Open video on YouTube',
+            'result.segments': 'segments',
+            'result.paragraphs': 'paragraphs',
+
+            // Toolbar
+            'toolbar.aria': 'Transcript actions',
+            'toolbar.download-aria': 'Download transcript',
+            'toolbar.download-tooltip': 'Download',
+            'toolbar.download-txt': 'Download .txt',
+            'toolbar.download-md': 'Download .md',
+            'toolbar.copy-aria': 'Copy transcript',
+            'toolbar.copy-tooltip': 'Copy',
+            'toolbar.copied': 'Copied',
+            'toolbar.copied-aria': 'Copied to clipboard',
+            'toolbar.plans-aria': 'View pricing plans',
+            'toolbar.plans-tooltip': 'Plans',
+
+            // AI actions
+            'ai.summarize': 'Summarize',
+            'ai.keypoints': 'Key points',
+            'ai.translate': 'Translate',
+            'ai.close': 'Close AI result',
+            'ai.translate-label': 'Translated to Spanish',
+            'ai.thinking': 'Thinking\u2026',
+
+            // Transcript
+            'transcript.aria': 'Transcript text',
+            'transcript.badge': '\u2726 Auto-enhanced',
+            'transcript.badge-tooltip': 'Corrected punctuation, filler words removed, and formatting improved',
+
+            // Announcements
+            'announce.complete': 'Transcription complete: ',
+            'announce.error': 'Error: ',
+
+            // Features section
+            'features.title': 'One link. Four superpowers.',
+            'features.sub': 'Everything you need to get more from any YouTube video.',
+            'features.tab-transcript': 'Transcript',
+            'features.tab-summary': 'Summary',
+            'features.tab-keypoints': 'Key Points',
+            'features.tab-translate': 'Translate',
+            'features.transcript-title': 'Full Transcript',
+            'features.transcript-body': 'Every word, with timestamps. Search, copy, and download in seconds.',
+            'features.summary-title': 'AI Summary',
+            'features.summary-body': 'Get the gist in 3 sentences. No fluff, no filler.',
+            'features.keypoints-title': 'Key Points',
+            'features.keypoints-body': 'The most important ideas, extracted and listed clearly.',
+            'features.translate-title': 'Translate',
+            'features.translate-body': 'Turn any transcript into any language instantly.',
+
+            // Paywall
+            'paywall.close-aria': 'Close upgrade dialog',
+            'paywall.title': 'Unlock more transcriptions',
+            'paywall.subtitle': 'You\'ve used your free quota. Choose a plan to keep going.',
+            'paywall.starter': 'Starter',
+            'paywall.starter-price': '$4<span>/mo</span>',
+            'paywall.starter-desc': '60 min of transcription per month',
+            'paywall.starter-cta': 'Get Starter',
+            'paywall.popular': 'Popular',
+            'paywall.standard': 'Standard',
+            'paywall.standard-price': '$9<span>/mo</span>',
+            'paywall.standard-desc': '300 min of transcription per month',
+            'paywall.standard-cta': 'Get Standard',
+            'paywall.bulk': 'Bulk',
+            'paywall.bulk-price': '$19<span>/mo</span>',
+            'paywall.bulk-desc': '1200 min of transcription per month',
+            'paywall.bulk-cta': 'Get Bulk',
+            'paywall.compare': '<a href="pricing.html">Compare all plans &rarr;</a>',
+
+            // Footer
+            'footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a>',
+
+            // Pricing page
+            'pricing.title': 'Billing &amp; Credits',
+            'pricing.subtitle': '30 free minutes every month. Buy more when you need them.',
+            'pricing.plan-badge': 'Free Tier',
+            'pricing.free-name': 'FREE',
+            'pricing.free-quota': '30 minutes <span>/ month</span>',
+            'pricing.feature-1': 'Standard queue',
+            'pricing.feature-2': '.txt &amp; .md downloads',
+            'pricing.feature-3': 'AI-powered transcription',
+            'pricing.feature-4': 'Batch transcription',
+            'pricing.start-cta': 'Start transcribing',
+            'pricing.buy-heading': 'Buy Additional Minutes',
+            'pricing.info-banner': 'Payment integration coming soon! Contact support to purchase credits.',
+            'pricing.starter-name': 'Starter',
+            'pricing.starter-min': '60 minutes',
+            'pricing.starter-desc': 'Top up for a quick project.',
+            'pricing.starter-btn': 'Coming Soon',
+            'pricing.best-value': 'Best value',
+            'pricing.standard-name': 'Standard',
+            'pricing.standard-min': '150 minutes <span class="pricing-savings-badge">+25%</span>',
+            'pricing.standard-desc': 'Great for regular use.',
+            'pricing.standard-btn': 'Coming Soon',
+            'pricing.bulk-name': 'Bulk',
+            'pricing.bulk-min': '350 minutes <span class="pricing-savings-badge">+46%</span>',
+            'pricing.bulk-desc': 'For heavy workloads.',
+            'pricing.bulk-btn': 'Coming Soon',
+            'pricing.faq-title': 'Frequently asked questions',
+            'pricing.faq-q1': 'Can yt2txt transcribe videos without subtitles?',
+            'pricing.faq-a1': 'Yes. yt2txt uses AI-powered speech recognition to transcribe directly from the audio, so it works even when no subtitles or captions are available.',
+            'pricing.faq-q2': 'How many free minutes do I get?',
+            'pricing.faq-a2': 'Every account gets 30 free minutes of transcription per month. You can purchase additional minutes if you need more.',
+            'pricing.faq-q3': 'What formats can I download transcripts in?',
+            'pricing.faq-a3': 'You can download transcripts as plain text (.txt) or Markdown (.md) files.',
+            'pricing.still-questions': 'Still have questions?',
+            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.',
+            'pricing.footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a>'
+        },
+        es: {
+            // Page titles
+            'title.index': 'yt2txt \u2014 Lee cualquier video de YouTube',
+            'title.pricing': 'Precios \u2014 yt2txt',
+
+            // Skip link
+            'skip-link': 'Ir al contenido',
+
+            // Navbar
+            'nav.transcribe': 'Transcribir',
+            'nav.features': 'Funciones',
+            'nav.pricing': 'Precios',
+            'nav.faq': 'Preguntas frecuentes',
+
+            // Theme toggle
+            'theme.to-light': 'Cambiar a modo claro',
+            'theme.to-dark': 'Cambiar a modo oscuro',
+
+            // Lang toggle
+            'lang.to-es': 'Cambiar a espa\u00f1ol',
+            'lang.to-en': 'Switch to English',
+
+            // Hamburger
+            'hamburger.open': 'Abrir men\u00fa de navegaci\u00f3n',
+            'hamburger.close': 'Cerrar men\u00fa de navegaci\u00f3n',
+
+            // Hero
+            'hero.headline': 'Lee cualquier<br>video de YouTube',
+            'hero.tagline-1': 'Leyendo tus videos',
+            'hero.tagline-2': 'O\u00eddos hechos de c\u00f3digo',
+            'hero.tagline-3': 'Realmente escucha el audio',
+            'hero.tagline-4': 'Bytes entran, palabras salen',
+            'hero.tagline-5': 'Mira por ti',
+            'hero.tagline-6': '\u00bfSin subt\u00edtulos? No hay problema',
+            'hero.tagline-7': '...Yo s\u00e9 kung-fu',
+
+            // Plan strip
+            'plan.badge': 'GRATIS',
+            'plan.quota': '<strong>12 min</strong> de 30 min usados',
+
+            // Input
+            'input.placeholder': 'https://youtube.com/watch?v=...',
+            'input.aria': 'URL del video de YouTube',
+            'input.hint': 'Pega cualquier link de YouTube',
+            'btn.transcribe': 'Transcribir',
+            'btn.transcribe-aria': 'Transcribir video',
+            'btn.add-aria': 'Agregar otro video',
+            'upgrade.hint': '<a href="pricing.html">Mejora tu plan</a> para res\u00famenes con IA, videos m\u00e1s largos y procesamiento por lotes',
+
+            // Validation errors
+            'validation.empty': 'Pega una URL de YouTube para comenzar.',
+            'validation.invalid': 'Pega una URL completa de YouTube (ej. https://youtube.com/watch?v=...)',
+            'validation.not-youtube': 'Es una URL v\u00e1lida, pero no es un enlace de YouTube.',
+            'validation.no-id': 'Parece una URL de YouTube, pero no encontramos un ID de video.',
+
+            // API errors
+            'error.network': 'Error de red. Verifica tu conexi\u00f3n e intenta de nuevo.',
+            'error.timeout': 'La solicitud expir\u00f3. El video puede ser muy largo \u2014 intenta m\u00e1s tarde.',
+            'error.rate-limit': 'Demasiadas solicitudes. Espera un momento e intenta de nuevo.',
+            'error.server': 'Error del servidor. Nuestro equipo fue notificado \u2014 intenta m\u00e1s tarde.',
+            'error.malformed': 'Respuesta inesperada del servidor.',
+            'error.not-found': 'Video no encontrado. Puede ser privado o no estar disponible.',
+            'error.generic': 'La transcripci\u00f3n fall\u00f3. Intenta de nuevo.',
+
+            // Processing status
+            'status.extracting': 'Extrayendo audio del video...',
+            'status.listening': 'Escuchando el audio...',
+            'status.transcribing': 'Transcribiendo el audio...',
+            'status.formatting': 'Formateando tu transcripci\u00f3n...',
+
+            // Export
+            'export.header': 'yt2txt \u2014 Transcripci\u00f3n',
+            'export.video': 'Video: ',
+            'export.url': 'URL: ',
+            'export.date': 'Fecha: ',
+
+            // Result card
+            'result.open-yt': 'Abrir video en YouTube',
+            'result.segments': 'segmentos',
+            'result.paragraphs': 'p\u00e1rrafos',
+
+            // Toolbar
+            'toolbar.aria': 'Acciones de transcripci\u00f3n',
+            'toolbar.download-aria': 'Descargar transcripci\u00f3n',
+            'toolbar.download-tooltip': 'Descargar',
+            'toolbar.download-txt': 'Descargar .txt',
+            'toolbar.download-md': 'Descargar .md',
+            'toolbar.copy-aria': 'Copiar transcripci\u00f3n',
+            'toolbar.copy-tooltip': 'Copiar',
+            'toolbar.copied': 'Copiado',
+            'toolbar.copied-aria': 'Copiado al portapapeles',
+            'toolbar.plans-aria': 'Ver planes de precios',
+            'toolbar.plans-tooltip': 'Planes',
+
+            // AI actions
+            'ai.summarize': 'Resumir',
+            'ai.keypoints': 'Puntos clave',
+            'ai.translate': 'Traducir',
+            'ai.close': 'Cerrar resultado IA',
+            'ai.translate-label': 'Traducido al español',
+            'ai.thinking': 'Pensando\u2026',
+
+            // Transcript
+            'transcript.aria': 'Texto de la transcripci\u00f3n',
+            'transcript.badge': '\u2726 Auto-mejorado',
+            'transcript.badge-tooltip': 'Puntuaci\u00f3n corregida, muletillas eliminadas y formato mejorado',
+
+            // Announcements
+            'announce.complete': 'Transcripci\u00f3n completa: ',
+            'announce.error': 'Error: ',
+
+            // Features section
+            'features.title': 'Un link. Cuatro superpoderes.',
+            'features.sub': 'Todo lo que necesitas para sacar m\u00e1s de cualquier video de YouTube.',
+            'features.tab-transcript': 'Transcripci\u00f3n',
+            'features.tab-summary': 'Resumen',
+            'features.tab-keypoints': 'Puntos clave',
+            'features.tab-translate': 'Traducir',
+            'features.transcript-title': 'Transcripci\u00f3n completa',
+            'features.transcript-body': 'Cada palabra, con marcas de tiempo. Busca, copia y descarga en segundos.',
+            'features.summary-title': 'Resumen con IA',
+            'features.summary-body': 'La esencia en 3 oraciones. Sin relleno.',
+            'features.keypoints-title': 'Puntos clave',
+            'features.keypoints-body': 'Las ideas m\u00e1s importantes, extra\u00eddas y listadas con claridad.',
+            'features.translate-title': 'Traducir',
+            'features.translate-body': 'Convierte cualquier transcripci\u00f3n a cualquier idioma al instante.',
+
+            // Paywall
+            'paywall.close-aria': 'Cerrar di\u00e1logo de mejora',
+            'paywall.title': 'Desbloquea m\u00e1s transcripciones',
+            'paywall.subtitle': 'Usaste tu cuota gratuita. Elige un plan para continuar.',
+            'paywall.starter': 'Starter',
+            'paywall.starter-price': '$4<span>/mes</span>',
+            'paywall.starter-desc': '60 min de transcripci\u00f3n al mes',
+            'paywall.starter-cta': 'Elegir Starter',
+            'paywall.popular': 'Popular',
+            'paywall.standard': 'Standard',
+            'paywall.standard-price': '$9<span>/mes</span>',
+            'paywall.standard-desc': '300 min de transcripci\u00f3n al mes',
+            'paywall.standard-cta': 'Elegir Standard',
+            'paywall.bulk': 'Bulk',
+            'paywall.bulk-price': '$19<span>/mes</span>',
+            'paywall.bulk-desc': '1200 min de transcripci\u00f3n al mes',
+            'paywall.bulk-cta': 'Elegir Bulk',
+            'paywall.compare': '<a href="pricing.html">Comparar todos los planes &rarr;</a>',
+
+            // Footer
+            'footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html">Precios</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Reportar un problema (abre GitHub)">Reportar un problema</a>',
+
+            // Pricing page
+            'pricing.title': 'Facturaci\u00f3n y cr\u00e9ditos',
+            'pricing.subtitle': '30 minutos gratis cada mes. Compra m\u00e1s cuando los necesites.',
+            'pricing.plan-badge': 'Plan gratuito',
+            'pricing.free-name': 'GRATIS',
+            'pricing.free-quota': '30 minutos <span>/ mes</span>',
+            'pricing.feature-1': 'Cola est\u00e1ndar',
+            'pricing.feature-2': 'Descargas .txt y .md',
+            'pricing.feature-3': 'Transcripci\u00f3n con IA',
+            'pricing.feature-4': 'Transcripci\u00f3n por lotes',
+            'pricing.start-cta': 'Comenzar a transcribir',
+            'pricing.buy-heading': 'Comprar minutos adicionales',
+            'pricing.info-banner': '\u00a1Integraci\u00f3n de pagos pr\u00f3ximamente! Contacta a soporte para comprar cr\u00e9ditos.',
+            'pricing.starter-name': 'Starter',
+            'pricing.starter-min': '60 minutos',
+            'pricing.starter-desc': 'Recarga para un proyecto r\u00e1pido.',
+            'pricing.starter-btn': 'Pr\u00f3ximamente',
+            'pricing.best-value': 'Mejor valor',
+            'pricing.standard-name': 'Standard',
+            'pricing.standard-min': '150 minutos <span class="pricing-savings-badge">+25%</span>',
+            'pricing.standard-desc': 'Ideal para uso regular.',
+            'pricing.standard-btn': 'Pr\u00f3ximamente',
+            'pricing.bulk-name': 'Bulk',
+            'pricing.bulk-min': '350 minutos <span class="pricing-savings-badge">+46%</span>',
+            'pricing.bulk-desc': 'Para cargas pesadas.',
+            'pricing.bulk-btn': 'Pr\u00f3ximamente',
+            'pricing.faq-title': 'Preguntas frecuentes',
+            'pricing.faq-q1': '\u00bfPuede yt2txt transcribir videos sin subt\u00edtulos?',
+            'pricing.faq-a1': 'S\u00ed. yt2txt utiliza reconocimiento de voz con IA para transcribir directamente del audio, as\u00ed que funciona incluso cuando no hay subt\u00edtulos disponibles.',
+            'pricing.faq-q2': '\u00bfCu\u00e1ntos minutos gratis tengo?',
+            'pricing.faq-a2': 'Cada cuenta recibe 30 minutos gratis de transcripci\u00f3n al mes. Puedes comprar minutos adicionales si necesitas m\u00e1s.',
+            'pricing.faq-q3': '\u00bfEn qu\u00e9 formatos puedo descargar las transcripciones?',
+            'pricing.faq-a3': 'Puedes descargar transcripciones como archivos de texto plano (.txt) o Markdown (.md).',
+            'pricing.still-questions': '\u00bfA\u00fan tienes preguntas?',
+            'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.',
+            'pricing.footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Precios</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Reportar un problema (abre GitHub)">Reportar un problema</a>'
+        }
+    };
+
+    var currentLang = 'en';
+
+    function getPreferredLang() {
+        var stored = localStorage.getItem('yt2txt-lang');
+        if (stored && translations[stored]) return stored;
+        var nav = (navigator.language || '').slice(0, 2).toLowerCase();
+        return translations[nav] ? nav : 'en';
+    }
+
+    function t(key) {
+        var dict = translations[currentLang];
+        if (dict && dict[key] !== undefined) return dict[key];
+        return translations.en[key] || key;
+    }
+
+    function applyTranslations() {
+        // textContent updates
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+            el.textContent = t(el.getAttribute('data-i18n'));
+        });
+        // Safe HTML updates (trusted translation strings only, never user input)
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n-html');
+            var value = t(key);
+            // Parse safely via template element to avoid script injection
+            var tmpl = document.createElement('template');
+            tmpl.innerHTML = value;
+            while (el.firstChild) el.removeChild(el.firstChild);
+            el.appendChild(tmpl.content.cloneNode(true));
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+            el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+        });
+        document.querySelectorAll('[data-i18n-aria-label]').forEach(function (el) {
+            el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria-label')));
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+            el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+        });
+        document.querySelectorAll('[data-i18n-data-tooltip]').forEach(function (el) {
+            el.setAttribute('data-tooltip', t(el.getAttribute('data-i18n-data-tooltip')));
+        });
+    }
+
+    function setLang(lang) {
+        if (!translations[lang]) return;
+        currentLang = lang;
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        localStorage.setItem('yt2txt-lang', lang);
+
+        // Update lang toggle display
+        var langToggle = document.getElementById('lang-toggle');
+        if (langToggle) {
+            var code = langToggle.querySelector('.lang-toggle-code');
+            if (code) code.textContent = lang.toUpperCase();
+            langToggle.setAttribute('aria-label', lang === 'en' ? t('lang.to-es') : t('lang.to-en'));
+        }
+
+        // Update page title
+        var isIndex = !document.body.classList.contains('page-pricing');
+        document.title = t(isIndex ? 'title.index' : 'title.pricing');
+
+        // Update theme toggle aria-label
+        var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        var themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', currentTheme === 'dark' ? t('theme.to-light') : t('theme.to-dark'));
+        }
+
+        // Update hamburger aria-label
+        var hamburger = document.querySelector('.island-hamburger');
+        if (hamburger) {
+            var isOpen = hamburger.classList.contains('is-open');
+            hamburger.setAttribute('aria-label', isOpen ? t('hamburger.close') : t('hamburger.open'));
+        }
+
+        applyTranslations();
+
+        // Re-measure island width after text change
+        if (remeasureIsland) remeasureIsland();
+    }
+
+    // Initialize language
+    currentLang = getPreferredLang();
+    document.documentElement.setAttribute('data-lang', currentLang);
+    document.documentElement.setAttribute('lang', currentLang);
+
     // ── Theme Toggle ─────────────────────────────────────────────
     function getPreferredTheme() {
         var stored = localStorage.getItem('yt2txt-theme');
@@ -13,15 +477,14 @@
         localStorage.setItem('yt2txt-theme', theme);
         var toggle = document.getElementById('theme-toggle');
         if (toggle) {
-            toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            toggle.setAttribute('aria-label', theme === 'dark' ? t('theme.to-light') : t('theme.to-dark'));
         }
     }
 
     var themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
-        // Initialize aria-label based on current theme
         var initTheme = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
-        themeToggle.setAttribute('aria-label', initTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        themeToggle.setAttribute('aria-label', initTheme === 'dark' ? t('theme.to-light') : t('theme.to-dark'));
 
         themeToggle.addEventListener('click', function () {
             var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
@@ -35,7 +498,9 @@
         }
     });
 
-    // ── Island Navbar: Scroll Morph (standard → island) ─────────
+    // ── Island Navbar: Scroll Morph (standard -> island) ---------
+    var remeasureIsland = null;
+
     (function () {
         var hero = document.querySelector('.landing') || document.querySelector('.pricing-hero');
         var nav = document.querySelector('.navbar--island');
@@ -57,8 +522,19 @@
 
         measureIslandWidth();
 
+        // Expose for lang toggle re-measurement
+        remeasureIsland = function () {
+            nav.classList.add('navbar--no-transition');
+            measureIslandWidth();
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    nav.classList.remove('navbar--no-transition');
+                });
+            });
+        };
+
         function checkScroll() {
-            var pastHero = window.scrollY > hero.offsetHeight * 0.6;
+            var pastHero = window.scrollY > 0;
             if (pastHero !== isScrolled) {
                 isScrolled = pastHero;
                 document.body.classList.toggle(morphClass, isScrolled);
@@ -79,13 +555,7 @@
         window.addEventListener('resize', function () {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function () {
-                nav.classList.add('navbar--no-transition');
-                measureIslandWidth();
-                requestAnimationFrame(function () {
-                    requestAnimationFrame(function () {
-                        nav.classList.remove('navbar--no-transition');
-                    });
-                });
+                remeasureIsland();
             }, 150);
         });
     })();
@@ -104,7 +574,7 @@
             navbarIsland.classList.add('island-open');
             hamburger.classList.add('is-open');
             hamburger.setAttribute('aria-expanded', 'true');
-            hamburger.setAttribute('aria-label', 'Close navigation menu');
+            hamburger.setAttribute('aria-label', t('hamburger.close'));
             scrollGuard = Date.now();
         }
 
@@ -112,7 +582,7 @@
             navbarIsland.classList.remove('island-open');
             hamburger.classList.remove('is-open');
             hamburger.setAttribute('aria-expanded', 'false');
-            hamburger.setAttribute('aria-label', 'Open navigation menu');
+            hamburger.setAttribute('aria-label', t('hamburger.open'));
             hamburger.focus();
         }
 
@@ -209,7 +679,9 @@
     var processingTxt = document.getElementById('processing-text');
     var resultEl      = document.getElementById('result');
     var resultsList   = document.getElementById('results-list');
-    var newBtn        = document.getElementById('new-btn');
+    var planStrip          = document.querySelector('.plan-strip');
+    var planStripParent    = planStrip ? planStrip.parentNode : null;
+    var planStripSibling   = planStrip ? planStrip.nextElementSibling : null;
     var hintError     = inputHint ? inputHint.querySelector('.hint-error') : null;
     var announcer      = document.getElementById('status-announcer');
     var paywallOverlay = document.getElementById('paywall-overlay');
@@ -255,10 +727,10 @@
 
     function getURLValidationError(input) {
         var trimmed = input.trim();
-        if (!trimmed) return 'Paste a YouTube URL to get started.';
-        if (!isURL(trimmed)) return 'Paste a full YouTube URL (e.g. https://youtube.com/watch?v=...)';
-        if (!isYouTubeDomain(trimmed)) return "That's a valid URL, but not a YouTube link.";
-        if (!isValidYouTubeURL(trimmed)) return "Looks like a YouTube URL, but we couldn't find a video ID.";
+        if (!trimmed) return t('validation.empty');
+        if (!isURL(trimmed)) return t('validation.invalid');
+        if (!isYouTubeDomain(trimmed)) return t('validation.not-youtube');
+        if (!isValidYouTubeURL(trimmed)) return t('validation.no-id');
         return null;
     }
 
@@ -307,11 +779,12 @@
 
     function buildPlainTextForItem(item) {
         if (!item || !item.segments) return '';
+        var dateLang = currentLang === 'es' ? 'es-ES' : 'en-US';
         var lines = [
-            'yt2txt \u2014 Transcript',
-            'Video: ' + item.title,
-            'URL: ' + item.url,
-            'Date: ' + new Date().toLocaleDateString('en-US'),
+            t('export.header'),
+            t('export.video') + item.title,
+            t('export.url') + item.url,
+            t('export.date') + new Date().toLocaleDateString(dateLang),
             '',
             '---',
             '',
@@ -324,12 +797,13 @@
 
     function buildMarkdownTextForItem(item) {
         if (!item || !item.segments) return '';
+        var dateLang = currentLang === 'es' ? 'es-ES' : 'en-US';
         var lines = [
             '# ' + item.title,
             '',
             '> Transcribed by [yt2txt](https://yt2txt.com)',
-            '> URL: ' + item.url,
-            '> Date: ' + new Date().toLocaleDateString('en-US'),
+            '> ' + t('export.url') + item.url,
+            '> ' + t('export.date') + new Date().toLocaleDateString(dateLang),
             '',
             '---',
             '',
@@ -342,24 +816,27 @@
     }
 
     // ── Processing Status Messages ──────────────────────────────
-    var statusMessages = [
-        'Extracting audio from the video...',
-        'Listening to the audio...',
-        'Transcribing the audio...',
-        'Formatting your transcript...',
-    ];
+    function getStatusMessages() {
+        return [
+            t('status.extracting'),
+            t('status.listening'),
+            t('status.transcribing'),
+            t('status.formatting'),
+        ];
+    }
 
     function cycleProcessingStatus() {
+        var msgs = getStatusMessages();
         var i = 0;
-        processingTxt.textContent = statusMessages[0];
+        processingTxt.textContent = msgs[0];
         return setInterval(function () {
-            i = (i + 1) % statusMessages.length;
-            processingTxt.textContent = statusMessages[i];
+            i = (i + 1) % msgs.length;
+            processingTxt.textContent = msgs[i];
         }, 2200);
     }
 
     // ── Transcription API ──────────────────────────────────────
-    var API_BASE = ''; // Set to API URL when ready; empty = use mock fallback
+    var API_BASE = '';
     var API_TIMEOUT_MS = 30000;
     var API_ERROR = {
         NETWORK:   'NETWORK',
@@ -370,17 +847,17 @@
         NOT_FOUND: 'NOT_FOUND'
     };
 
-    var API_ERROR_MESSAGES = {};
-    API_ERROR_MESSAGES[API_ERROR.NETWORK]    = 'Network error. Check your connection and try again.';
-    API_ERROR_MESSAGES[API_ERROR.TIMEOUT]    = 'The request timed out. The video may be too long — try again later.';
-    API_ERROR_MESSAGES[API_ERROR.RATE_LIMIT] = 'Too many requests. Please wait a moment and try again.';
-    API_ERROR_MESSAGES[API_ERROR.SERVER]     = 'Server error. Our team has been notified — please try again later.';
-    API_ERROR_MESSAGES[API_ERROR.MALFORMED]  = 'Received an unexpected response from the server.';
-    API_ERROR_MESSAGES[API_ERROR.NOT_FOUND]  = 'Video not found. It may be private or unavailable.';
+    var API_ERROR_KEY_MAP = {};
+    API_ERROR_KEY_MAP[API_ERROR.NETWORK]    = 'error.network';
+    API_ERROR_KEY_MAP[API_ERROR.TIMEOUT]    = 'error.timeout';
+    API_ERROR_KEY_MAP[API_ERROR.RATE_LIMIT] = 'error.rate-limit';
+    API_ERROR_KEY_MAP[API_ERROR.SERVER]     = 'error.server';
+    API_ERROR_KEY_MAP[API_ERROR.MALFORMED]  = 'error.malformed';
+    API_ERROR_KEY_MAP[API_ERROR.NOT_FOUND]  = 'error.not-found';
 
     function ApiError(type, message) {
         this.type = type;
-        this.message = message || API_ERROR_MESSAGES[type] || 'Unknown error';
+        this.message = message || t(API_ERROR_KEY_MAP[type] || 'error.generic');
     }
 
     function validateTranscriptResponse(data) {
@@ -401,26 +878,14 @@
                     duration: '19:13',
                     segments: [
                         { text: 'This is a 3. It\u2019s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. This, this, and this are also recognizable as 3s, even though the specific values of each pixel are very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3. But something in that crazy-smart visual cortex of yours resolves these as representing the same idea while recognizing other images as their own distinct ideas.' },
-                        { text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math. My hope is that you come away feeling like the structure itself is motivated and that you know what it means when you read or hear about a neural network quote-unquote learning. This video is just going to be devoted to the structure component of that, and the following one will tackle learning.' },
-                        { text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer. There are many variants of neural networks, and in recent years there\u2019s been a boom in research towards these variants. But in these two introductory videos, we are just going to look at the simplest plain vanilla form with no added frills. This is a necessary prerequisite for understanding any of the more powerful modern variants, and trust me, it still has plenty of complexity for us to wrap our minds around. Even in this simplest form, it can learn to recognize handwritten digits, which is a pretty cool thing for a computer to be able to do. At the same time, you\u2019ll see how it does fall short of a couple of hopes that we might have for it.' },
-                        { text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that. For example, the network starts with a bunch of neurons corresponding to each of the 28x28 pixels of the input image, which is 784 neurons in total. Each one of these holds a number that represents the grayscale value of the corresponding pixel, ranging from 0 for black pixels up to 1 for white pixels. This number inside the neuron is called its activation, and the image you might have in mind here is that each neuron is lit up when its activation is a high number. So all of these 784 neurons make up the first layer of our network.' },
-                        { text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit. There are also a couple of layers in between called the hidden layers, which for the time being should just be a giant question mark for how on earth this process of recognizing digits is going to be handled. In this network, I chose two hidden layers, each with 16 neurons, and admittedly that\u2019s kind of an arbitrary choice. I chose two layers based on how I want to motivate the structure in just a moment, and 16 was just a nice number to fit on the screen. In practice, there is a lot of room for experimentation with a specific structure here.' },
-                        { text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer. It\u2019s meant to be loosely analogous to how in biological networks of neurons, some groups of neurons firing cause certain others to fire. The network I\u2019m showing here has already been trained to recognize digits, and let me show you what I mean by that. It means if you feed in an image, lighting up all 784 neurons of the input layer according to the brightness of each pixel in the image, that pattern of activations causes some very specific pattern in the next layer, which causes some pattern in the one after it, which finally gives some pattern in the output layer. The brightest neuron of that output layer is the network\u2019s choice, so to speak, for what digit this image represents.' },
-                        { text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently. What are we expecting here? What is the best hope for what those middle layers might be doing? When you or I recognize digits, we piece together various components. A 9 has a loop up top and a line on the right. An 8 also has a loop up top, but it\u2019s paired with another loop down low. A 4 basically breaks down into three specific lines, and things like that. In a perfect world, we might hope that each neuron in the second to last layer corresponds with one of these subcomponents. Anytime you feed in an image with, say, a loop up top, like a 9 or an 8, there\u2019s some specific neuron whose activation is going to be close to 1. I don\u2019t mean this specific loop of pixels; the hope would be that any generally loopy pattern towards the top sets off this neuron. That way, going from the third layer to the last one just requires learning which combination of subcomponents corresponds to which digits.' },
-                        { text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be? Recognizing a loop can also break down into subproblems. One reasonable way to do this would be to first recognize the various little edges that make it up. Similarly, a long line, like the kind you might see in the digits 1, 4, or 7, is really just a long edge, or maybe you think of it as a certain pattern of several smaller edges. So maybe our hope is that each neuron in the second layer of the network corresponds with the various relevant little edges. When an image like this one comes in, it lights up all of the neurons associated with around 8 to 10 specific little edges, which in turn lights up the neurons associated with the upper loop and a long vertical line, and those light up the neuron associated with a 9.' },
-                        { text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network. But this is a hope that we might have, a sort of goal with the layered structure like this. Moreover, you can imagine how being able to detect edges and patterns like this would be really useful for other image recognition tasks. Beyond image recognition, there are all sorts of intelligent things you might want to do that break down into layers of abstraction. Parsing speech, for example, involves taking raw audio and picking out distinct sounds, which combine to make certain syllables, which combine to form words, which combine to make up phrases and more abstract thoughts.' },
-                        { text: 'Getting back to how any of this actually works, picture yourself designing how exactly the activations in one layer might determine the activations in the next. The goal is to have some mechanism that could conceivably combine pixels into edges, or edges into patterns, or patterns into digits. To zoom in on one very specific example, let\u2019s say the hope is for one particular neuron in the second layer to pick up on whether or not the image has an edge in this region here. The question at hand is what parameters should the network have? What dials and knobs should you be able to tweak so that it\u2019s expressive enough to potentially capture this pattern, or any other pixel pattern, or the pattern that several edges can make a loop, and other such things?' },
-                        { text: 'We will assign a weight to each one of the connections between our neuron and the neurons from the first layer. These weights are just numbers. Then we take all of those activations from the first layer and compute their weighted sum according to these weights. I find it helpful to think of these weights as being organized into a little grid of their own. I\u2019m going to use green pixels to indicate positive weights and red pixels to indicate negative weights, where the brightness of that pixel is a loose depiction of the weight\u2019s value. If we made the weights associated with almost all of the pixels zero except for some positive weights in this region that we care about, then taking the weighted sum of all the pixel values really just amounts to adding up the values of the pixels in the region that we care about.' },
-                        { text: 'If you really wanted to pick up on whether there\u2019s an edge here, you might have some negative weights associated with the surrounding pixels. Then the sum is largest when those middle pixels are bright but the surrounding pixels are darker. When you compute a weighted sum like this, you might come out with any number, but for this network, we want activations to be some value between 0 and 1. A common thing to do is to pump this weighted sum into some function that squishes the real number line into the range between 0 and 1. A common function that does this is called the sigmoid function, also known as a logistic curve. Very negative inputs end up close to 0, positive inputs end up close to 1, and it steadily increases around the input 0.' },
-                        { text: 'The activation of the neuron here is basically a measure of how positive the relevant weighted sum is. Maybe you don\u2019t want the neuron to light up when the weighted sum is bigger than 0. Maybe you only want it to be active when the sum is bigger than, say, 10. You want some bias for it to be inactive. What we\u2019ll do then is just add in some other number, like negative 10, to this weighted sum before plugging it through the sigmoid squishification function. That additional number is called the bias. The weights tell you what pixel pattern this neuron in the second layer is picking up on, and the bias tells you how high the weighted sum needs to be before the neuron starts getting meaningfully active.' },
-                        { text: 'That is just one neuron. Every other neuron in this layer is going to be connected to all 784 pixel neurons from the first layer, and each one of those 784 connections has its own weight associated with it. Each one also has some bias, some other number that you add on to the weighted sum before squishing it with the sigmoid. That\u2019s a lot to think about! With this hidden layer of 16 neurons, that\u2019s a total of 784 times 16 weights, along with 16 biases. All of that is just the connections from the first layer to the second. The connections between the other layers also have a bunch of weights and biases associated with them. All said and done, this network has almost exactly 13,000 total weights and biases\u201413,000 knobs and dials that can be tweaked and turned to make this network behave in different ways.' },
-                        { text: 'When we talk about learning, that refers to getting the computer to find a valid setting for all of these many numbers so that it\u2019ll actually solve the problem at hand. One thought experiment that is at once fun and kind of horrifying is to imagine sitting down and setting all of these weights and biases by hand, purposefully tweaking the numbers so that the second layer picks up on edges, the third layer picks up on patterns, etc. I personally find this satisfying rather than just treating the network as a total black box. When the network doesn\u2019t perform the way you anticipate, if you\u2019ve built up a little bit of a relationship with what those weights and biases actually mean, you have a starting place for experimenting with how to change the structure to improve. When the network does work but not for the reasons you might expect, digging into what the weights and biases are doing is a good way to challenge your assumptions and really expose the full space of possible solutions.' },
-                        { text: 'By the way, the actual function here is a little cumbersome to write down, don\u2019t you think? Let me show you a more notationally compact way that these connections are represented. This is how you\u2019d see it if you choose to read up more about neural networks. Organize all of the activations from one layer into a column as a vector. Then organize all of the weights as a matrix, where each row of that matrix corresponds to the connections between one layer and a particular neuron in the next layer. Taking the weighted sum of the activations in the first layer according to these weights corresponds to one of the terms in the matrix vector product of everything we have on the left here.' },
-                        { text: 'So much of machine learning just comes down to having a good grasp of linear algebra. For any of you who want a nice visual understanding of matrices and what matrix vector multiplication means, take a look at the series I did on linear algebra, especially chapter 3. Back to our expression, instead of talking about adding the bias to each of these values independently, we represent it by organizing all those biases into a vector and adding the entire vector to the previous matrix vector product. As a final step, I\u2019ll wrap a sigmoid around the outside here, and what that\u2019s supposed to represent is that you\u2019re going to apply the sigmoid function to each specific component of the resulting vector inside.' },
-                        { text: 'Once you write down this weight matrix and these vectors as their own symbols, you can communicate the full transition of activations from one layer to the next in an extremely tight and neat little expression. This makes the relevant code both a lot simpler and a lot faster since many libraries optimize matrix multiplication. Remember how earlier I said these neurons are simply things that hold numbers? The specific numbers they hold depend on the image you feed in, so it\u2019s more accurate to think of each neuron as a function\u2014one that takes in the outputs of all the neurons in the previous layer and spits out a number between 0 and 1. The entire network is just a function, one that takes in 784 numbers as an input and spits out 10 numbers as an output. It\u2019s an absurdly complicated function, one that involves 13,000 parameters in the forms of these weights and biases that pick up on certain patterns, and which involves iterating many matrix vector products and the sigmoid squishification function, but it\u2019s just a function nonetheless.' },
-                        { text: 'In a way, it\u2019s kind of reassuring that it looks complicated. If it were any simpler, what hope would we have that it could take on the challenge of recognizing digits? How does this network learn the appropriate weights and biases just by looking at data? That\u2019s what I\u2019ll show in the next video, and I\u2019ll also dig a little more into what this particular network we\u2019re seeing is really doing. Now is the point I suppose I should say subscribe to stay notified about when that video or any new videos come out. Realistically, most of you don\u2019t actually receive notifications from YouTube, do you? Maybe more honestly, I should say subscribe so that the neural networks that underlie YouTube\u2019s recommendation algorithm are primed to believe that you want to see content from this channel recommended to you.' },
-                        { text: 'Anyway, stay posted for more. Thank you very much to everyone supporting these videos on Patreon. I\u2019ve been a little slow to progress in the probability series this summer, but I\u2019m jumping back into it after this project, so patrons, you can look out for updates there. To close things off here, I have with me Lisha Li, who did her PhD work on the theoretical side of deep learning and who currently works at a venture capital firm called Amplify Partners, which kindly provided some of the funding for this video. Lisha, one thing I think we should quickly bring up is this sigmoid function. As I understand it, early networks used this to squish the relevant weighted sum into that interval between zero and one, motivated by this biological analogy of neurons either being inactive or active.' },
-                        { text: 'Exactly. But relatively few modern networks actually use sigmoid anymore. Yeah, it\u2019s kind of old school, right? Yeah, or rather ReLU seems to be much easier to train. And ReLU stands for rectified linear unit? Yes, it\u2019s this kind of function where you\u2019re just taking a max of zero and a, where a is given by what you were explaining in the video. This was motivated partially by a biological analogy with how neurons would either be activated or not. If it passes a certain threshold, it would be the identity function, but if it did not, then it would just not be activated, so it\u2019d be zero. It\u2019s kind of a simplification. Using sigmoids didn\u2019t help training or it was very difficult to train at some point, and people just tried ReLU, and it happened to work very well for these incredibly deep neural networks.' },
+                        { text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math.' },
+                        { text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer.' },
+                        { text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that.' },
+                        { text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit.' },
+                        { text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer.' },
+                        { text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently.' },
+                        { text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be?' },
+                        { text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network.' },
                         { text: 'All right, thank you, Lisha.' },
                     ],
                 });
@@ -429,7 +894,6 @@
     }
 
     function transcribe(url) {
-        // Use mock fallback when no API is configured
         if (!API_BASE) return mockTranscribe(url);
 
         var controller = new AbortController();
@@ -505,16 +969,16 @@
                 currentItem.duration = data.duration;
                 currentItem.segments = data.segments;
                 renderResultCard(currentItem);
-                announce('Transcription complete: ' + data.title);
+                announce(t('announce.complete') + data.title);
                 showResultSection();
                 isProcessing = false;
             })
             .catch(function (err) {
                 clearInterval(statusInterval);
                 processingEl.hidden = true;
-                var msg = (err instanceof ApiError) ? err.message : 'Transcription failed. Try again.';
+                var msg = (err instanceof ApiError) ? err.message : t('error.generic');
                 showError(msg);
-                announce('Error: ' + msg);
+                announce(t('announce.error') + msg);
                 currentItem = null;
                 isProcessing = false;
                 submitBtn.disabled = false;
@@ -530,7 +994,9 @@
         submitBtn.disabled = false;
         if (paywallTimer) clearTimeout(paywallTimer);
         paywallTimer = setTimeout(showPaywall, 3000);
-        resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (window.innerWidth <= 768) {
+            resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     function renderResultCard(item) {
@@ -541,32 +1007,20 @@
         card.id = 'card-' + item.id;
         card.setAttribute('role', 'listitem');
 
-        // ── Card Header (accordion toggle) ──
-        var header = document.createElement('div');
-        header.className = 'result-card-header';
-
-        var toggleBtn = document.createElement('button');
-        toggleBtn.className = 'result-card-toggle';
-        toggleBtn.type = 'button';
-        toggleBtn.setAttribute('aria-expanded', 'true');
-        toggleBtn.setAttribute('aria-controls', 'card-body-' + item.id);
-
         var thumbLink = document.createElement('a');
         thumbLink.className = 'result-card-thumb';
         thumbLink.href = item.url;
         thumbLink.target = '_blank';
         thumbLink.rel = 'noopener noreferrer';
-        thumbLink.setAttribute('aria-label', 'Open video on YouTube');
+        thumbLink.setAttribute('aria-label', t('result.open-yt'));
+        thumbLink.setAttribute('data-i18n-aria-label', 'result.open-yt');
         var thumbImg = document.createElement('img');
         thumbImg.src = 'https://img.youtube.com/vi/' + item.videoId + '/mqdefault.jpg';
         thumbImg.alt = item.title;
-        thumbImg.width = 80;
-        thumbImg.height = 45;
+        thumbImg.width = 560;
+        thumbImg.height = 315;
         thumbImg.loading = 'lazy';
         thumbLink.appendChild(thumbImg);
-
-        var titleWrap = document.createElement('div');
-        titleWrap.className = 'result-card-meta';
 
         var titleEl = document.createElement('h2');
         titleEl.className = 'result-card-title';
@@ -575,49 +1029,44 @@
         var infoEl = document.createElement('p');
         infoEl.className = 'result-card-info';
         var hasTimestamps = item.segments.some(function (s) { return typeof s.start === 'number'; });
-        infoEl.textContent = item.segments.length + (hasTimestamps ? ' segments' : ' paragraphs') + ' \u00b7 ' + item.duration;
+        var infoCount = document.createTextNode(item.segments.length + ' ');
+        var infoUnit = document.createElement('span');
+        var unitKey = hasTimestamps ? 'result.segments' : 'result.paragraphs';
+        infoUnit.textContent = t(unitKey);
+        infoUnit.setAttribute('data-i18n', unitKey);
+        var infoDot = document.createTextNode(' \u00b7 ' + item.duration);
+        infoEl.appendChild(infoCount);
+        infoEl.appendChild(infoUnit);
+        infoEl.appendChild(infoDot);
 
-        titleWrap.appendChild(titleEl);
-        titleWrap.appendChild(infoEl);
+        var videoInfo = document.getElementById('video-info');
+        if (videoInfo) {
+            while (videoInfo.firstChild) videoInfo.removeChild(videoInfo.firstChild);
+            videoInfo.hidden = false;
+            videoInfo.appendChild(thumbLink);
+            videoInfo.appendChild(titleEl);
+            videoInfo.appendChild(infoEl);
+        }
 
-        var chevron = document.createElement('span');
-        chevron.className = 'result-card-chevron';
-        chevron.setAttribute('aria-hidden', 'true');
-        chevron.appendChild(createSvgElement('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'));
-
-        toggleBtn.appendChild(titleWrap);
-        toggleBtn.appendChild(chevron);
-        header.appendChild(thumbLink);
-        header.appendChild(toggleBtn);
-
-        // ── Card Body ──
         var body = document.createElement('div');
         body.className = 'result-card-body';
         body.id = 'card-body-' + item.id;
 
-        // Actions row
-        var actions = document.createElement('div');
-        actions.className = 'result-card-actions';
+        var toolbar = document.createElement('div');
+        toolbar.className = 'unified-toolbar';
 
-        // Download group
         var dlGroup = document.createElement('div');
         dlGroup.className = 'download-group';
 
         var dlBtn = document.createElement('button');
         dlBtn.className = 'action-btn action-btn--primary card-download-btn';
-        dlBtn.setAttribute('aria-label', 'Download transcript as text file');
+        dlBtn.setAttribute('aria-label', t('toolbar.download-aria'));
+        dlBtn.setAttribute('data-tooltip', t('toolbar.download-tooltip'));
+        dlBtn.setAttribute('data-i18n-aria-label', 'toolbar.download-aria');
+        dlBtn.setAttribute('data-i18n-data-tooltip', 'toolbar.download-tooltip');
+        dlBtn.setAttribute('aria-haspopup', 'true');
+        dlBtn.setAttribute('aria-expanded', 'false');
         dlBtn.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'));
-        var dlSpan = document.createElement('span');
-        dlSpan.textContent = 'Download .txt';
-        dlBtn.appendChild(dlSpan);
-        dlBtn.addEventListener('click', function () { showPaywall(true); });
-
-        var dlToggle = document.createElement('button');
-        dlToggle.className = 'action-btn action-btn--primary download-toggle';
-        dlToggle.setAttribute('aria-label', 'More download options');
-        dlToggle.setAttribute('aria-expanded', 'false');
-        dlToggle.setAttribute('aria-haspopup', 'true');
-        dlToggle.appendChild(createSvgElement('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'));
 
         var dlMenu = document.createElement('div');
         dlMenu.className = 'download-menu';
@@ -628,22 +1077,24 @@
         dlTxt.className = 'download-menu-item';
         dlTxt.setAttribute('role', 'menuitem');
         dlTxt.setAttribute('tabindex', '-1');
-        dlTxt.textContent = 'Download .txt';
-        dlTxt.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlToggle); });
+        dlTxt.setAttribute('data-i18n', 'toolbar.download-txt');
+        dlTxt.textContent = t('toolbar.download-txt');
+        dlTxt.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlBtn); });
 
         var dlMd = document.createElement('button');
         dlMd.className = 'download-menu-item';
         dlMd.setAttribute('role', 'menuitem');
         dlMd.setAttribute('tabindex', '-1');
-        dlMd.textContent = 'Download .md';
-        dlMd.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlToggle); });
+        dlMd.setAttribute('data-i18n', 'toolbar.download-md');
+        dlMd.textContent = t('toolbar.download-md');
+        dlMd.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlBtn); });
 
         dlMenu.appendChild(dlTxt);
         dlMenu.appendChild(dlMd);
 
         function openDownloadMenu() {
             dlMenu.hidden = false;
-            dlToggle.setAttribute('aria-expanded', 'true');
+            dlBtn.setAttribute('aria-expanded', 'true');
             var firstItem = dlMenu.querySelector('[role="menuitem"]');
             if (firstItem) firstItem.focus();
         }
@@ -653,16 +1104,13 @@
             toggle.setAttribute('aria-expanded', 'false');
         }
 
-        dlToggle.addEventListener('click', function (e) {
+        dlBtn.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (dlMenu.hidden) {
-                openDownloadMenu();
-            } else {
-                closeDownloadMenu(dlMenu, dlToggle);
-            }
+            if (dlMenu.hidden) openDownloadMenu();
+            else closeDownloadMenu(dlMenu, dlBtn);
         });
 
-        dlToggle.addEventListener('keydown', function (e) {
+        dlBtn.addEventListener('keydown', function (e) {
             if ((e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') && dlMenu.hidden) {
                 e.preventDefault();
                 openDownloadMenu();
@@ -672,51 +1120,68 @@
         dlMenu.addEventListener('keydown', function (e) {
             var items = Array.prototype.slice.call(dlMenu.querySelectorAll('[role="menuitem"]'));
             var idx = items.indexOf(document.activeElement);
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                var next = idx + 1 < items.length ? idx + 1 : 0;
-                items[next].focus();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                var prev = idx - 1 >= 0 ? idx - 1 : items.length - 1;
-                items[prev].focus();
-            } else if (e.key === 'Escape') {
-                e.preventDefault();
-                closeDownloadMenu(dlMenu, dlToggle);
-                dlToggle.focus();
-            } else if (e.key === 'Tab') {
-                closeDownloadMenu(dlMenu, dlToggle);
-            }
+            if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+            else if (e.key === 'Escape') { e.preventDefault(); closeDownloadMenu(dlMenu, dlBtn); dlBtn.focus(); }
+            else if (e.key === 'Tab') { closeDownloadMenu(dlMenu, dlBtn); }
         });
 
         dlGroup.appendChild(dlBtn);
-        dlGroup.appendChild(dlToggle);
         dlGroup.appendChild(dlMenu);
 
-        // Copy button
         var copyBtn = document.createElement('button');
         copyBtn.className = 'action-btn';
-        copyBtn.setAttribute('aria-label', 'Copy transcript');
+        copyBtn.setAttribute('aria-label', t('toolbar.copy-aria'));
+        copyBtn.setAttribute('data-tooltip', t('toolbar.copy-tooltip'));
+        copyBtn.setAttribute('data-i18n-aria-label', 'toolbar.copy-aria');
+        copyBtn.setAttribute('data-i18n-data-tooltip', 'toolbar.copy-tooltip');
         copyBtn.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
-        var copyLabel = document.createElement('span');
-        copyLabel.textContent = 'Copy';
-        copyBtn.appendChild(copyLabel);
         copyBtn.addEventListener('click', function () { showPaywall(true); });
 
-        // Upgrade CTA
         var upgradeCta = document.createElement('a');
         upgradeCta.href = 'pricing.html';
         upgradeCta.className = 'cta-upgrade';
-        upgradeCta.setAttribute('aria-label', 'View pricing plans');
-        upgradeCta.appendChild(createSvgElement('<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
-        upgradeCta.appendChild(document.createTextNode('Upgrade'));
+        upgradeCta.setAttribute('aria-label', t('toolbar.plans-aria'));
+        upgradeCta.setAttribute('data-tooltip', t('toolbar.plans-tooltip'));
+        upgradeCta.setAttribute('data-i18n-aria-label', 'toolbar.plans-aria');
+        upgradeCta.setAttribute('data-i18n-data-tooltip', 'toolbar.plans-tooltip');
+        upgradeCta.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
 
-        actions.appendChild(dlGroup);
-        actions.appendChild(copyBtn);
-        actions.appendChild(upgradeCta);
+        toolbar.appendChild(dlGroup);
+        toolbar.appendChild(copyBtn);
 
-        // Transcript wrapper (transcript + AI toolbar)
+        var divider1 = document.createElement('span');
+        divider1.className = 'toolbar-divider';
+        divider1.setAttribute('aria-hidden', 'true');
+        toolbar.appendChild(divider1);
+
+        var aiActionDefs = [
+            { action: 'summarize', label: t('ai.summarize'), tooltip: t('ai.summarize'), i18nKey: 'ai.summarize', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' },
+            { action: 'key-points', label: t('ai.keypoints'), tooltip: t('ai.keypoints'), i18nKey: 'ai.keypoints', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
+            { action: 'translate', label: t('ai.translate'), tooltip: t('ai.translate'), i18nKey: 'ai.translate', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
+        ];
+
+        aiActionDefs.forEach(function (ai) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ai-action-btn';
+            btn.setAttribute('data-action', ai.action);
+            btn.setAttribute('data-tooltip', ai.tooltip);
+            btn.setAttribute('aria-label', ai.tooltip);
+            btn.setAttribute('data-i18n-data-tooltip', ai.i18nKey);
+            btn.setAttribute('data-i18n-aria-label', ai.i18nKey);
+            btn.appendChild(createSvgElement(ai.svg));
+            btn.addEventListener('click', function () { showPaywall(true); });
+            toolbar.appendChild(btn);
+        });
+
+        var divider2 = document.createElement('span');
+        divider2.className = 'toolbar-divider';
+        divider2.setAttribute('aria-hidden', 'true');
+        toolbar.appendChild(divider2);
+        if (planStrip) toolbar.appendChild(planStrip);
+        toolbar.appendChild(upgradeCta);
+
         var transcriptWrapper = document.createElement('div');
         transcriptWrapper.className = 'transcript-wrapper';
 
@@ -724,21 +1189,22 @@
         transcript.className = 'transcript';
         transcript.setAttribute('role', 'region');
         transcript.setAttribute('tabindex', '0');
-        transcript.setAttribute('aria-label', 'Transcript text');
+        transcript.setAttribute('aria-label', t('transcript.aria'));
+        transcript.setAttribute('data-i18n-aria-label', 'transcript.aria');
 
         var cleanBadge = document.createElement('span');
         cleanBadge.className = 'transcript-clean-badge';
-        cleanBadge.textContent = '\u2726 Auto-enhanced';
-        cleanBadge.setAttribute('data-tooltip', 'Corrected punctuation, filler words removed, and formatting improved');
+        cleanBadge.textContent = t('transcript.badge');
+        cleanBadge.setAttribute('data-tooltip', t('transcript.badge-tooltip'));
+        cleanBadge.setAttribute('data-i18n', 'transcript.badge');
+        cleanBadge.setAttribute('data-i18n-data-tooltip', 'transcript.badge-tooltip');
         transcript.appendChild(cleanBadge);
 
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         item.segments.forEach(function (seg, i) {
             var div = document.createElement('div');
             div.className = 'transcript-segment';
-            if (!reducedMotion) {
-                div.style.animationDelay = Math.min(i * 30, 600) + 'ms';
-            }
+            if (!reducedMotion) div.style.animationDelay = Math.min(i * 30, 600) + 'ms';
             if (typeof seg.start === 'number') {
                 var timeSpan = document.createElement('span');
                 timeSpan.className = 'segment-time';
@@ -754,45 +1220,8 @@
             transcript.appendChild(div);
         });
 
-        // AI toolbar
-        var aiToolbar = document.createElement('aside');
-        aiToolbar.className = 'ai-toolbar';
-        aiToolbar.setAttribute('aria-label', 'AI actions');
-
-        var aiActionDefs = [
-            { action: 'summarize', tooltip: 'Summarize', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' },
-            { action: 'key-points', tooltip: 'Key points', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
-            { action: 'translate', tooltip: 'Translate', svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
-            { action: 'rewrite', tooltip: 'Rewrite as article', comingSoon: true, svg: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>' },
-        ];
-
-        aiActionDefs.forEach(function (ai) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'ai-action-btn';
-            btn.setAttribute('data-action', ai.action);
-            btn.setAttribute('data-tooltip', ai.comingSoon ? 'Coming soon' : ai.tooltip);
-            btn.setAttribute('aria-label', ai.tooltip + ' transcript');
-            btn.appendChild(createSvgElement(ai.svg));
-            if (ai.comingSoon) {
-                btn.classList.add('ai-action-btn--coming-soon');
-                btn.setAttribute('aria-disabled', 'true');
-                var badge = document.createElement('span');
-                badge.className = 'ai-coming-soon-badge';
-                badge.textContent = 'Soon';
-                btn.appendChild(badge);
-            } else {
-                btn.addEventListener('click', function () {
-                    showPaywall(true);
-                });
-            }
-            aiToolbar.appendChild(btn);
-        });
-
         transcriptWrapper.appendChild(transcript);
-        transcriptWrapper.appendChild(aiToolbar);
 
-        // AI result panel (per card)
         var aiPanel = document.createElement('div');
         aiPanel.className = 'ai-result-panel';
         aiPanel.id = 'ai-result-' + item.id;
@@ -806,11 +1235,10 @@
         var aiClose = document.createElement('button');
         aiClose.type = 'button';
         aiClose.className = 'ai-result-close';
-        aiClose.setAttribute('aria-label', 'Close AI result');
+        aiClose.setAttribute('aria-label', t('ai.close'));
+        aiClose.setAttribute('data-i18n-aria-label', 'ai.close');
         aiClose.appendChild(createSvgElement('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'));
-        aiClose.addEventListener('click', function () {
-            closeCardAIResult(card);
-        });
+        aiClose.addEventListener('click', function () { closeCardAIResult(card); });
         aiHeader.appendChild(aiBadge);
         aiHeader.appendChild(aiClose);
 
@@ -822,26 +1250,16 @@
         aiPanel.appendChild(aiHeader);
         aiPanel.appendChild(aiBody);
 
-        // Assemble card body
-        body.appendChild(actions);
+        toolbar.setAttribute('role', 'toolbar');
+        toolbar.setAttribute('aria-orientation', 'horizontal');
+        toolbar.setAttribute('aria-label', t('toolbar.aria'));
+        toolbar.setAttribute('data-i18n-aria-label', 'toolbar.aria');
+
+        transcriptWrapper.insertBefore(toolbar, transcript);
         body.appendChild(transcriptWrapper);
         body.appendChild(aiPanel);
-
-        // Assemble card
-        card.appendChild(header);
         card.appendChild(body);
-
-        // Accordion toggle behavior
-        toggleBtn.addEventListener('click', function (e) {
-            var expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-            toggleBtn.setAttribute('aria-expanded', String(!expanded));
-            body.hidden = expanded;
-        });
-
         resultsList.appendChild(card);
-
-        titleEl.setAttribute('tabindex', '-1');
-        titleEl.focus({ preventScroll: false });
     }
 
     // ── Per-card Actions ─────────────────────────────────────────
@@ -853,12 +1271,12 @@
 
         function onCopied() {
             btn.classList.add('copied');
-            label.textContent = 'Copied';
-            btn.setAttribute('aria-label', 'Copied to clipboard');
+            label.textContent = t('toolbar.copied');
+            btn.setAttribute('aria-label', t('toolbar.copied-aria'));
             setTimeout(function () {
                 btn.classList.remove('copied');
-                label.textContent = 'Copy';
-                btn.setAttribute('aria-label', 'Copy transcript');
+                label.textContent = t('toolbar.copy-tooltip');
+                btn.setAttribute('aria-label', t('toolbar.copy-aria'));
             }, 2000);
         }
 
@@ -887,7 +1305,6 @@
     function handleCardDownload(format) {
         if (!currentItem) return;
         var item = currentItem;
-
         format = format || 'txt';
         var text, mime, ext;
         if (format === 'md') {
@@ -900,12 +1317,7 @@
             ext  = '.txt';
         }
         if (!text) return;
-
-        var safeName = item.title
-            .replace(/[^a-zA-Z0-9\s-]/g, '')
-            .replace(/\s+/g, '_')
-            .substring(0, 60);
-
+        var safeName = item.title.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_').substring(0, 60);
         var blob = new Blob([text], { type: mime });
         var url  = URL.createObjectURL(blob);
         var a    = document.createElement('a');
@@ -919,87 +1331,33 @@
 
     // ── AI Actions (per card) ────────────────────────────────────
     var AI_ACTIONS = {
-        summarize: {
-            label: 'Summary',
-            icon: '\u26A1',
-            delay: 2000,
-            render: function () {
-                var frag = document.createDocumentFragment();
-                var p1 = document.createElement('p');
-                p1.textContent = 'This introductory lecture covers the fundamentals of artificial intelligence. Starting with AI\u2019s origins at the 1956 Dartmouth conference, it traces the field through periods of excitement and \u201CAI winters\u201D to the modern deep learning revolution.';
-                var p2 = document.createElement('p');
-                p2.textContent = 'Key topics include computer vision, NLP, and AI-powered speech recognition. The course will progress from basic neural networks to transformers, with practical assignments using Python, NumPy, and PyTorch.';
-                frag.appendChild(p1);
-                frag.appendChild(p2);
-                return frag;
-            }
-        },
-        'key-points': {
-            label: 'Key Points',
-            icon: '\u2261',
-            delay: 1800,
-            render: function () {
-                var ul = document.createElement('ul');
-                ['AI originated at the 1956 Dartmouth conference',
-                 'The field has gone through cycles of enthusiasm and \u201CAI winters\u201D',
-                 'Recent computational power and data availability drove breakthroughs',
-                 'Deep learning revolutionized vision, NLP, and speech recognition',
-                 'AI-powered speech recognition enables multilingual audio transcription',
-                 'Course covers neural networks \u2192 transformers',
-                 'Prerequisites: Python, NumPy, PyTorch'
-                ].forEach(function (text) {
-                    var li = document.createElement('li');
-                    li.textContent = text;
-                    ul.appendChild(li);
-                });
-                return ul;
-            }
-        },
-        translate: {
-            label: 'Translation',
-            icon: '\uD83C\uDF10',
-            delay: 2500,
-            render: function () {
-                var frag = document.createDocumentFragment();
-                var lbl = document.createElement('p');
-                lbl.style.fontSize = '0.75rem';
-                lbl.style.color = 'var(--text-muted)';
-                lbl.style.marginBottom = 'var(--space-sm)';
-                lbl.textContent = 'Translated to Spanish';
-                frag.appendChild(lbl);
-                ['Bienvenidos a esta primera clase sobre inteligencia artificial. Hoy comenzaremos con los conceptos fundamentales.',
-                 'La inteligencia artificial es un campo de la inform\u00E1tica que busca crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.',
-                 'Esto incluye el aprendizaje, el razonamiento, la percepci\u00F3n y la comprensi\u00F3n del lenguaje natural.'
-                ].forEach(function (text) {
-                    var p = document.createElement('p');
-                    p.textContent = text;
-                    frag.appendChild(p);
-                });
-                return frag;
-            }
-        },
-        rewrite: {
-            label: 'Rewrite',
-            icon: '\u270F\uFE0F',
-            delay: 2500,
-            render: function () {
-                var frag = document.createDocumentFragment();
-                var h4 = document.createElement('h4');
-                h4.style.marginBottom = 'var(--space-sm)';
-                h4.textContent = 'The Rise of Artificial Intelligence: From Dartmouth to Deep Learning';
-                var p1 = document.createElement('p');
-                p1.textContent = 'Artificial intelligence, once a niche academic pursuit born at a small workshop in Dartmouth in 1956, has become one of the most transformative technologies of our time. What began as an ambitious dream to replicate human cognition in machines has evolved through decades of breakthroughs and setbacks into a discipline that touches nearly every aspect of modern life.';
-                var p2 = document.createElement('p');
-                p2.textContent = 'The journey was far from linear. Periods of intense optimism gave way to so-called "AI winters," where funding dried up and progress stalled. Yet each winter was followed by a renaissance, fueled by new ideas and, crucially, by exponential growth in computational power and data availability.';
-                var p3 = document.createElement('p');
-                p3.textContent = 'Today, deep learning has revolutionized fields from computer vision to natural language processing and speech recognition. Neural networks can now identify objects in images, translate between languages in real time, and transcribe spoken words with remarkable accuracy \u2014 capabilities that seemed like science fiction just a decade ago.';
-                frag.appendChild(h4);
-                frag.appendChild(p1);
-                frag.appendChild(p2);
-                frag.appendChild(p3);
-                return frag;
-            }
-        }
+        summarize: { label: 'Summary', icon: '\u26A1', delay: 2000, render: function () {
+            var frag = document.createDocumentFragment();
+            var p1 = document.createElement('p');
+            p1.textContent = 'This introductory lecture covers the fundamentals of artificial intelligence. Starting with AI\u2019s origins at the 1956 Dartmouth conference, it traces the field through periods of excitement and \u201CAI winters\u201D to the modern deep learning revolution.';
+            var p2 = document.createElement('p');
+            p2.textContent = 'Key topics include computer vision, NLP, and AI-powered speech recognition. The course will progress from basic neural networks to transformers, with practical assignments using Python, NumPy, and PyTorch.';
+            frag.appendChild(p1); frag.appendChild(p2); return frag;
+        }},
+        'key-points': { label: 'Key Points', icon: '\u2261', delay: 1800, render: function () {
+            var ul = document.createElement('ul');
+            ['AI originated at the 1956 Dartmouth conference','The field has gone through cycles of enthusiasm and \u201CAI winters\u201D','Recent computational power and data availability drove breakthroughs','Deep learning revolutionized vision, NLP, and speech recognition','AI-powered speech recognition enables multilingual audio transcription','Course covers neural networks \u2192 transformers','Prerequisites: Python, NumPy, PyTorch'].forEach(function (text) { var li = document.createElement('li'); li.textContent = text; ul.appendChild(li); });
+            return ul;
+        }},
+        translate: { label: 'Translation', icon: '\uD83C\uDF10', delay: 2500, render: function () {
+            var frag = document.createDocumentFragment();
+            var lbl = document.createElement('p'); lbl.style.fontSize = '0.75rem'; lbl.style.color = 'var(--text-muted)'; lbl.style.marginBottom = 'var(--space-sm)'; lbl.textContent = t('ai.translate-label'); frag.appendChild(lbl);
+            ['Bienvenidos a esta primera clase sobre inteligencia artificial.','La inteligencia artificial es un campo de la inform\u00E1tica que busca crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.','Esto incluye el aprendizaje, el razonamiento, la percepci\u00F3n y la comprensi\u00F3n del lenguaje natural.'].forEach(function (text) { var p = document.createElement('p'); p.textContent = text; frag.appendChild(p); });
+            return frag;
+        }},
+        rewrite: { label: 'Rewrite', icon: '\u270F\uFE0F', delay: 2500, render: function () {
+            var frag = document.createDocumentFragment();
+            var h4 = document.createElement('h4'); h4.style.marginBottom = 'var(--space-sm)'; h4.textContent = 'The Rise of Artificial Intelligence: From Dartmouth to Deep Learning';
+            var p1 = document.createElement('p'); p1.textContent = 'Artificial intelligence, once a niche academic pursuit born at a small workshop in Dartmouth in 1956, has become one of the most transformative technologies of our time.';
+            var p2 = document.createElement('p'); p2.textContent = 'The journey was far from linear. Periods of intense optimism gave way to so-called "AI winters," where funding dried up and progress stalled.';
+            var p3 = document.createElement('p'); p3.textContent = 'Today, deep learning has revolutionized fields from computer vision to natural language processing and speech recognition.';
+            frag.appendChild(h4); frag.appendChild(p1); frag.appendChild(p2); frag.appendChild(p3); return frag;
+        }}
     };
 
     function buildLoadingIndicator() {
@@ -1009,69 +1367,44 @@
         dots.className = 'ai-result-loading-dot';
         for (var i = 0; i < 3; i++) dots.appendChild(document.createElement('span'));
         wrap.appendChild(dots);
-        wrap.appendChild(document.createTextNode(' Thinking\u2026'));
+        wrap.appendChild(document.createTextNode(' ' + t('ai.thinking')));
         return wrap;
     }
 
     function handleCardAIAction(action, cardEl) {
         if (!currentItem) return;
         var item = currentItem;
-
-        if (item.activeAI === action) {
-            closeCardAIResult(cardEl);
-            return;
-        }
-
+        if (item.activeAI === action) { closeCardAIResult(cardEl); return; }
         item.activeAI = action;
         var config = AI_ACTIONS[action];
         if (!config) return;
-
         var btns = cardEl.querySelectorAll('.ai-action-btn');
-        btns.forEach(function (btn) {
-            btn.classList.toggle('ai-action-btn--active', btn.getAttribute('data-action') === action);
-        });
-
+        btns.forEach(function (btn) { btn.classList.toggle('ai-action-btn--active', btn.getAttribute('data-action') === action); });
         var panel = cardEl.querySelector('.ai-result-panel');
         var badge = cardEl.querySelector('.ai-result-badge');
         var aiBody = cardEl.querySelector('.ai-result-body');
         if (!panel || !badge || !aiBody) return;
-
         badge.textContent = config.icon + ' ' + config.label;
         panel.hidden = false;
         clearElement(aiBody);
-
         if (config.delay > 0) {
             aiBody.appendChild(buildLoadingIndicator());
-            setTimeout(function () {
-                if (item.activeAI === action) {
-                    clearElement(aiBody);
-                    aiBody.appendChild(config.render());
-                }
-            }, config.delay);
-        } else {
-            aiBody.appendChild(config.render());
-        }
-
+            setTimeout(function () { if (item.activeAI === action) { clearElement(aiBody); aiBody.appendChild(config.render()); } }, config.delay);
+        } else { aiBody.appendChild(config.render()); }
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function closeCardAIResult(cardEl) {
         if (currentItem) currentItem.activeAI = null;
-
         var panel = cardEl.querySelector('.ai-result-panel');
         var aiBody = cardEl.querySelector('.ai-result-body');
         if (panel) panel.hidden = true;
         if (aiBody) clearElement(aiBody);
-
-        var btns = cardEl.querySelectorAll('.ai-action-btn');
-        btns.forEach(function (btn) {
-            btn.classList.remove('ai-action-btn--active');
-        });
+        cardEl.querySelectorAll('.ai-action-btn').forEach(function (btn) { btn.classList.remove('ai-action-btn--active'); });
     }
 
     // ── Paywall Modal ────────────────────────────────────────────
     var paywallTrigger = null;
-
     function showPaywall(force) {
         if (!paywallOverlay) return;
         if (!force && sessionStorage.getItem('yt2txt-paywall-dismissed')) return;
@@ -1081,19 +1414,14 @@
         trapFocus(paywallOverlay);
         if (paywallClose) paywallClose.focus();
     }
-
     function dismissPaywall() {
         if (!paywallOverlay) return;
         releaseFocusTrap();
         paywallOverlay.hidden = true;
         document.body.style.overflow = '';
         sessionStorage.setItem('yt2txt-paywall-dismissed', '1');
-        if (paywallTrigger && paywallTrigger.focus) {
-            paywallTrigger.focus();
-            paywallTrigger = null;
-        }
+        if (paywallTrigger && paywallTrigger.focus) { paywallTrigger.focus(); paywallTrigger = null; }
     }
-
     if (paywallClose) paywallClose.addEventListener('click', dismissPaywall);
     if (paywallBackdrop) paywallBackdrop.addEventListener('click', dismissPaywall);
 
@@ -1106,29 +1434,28 @@
         processingEl.hidden = true;
         if (paywallTimer) clearTimeout(paywallTimer);
         dismissPaywall();
+        if (planStrip && planStrip.closest('.results-list')) {
+            if (planStripSibling && planStripSibling.parentNode === planStripParent) planStripParent.insertBefore(planStrip, planStripSibling);
+            else if (planStripParent) planStripParent.appendChild(planStrip);
+        }
         if (resultsList) clearElement(resultsList);
         urlInput.value = '';
         urlInput.removeAttribute('readonly');
         submitBtn.disabled = false;
         clearError();
-
+        var videoInfo = document.getElementById('video-info');
+        if (videoInfo) { videoInfo.hidden = true; while (videoInfo.firstChild) videoInfo.removeChild(videoInfo.firstChild); }
         if (currentController) { currentController.abort(); currentController = null; }
         currentItem = null;
         isProcessing = false;
-
-        var heroSection = document.getElementById('hero');
+        var heroSection = document.getElementById('transcribe');
         if (heroSection) heroSection.scrollIntoView();
         urlInput.focus({ preventScroll: true });
         startTagline();
     }
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            if (paywallOverlay && !paywallOverlay.hidden) {
-                dismissPaywall();
-                e.stopImmediatePropagation();
-            }
-        }
+        if (e.key === 'Escape' && paywallOverlay && !paywallOverlay.hidden) { dismissPaywall(); e.stopImmediatePropagation(); }
     });
 
     // ── Submit Handler ───────────────────────────────────────────
@@ -1136,45 +1463,27 @@
         e.preventDefault();
         if (demoInProgress) return;
         clearError();
-
-        if (currentItem && currentItem.status === 'done') {
-            resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            return;
-        }
-
+        if (currentItem && currentItem.status === 'done') { resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
         if (isProcessing) return;
-
         var url = urlInput.value.trim();
         var validationError = getURLValidationError(url);
-        if (validationError) {
-            showError(validationError);
-            urlInput.focus();
-            return;
-        }
-
+        if (validationError) { showError(validationError); urlInput.focus(); return; }
         runTranscription(url);
     }
 
-    // ── Input: clear error on typing ────────────────────────────
     if (urlInput) {
         urlInput.addEventListener('input', function () {
-            if (inputHint && inputHint.classList.contains('show-error')) {
-                clearError();
-            }
+            if (inputHint && inputHint.classList.contains('show-error')) clearError();
         });
     }
 
     // ── Bind Events ─────────────────────────────────────────────
     var addBtn = document.getElementById('add-btn');
     if (addBtn) addBtn.addEventListener('click', function () { showPaywall(true); });
-
     if (form) form.addEventListener('submit', handleSubmit);
-    if (newBtn) newBtn.addEventListener('click', resetUI);
 
-    // Close download menus on outside click
     document.addEventListener('click', function (e) {
-        var openMenus = document.querySelectorAll('.result-card .download-menu:not([hidden])');
-        openMenus.forEach(function (menu) {
+        document.querySelectorAll('.result-card .download-menu:not([hidden])').forEach(function (menu) {
             if (!menu.parentElement.contains(e.target)) {
                 menu.hidden = true;
                 var toggle = menu.parentElement.querySelector('.download-toggle');
@@ -1183,27 +1492,10 @@
         });
     });
 
-    // ── Landing CTA & Scroll ────────────────────────────────────
-    var landingCta = document.getElementById('landing-cta');
-
-    function scrollToHero() {
-        var heroEl = document.getElementById('hero');
-        if (heroEl) {
-            heroEl.scrollIntoView({ behavior: 'smooth' });
-            if (demoPlayed) {
-                setTimeout(function () { urlInput.focus({ preventScroll: true }); }, 600);
-            }
-        }
-    }
-
-    if (landingCta) landingCta.addEventListener('click', scrollToHero);
-
-    // ── Cleanup on page unload ─────────────────────────────────
     window.addEventListener('beforeunload', function () {
         if (currentController) { currentController.abort(); currentController = null; }
     });
 
-    // ── Start Tagline Rotation ──────────────────────────────────
     startTagline();
 
     // ── Features Carousel ────────────────────────────────────────
@@ -1215,16 +1507,8 @@
     var featureTimer = null;
 
     function activateFeature(index) {
-        featureTabs.forEach(function (t, i) {
-            t.classList.toggle('features-tab--active', i === index);
-            t.setAttribute('aria-selected', i === index ? 'true' : 'false');
-            t.setAttribute('tabindex', i === index ? '0' : '-1');
-        });
-        featurePanels.forEach(function (p, i) {
-            p.classList.toggle('features-panel--active', i === index);
-            if (i === index) p.removeAttribute('hidden');
-            else p.setAttribute('hidden', '');
-        });
+        featureTabs.forEach(function (t, i) { t.classList.toggle('features-tab--active', i === index); t.setAttribute('aria-selected', i === index ? 'true' : 'false'); t.setAttribute('tabindex', i === index ? '0' : '-1'); });
+        featurePanels.forEach(function (p, i) { p.classList.toggle('features-panel--active', i === index); if (i === index) p.removeAttribute('hidden'); else p.setAttribute('hidden', ''); });
         featureIndex = index;
     }
 
@@ -1232,97 +1516,47 @@
         if (!featuresProgressFill) return;
         featuresProgressFill.style.transition = 'none';
         featuresProgressFill.style.width = '0%';
-        requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-                featuresProgressFill.style.transition = 'width ' + FEATURE_INTERVAL + 'ms linear';
-                featuresProgressFill.style.width = '100%';
-            });
-        });
+        requestAnimationFrame(function () { requestAnimationFrame(function () { featuresProgressFill.style.transition = 'width ' + FEATURE_INTERVAL + 'ms linear'; featuresProgressFill.style.width = '100%'; }); });
     }
 
     function startFeatureCarousel() {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         clearInterval(featureTimer);
         startFeatureProgress();
-        featureTimer = setInterval(function () {
-            var next = (featureIndex + 1) % featureTabs.length;
-            activateFeature(next);
-            startFeatureProgress();
-        }, FEATURE_INTERVAL);
+        featureTimer = setInterval(function () { var next = (featureIndex + 1) % featureTabs.length; activateFeature(next); startFeatureProgress(); }, FEATURE_INTERVAL);
     }
 
-    function stopFeatureCarousel() {
-        clearInterval(featureTimer);
-        featureTimer = null;
-        if (featuresProgressFill) {
-            featuresProgressFill.style.transition = 'none';
-            featuresProgressFill.style.width = '0%';
-        }
-    }
+    function stopFeatureCarousel() { clearInterval(featureTimer); featureTimer = null; if (featuresProgressFill) { featuresProgressFill.style.transition = 'none'; featuresProgressFill.style.width = '0%'; } }
 
     var featuresSection = document.getElementById('features');
     if (featuresSection && featureTabs.length > 0) {
         featuresSection.addEventListener('mouseenter', stopFeatureCarousel);
         featuresSection.addEventListener('mouseleave', startFeatureCarousel);
         featuresSection.addEventListener('focusin', stopFeatureCarousel);
-        featuresSection.addEventListener('focusout', function (e) {
-            if (!featuresSection.contains(e.relatedTarget)) {
-                startFeatureCarousel();
-            }
-        });
-
-        featureTabs.forEach(function (tab, i) {
-            tab.addEventListener('click', function () {
-                activateFeature(i);
-                startFeatureCarousel();
-            });
-        });
-
+        featuresSection.addEventListener('focusout', function (e) { if (!featuresSection.contains(e.relatedTarget)) startFeatureCarousel(); });
+        featureTabs.forEach(function (tab, i) { tab.addEventListener('click', function () { activateFeature(i); startFeatureCarousel(); }); });
         featureTabs.forEach(function (tab, i) {
             tab.setAttribute('tabindex', i === featureIndex ? '0' : '-1');
             tab.addEventListener('keydown', function (e) {
-                var len = featureTabs.length;
-                var newIndex = -1;
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    newIndex = (i + 1) % len;
-                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    newIndex = (i - 1 + len) % len;
-                } else if (e.key === 'Home') {
-                    e.preventDefault();
-                    newIndex = 0;
-                } else if (e.key === 'End') {
-                    e.preventDefault();
-                    newIndex = len - 1;
-                }
-                if (newIndex >= 0) {
-                    featureTabs.forEach(function (t, j) {
-                        t.setAttribute('tabindex', j === newIndex ? '0' : '-1');
-                    });
-                    featureTabs[newIndex].focus();
-                    activateFeature(newIndex);
-                    startFeatureCarousel();
-                }
+                var len = featureTabs.length; var newIndex = -1;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); newIndex = (i + 1) % len; }
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); newIndex = (i - 1 + len) % len; }
+                else if (e.key === 'Home') { e.preventDefault(); newIndex = 0; }
+                else if (e.key === 'End') { e.preventDefault(); newIndex = len - 1; }
+                if (newIndex >= 0) { featureTabs.forEach(function (t, j) { t.setAttribute('tabindex', j === newIndex ? '0' : '-1'); }); featureTabs[newIndex].focus(); activateFeature(newIndex); startFeatureCarousel(); }
             });
         });
-
         startFeatureCarousel();
     }
 
     // ── Floating Island: Scroll-linked Active State ──────────────
     var islandSteps = document.querySelectorAll('.island-step[data-section]');
     var islandIndicator = document.querySelector('.island-indicator');
-
-    var stepSectionMap = {
-        features: document.getElementById('features'),
-        hero: document.getElementById('hero')
-    };
+    var stepSectionMap = { features: document.getElementById('features'), transcribe: document.getElementById('transcribe') };
 
     function updateIslandIndicator(activeBtn) {
         if (!islandIndicator || !activeBtn) return;
-        var stepsContainer = activeBtn.parentElement;
-        if (!stepsContainer) return;
+        var stepsContainer = activeBtn.parentElement; if (!stepsContainer) return;
         var containerRect = stepsContainer.getBoundingClientRect();
         var btnRect = activeBtn.getBoundingClientRect();
         islandIndicator.style.left = (btnRect.left - containerRect.left) + 'px';
@@ -1332,37 +1566,19 @@
     var islandMenuItems = document.querySelectorAll('.island-menu-item[data-section]');
 
     function setActiveIslandStep(sectionName) {
-        islandSteps.forEach(function (link) {
-            var isActive = sectionName && link.getAttribute('data-section') === sectionName;
-            link.classList.toggle('island-step--active', isActive);
-            if (isActive) updateIslandIndicator(link);
-        });
-        islandMenuItems.forEach(function (item) {
-            var isActive = sectionName && item.getAttribute('data-section') === sectionName;
-            item.classList.toggle('island-menu-item--active', isActive);
-        });
-        if (islandIndicator) {
-            islandIndicator.style.opacity = sectionName ? '1' : '0';
-        }
+        islandSteps.forEach(function (link) { var isActive = sectionName && link.getAttribute('data-section') === sectionName; link.classList.toggle('island-step--active', isActive); if (isActive) updateIslandIndicator(link); });
+        islandMenuItems.forEach(function (item) { var isActive = sectionName && item.getAttribute('data-section') === sectionName; item.classList.toggle('island-menu-item--active', isActive); });
+        if (islandIndicator) islandIndicator.style.opacity = sectionName ? '1' : '0';
     }
 
     function updateIslandActive() {
-        var scrollY = window.scrollY + window.innerHeight * 0.35;
-        var active = null;
-        var entries = [
-            { name: 'hero', el: stepSectionMap.hero },
-            { name: 'features', el: stepSectionMap.features }
-        ];
-        for (var i = 0; i < entries.length; i++) {
-            if (entries[i].el && entries[i].el.offsetTop <= scrollY) {
-                active = entries[i].name;
-                break;
-            }
-        }
+        var scrollY = window.scrollY + window.innerHeight * 0.35; var active = null;
+        var entries = [{ name: 'features', el: stepSectionMap.features }, { name: 'transcribe', el: stepSectionMap.transcribe }];
+        for (var i = 0; i < entries.length; i++) { if (entries[i].el && entries[i].el.offsetTop <= scrollY) { active = entries[i].name; break; } }
         setActiveIslandStep(active);
     }
 
-    if (islandSteps.length > 0 && stepSectionMap.features && stepSectionMap.hero) {
+    if (islandSteps.length > 0 && stepSectionMap.features && stepSectionMap.transcribe) {
         window.addEventListener('scroll', updateIslandActive, { passive: true });
         requestAnimationFrame(function () { updateIslandActive(); });
     }
@@ -1371,81 +1587,53 @@
     function runDemo() {
         if (demoPlayed || demoInProgress) return;
         if (!urlInput || !form) return;
-        demoPlayed = true;
-        demoInProgress = true;
-
-        urlInput.setAttribute('readonly', '');
-        urlInput.placeholder = '';
-        form.classList.add('demo-mode');
-        submitBtn.disabled = true;
-
+        demoPlayed = true; demoInProgress = true;
+        urlInput.setAttribute('readonly', ''); urlInput.placeholder = '';
+        form.classList.add('demo-mode'); submitBtn.disabled = true;
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (reducedMotion) {
-            urlInput.value = DEMO_URL;
-            setTimeout(demoSubmit, 300);
-            return;
-        }
-
-        // Create blinking cursor
-        var cursor = document.createElement('span');
-        cursor.className = 'demo-cursor';
-        cursor.setAttribute('aria-hidden', 'true');
+        if (reducedMotion) { urlInput.value = DEMO_URL; setTimeout(demoSubmit, 300); return; }
+        var cursor = document.createElement('span'); cursor.className = 'demo-cursor'; cursor.setAttribute('aria-hidden', 'true');
         if (inputWrapper) inputWrapper.appendChild(cursor);
-
-        // Canvas for measuring text width
-        var measureCanvas = document.createElement('canvas');
-        var ctx = measureCanvas.getContext('2d');
-        var inputStyles = window.getComputedStyle(urlInput);
-        ctx.font = inputStyles.fontSize + ' ' + inputStyles.fontFamily;
-
+        var measureCanvas = document.createElement('canvas'); var ctx = measureCanvas.getContext('2d');
+        var inputStyles = window.getComputedStyle(urlInput); ctx.font = inputStyles.fontSize + ' ' + inputStyles.fontFamily;
         var charIndex = 0;
-
-        function positionCursor() {
-            var textWidth = ctx.measureText(urlInput.value).width;
-            var inputPadding = parseFloat(inputStyles.paddingLeft) || 0;
-            cursor.style.left = (inputPadding + textWidth) + 'px';
-        }
-
+        function positionCursor() { var textWidth = ctx.measureText(urlInput.value).width; var inputPadding = parseFloat(inputStyles.paddingLeft) || 0; cursor.style.left = (inputPadding + textWidth) + 'px'; }
         function typeNextChar() {
-            if (charIndex < DEMO_URL.length) {
-                urlInput.value += DEMO_URL[charIndex];
-                charIndex++;
-                positionCursor();
-                var delay = DEMO_CHAR_DELAY_MIN + Math.random() * (DEMO_CHAR_DELAY_MAX - DEMO_CHAR_DELAY_MIN);
-                setTimeout(typeNextChar, delay);
-            } else {
-                // Typing complete
-                if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
-                setTimeout(demoSubmit, DEMO_POST_TYPE_DELAY);
-            }
+            if (charIndex < DEMO_URL.length) { urlInput.value += DEMO_URL[charIndex]; charIndex++; positionCursor(); setTimeout(typeNextChar, DEMO_CHAR_DELAY_MIN + Math.random() * (DEMO_CHAR_DELAY_MAX - DEMO_CHAR_DELAY_MIN)); }
+            else { if (cursor.parentNode) cursor.parentNode.removeChild(cursor); setTimeout(demoSubmit, DEMO_POST_TYPE_DELAY); }
         }
-
-        positionCursor();
-        typeNextChar();
+        positionCursor(); typeNextChar();
     }
 
-    function demoSubmit() {
-        if (form) form.classList.remove('demo-mode');
-        demoInProgress = false;
-        runTranscription(DEMO_URL);
-    }
+    function demoSubmit() { if (form) form.classList.remove('demo-mode'); demoInProgress = false; runTranscription(DEMO_URL); }
 
-    // ── Demo Trigger: IntersectionObserver on #hero ────────────
     (function () {
-        var heroEl = document.getElementById('hero');
-        if (!heroEl || typeof IntersectionObserver === 'undefined') return;
-
+        var transcribeEl = document.getElementById('transcribe');
+        if (!transcribeEl || typeof IntersectionObserver === 'undefined') return;
         var observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (entry.isIntersecting && !demoPlayed) {
-                    setTimeout(runDemo, 400);
-                    observer.disconnect();
-                }
-            });
+            entries.forEach(function (entry) { if (entry.isIntersecting && !demoPlayed) { setTimeout(runDemo, 400); observer.disconnect(); } });
         }, { threshold: 0.5 });
-
-        observer.observe(heroEl);
+        observer.observe(transcribeEl);
     })();
+
+    // ── Language Toggle ──────────────────────────────────────────
+    var langToggle = document.getElementById('lang-toggle');
+    if (langToggle) {
+        langToggle.addEventListener('click', function () {
+            setLang(currentLang === 'en' ? 'es' : 'en');
+        });
+    }
+
+    // ── Initial i18n Setup ───────────────────────────────────────
+    var isIndexPage = !document.body.classList.contains('page-pricing');
+    document.title = t(isIndexPage ? 'title.index' : 'title.pricing');
+
+    if (langToggle) {
+        var langCode = langToggle.querySelector('.lang-toggle-code');
+        if (langCode) langCode.textContent = currentLang.toUpperCase();
+        langToggle.setAttribute('aria-label', currentLang === 'en' ? t('lang.to-es') : t('lang.to-en'));
+    }
+
+    applyTranslations();
 
 })();

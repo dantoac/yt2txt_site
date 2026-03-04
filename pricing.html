@@ -30,6 +30,10 @@
       var t=localStorage.getItem('yt2txt-theme');
       if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
       document.documentElement.setAttribute('data-theme',t);
+      var l=localStorage.getItem('yt2txt-lang');
+      if(!l){var n=(navigator.language||'').slice(0,2).toLowerCase();l=(n==='es')?'es':'en';}
+      document.documentElement.setAttribute('data-lang',l);
+      document.documentElement.setAttribute('lang',l);
     })();
     </script>
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -79,7 +83,7 @@
     </script>
 </head>
 <body class="page-pricing">
-    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link" data-i18n="skip-link">Skip to content</a>
 
     <nav class="navbar navbar--island" aria-label="Main navigation">
         <div class="navbar-island">
@@ -96,30 +100,30 @@
                     <span class="island-step-icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     </span>
-                    <span class="island-step-label">Features</span>
+                    <span class="island-step-label" data-i18n="nav.features">Features</span>
                 </a>
                 <a href="index.html#hero" class="island-step" data-section="hero">
                     <span class="island-step-icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     </span>
-                    <span class="island-step-label">Transcribe</span>
+                    <span class="island-step-label" data-i18n="nav.transcribe">Transcribe</span>
                 </a>
                 <div class="island-indicator" aria-hidden="true"></div>
             </div>
             <div class="island-divider" aria-hidden="true"></div>
 
-            <a href="pricing.html" class="island-link island-link--active" aria-current="page">Pricing</a>
-            <a href="#faq" class="island-link">FAQ</a>
+            <a href="pricing.html" class="island-link island-link--active" aria-current="page" data-i18n="nav.pricing">Pricing</a>
+            <a href="#faq" class="island-link" data-i18n="nav.faq">FAQ</a>
 
             <div class="island-divider" aria-hidden="true"></div>
 
             <div class="island-actions">
-                <button class="island-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="island-menu">
+                <button class="island-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="island-menu" data-i18n-aria-label="hamburger.open">
                     <span class="island-hamburger-bar"></span>
                     <span class="island-hamburger-bar"></span>
                     <span class="island-hamburger-bar"></span>
                 </button>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button" data-i18n-aria-label="theme.to-dark">
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -135,6 +139,9 @@
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </button>
+                <button id="lang-toggle" class="lang-toggle" aria-label="Cambiar a espa&#241;ol" type="button">
+                    <span class="lang-toggle-code" aria-hidden="true">EN</span>
+                </button>
             </div>
         </div>
 
@@ -143,25 +150,25 @@
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 </span>
-                <span class="island-menu-label">Features</span>
+                <span class="island-menu-label" data-i18n="nav.features">Features</span>
             </a>
             <a href="index.html#hero" class="island-menu-item" data-section="hero">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 </span>
-                <span class="island-menu-label">Transcribe</span>
+                <span class="island-menu-label" data-i18n="nav.transcribe">Transcribe</span>
             </a>
             <a href="pricing.html" class="island-menu-item island-menu-item--active" aria-current="page">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </span>
-                <span class="island-menu-label">Pricing</span>
+                <span class="island-menu-label" data-i18n="nav.pricing">Pricing</span>
             </a>
             <a href="#faq" class="island-menu-item">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 </span>
-                <span class="island-menu-label">FAQ</span>
+                <span class="island-menu-label" data-i18n="nav.faq">FAQ</span>
             </a>
         </div>
     </nav>
@@ -169,8 +176,8 @@
     <main id="main">
         <section class="pricing-hero" aria-label="Pricing overview">
             <div class="pricing-container">
-                <h1 class="pricing-title">Billing &amp; Credits</h1>
-                <p class="pricing-subtitle">30 free minutes every month. Buy more when you need them.</p>
+                <h1 class="pricing-title" data-i18n-html="pricing.title">Billing &amp; Credits</h1>
+                <p class="pricing-subtitle" data-i18n="pricing.subtitle">30 free minutes every month. Buy more when you need them.</p>
             </div>
         </section>
 
@@ -178,52 +185,52 @@
             <div class="pricing-container">
                 <div class="pricing-current-plan">
                     <div class="pricing-current-plan-info">
-                        <span class="pricing-plan-badge">Free Tier</span>
-                        <h2 class="pricing-card-name">FREE</h2>
-                        <p class="pricing-current-plan-quota">30 minutes <span>/ month</span></p>
+                        <span class="pricing-plan-badge" data-i18n="pricing.plan-badge">Free Tier</span>
+                        <h2 class="pricing-card-name" data-i18n="pricing.free-name">FREE</h2>
+                        <p class="pricing-current-plan-quota" data-i18n-html="pricing.free-quota">30 minutes <span>/ month</span></p>
                     </div>
                     <ul class="pricing-features">
-                        <li>Standard queue</li>
-                        <li>.txt &amp; .md downloads</li>
-                        <li>AI-powered transcription</li>
-                        <li>Batch transcription</li>
+                        <li data-i18n="pricing.feature-1">Standard queue</li>
+                        <li data-i18n-html="pricing.feature-2">.txt &amp; .md downloads</li>
+                        <li data-i18n="pricing.feature-3">AI-powered transcription</li>
+                        <li data-i18n="pricing.feature-4">Batch transcription</li>
                     </ul>
-                    <a href="index.html" class="action-btn pricing-cta">Start transcribing</a>
+                    <a href="index.html" class="action-btn pricing-cta" data-i18n="pricing.start-cta">Start transcribing</a>
                 </div>
             </div>
         </section>
 
         <section aria-label="Buy additional minutes">
             <div class="pricing-container">
-                <h2 class="pricing-section-heading">Buy Additional Minutes</h2>
+                <h2 class="pricing-section-heading" data-i18n="pricing.buy-heading">Buy Additional Minutes</h2>
                 <div class="pricing-info-banner">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                    Payment integration coming soon! Contact support to purchase credits.
+                    <span data-i18n="pricing.info-banner">Payment integration coming soon! Contact support to purchase credits.</span>
                 </div>
                 <div class="pricing-grid">
                     <div class="pricing-card">
-                        <h3 class="pricing-card-name">Starter</h3>
-                        <p class="pricing-card-minutes">60 minutes</p>
+                        <h3 class="pricing-card-name" data-i18n="pricing.starter-name">Starter</h3>
+                        <p class="pricing-card-minutes" data-i18n="pricing.starter-min">60 minutes</p>
                         <p class="pricing-card-price">$5</p>
-                        <p class="pricing-card-desc">Top up for a quick project.</p>
-                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Starter plan — coming soon">Coming Soon</button>
+                        <p class="pricing-card-desc" data-i18n="pricing.starter-desc">Top up for a quick project.</p>
+                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Starter plan — coming soon" data-i18n="pricing.starter-btn">Coming Soon</button>
                     </div>
 
                     <div class="pricing-card pricing-card--featured">
-                        <span class="pricing-card-badge">Best value</span>
-                        <h3 class="pricing-card-name">Standard</h3>
-                        <p class="pricing-card-minutes">150 minutes <span class="pricing-savings-badge">+25%</span></p>
+                        <span class="pricing-card-badge" data-i18n="pricing.best-value">Best value</span>
+                        <h3 class="pricing-card-name" data-i18n="pricing.standard-name">Standard</h3>
+                        <p class="pricing-card-minutes" data-i18n-html="pricing.standard-min">150 minutes <span class="pricing-savings-badge">+25%</span></p>
                         <p class="pricing-card-price">$10</p>
-                        <p class="pricing-card-desc">Great for regular use.</p>
-                        <button type="button" class="action-btn action-btn--primary pricing-cta pricing-cta--disabled" disabled aria-label="Standard plan — coming soon">Coming Soon</button>
+                        <p class="pricing-card-desc" data-i18n="pricing.standard-desc">Great for regular use.</p>
+                        <button type="button" class="action-btn action-btn--primary pricing-cta pricing-cta--disabled" disabled aria-label="Standard plan — coming soon" data-i18n="pricing.standard-btn">Coming Soon</button>
                     </div>
 
                     <div class="pricing-card">
-                        <h3 class="pricing-card-name">Bulk</h3>
-                        <p class="pricing-card-minutes">350 minutes <span class="pricing-savings-badge">+46%</span></p>
+                        <h3 class="pricing-card-name" data-i18n="pricing.bulk-name">Bulk</h3>
+                        <p class="pricing-card-minutes" data-i18n-html="pricing.bulk-min">350 minutes <span class="pricing-savings-badge">+46%</span></p>
                         <p class="pricing-card-price">$20</p>
-                        <p class="pricing-card-desc">For heavy workloads.</p>
-                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Bulk plan — coming soon">Coming Soon</button>
+                        <p class="pricing-card-desc" data-i18n="pricing.bulk-desc">For heavy workloads.</p>
+                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Bulk plan — coming soon" data-i18n="pricing.bulk-btn">Coming Soon</button>
                     </div>
                 </div>
             </div>
@@ -231,44 +238,44 @@
 
         <section class="faq-section" id="faq" aria-label="Frequently asked questions">
             <div class="pricing-container">
-                <h2 class="faq-title">Frequently asked questions</h2>
+                <h2 class="faq-title" data-i18n="pricing.faq-title">Frequently asked questions</h2>
                 <div class="faq-list">
 
                     <div class="faq-item">
                         <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1" type="button">
-                            Can yt2txt transcribe videos without subtitles?
+                            <span data-i18n="pricing.faq-q1">Can yt2txt transcribe videos without subtitles?</span>
                             <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </button>
-                        <div id="faq-a-1" class="faq-a" hidden>
+                        <div id="faq-a-1" class="faq-a" data-i18n="pricing.faq-a1" hidden>
                             Yes. yt2txt uses AI-powered speech recognition to transcribe directly from the audio, so it works even when no subtitles or captions are available.
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2" type="button">
-                            How many free minutes do I get?
+                            <span data-i18n="pricing.faq-q2">How many free minutes do I get?</span>
                             <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </button>
-                        <div id="faq-a-2" class="faq-a" hidden>
+                        <div id="faq-a-2" class="faq-a" data-i18n="pricing.faq-a2" hidden>
                             Every account gets 30 free minutes of transcription per month. You can purchase additional minutes if you need more.
                         </div>
                     </div>
 
                     <div class="faq-item">
                         <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3" type="button">
-                            What formats can I download transcripts in?
+                            <span data-i18n="pricing.faq-q3">What formats can I download transcripts in?</span>
                             <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </button>
-                        <div id="faq-a-3" class="faq-a" hidden>
+                        <div id="faq-a-3" class="faq-a" data-i18n="pricing.faq-a3" hidden>
                             You can download transcripts as plain text (.txt) or Markdown (.md) files.
                         </div>
                     </div>
@@ -279,8 +286,8 @@
 
         <section class="pricing-faq" aria-label="Questions">
             <div class="pricing-container">
-                <h2 class="pricing-faq-title">Still have questions?</h2>
-                <p class="pricing-faq-text">
+                <h2 class="pricing-faq-title" data-i18n="pricing.still-questions">Still have questions?</h2>
+                <p class="pricing-faq-text" data-i18n-html="pricing.still-text">
                     Open an issue on
                     <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a>
                     or email us at
@@ -292,7 +299,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
+            <p data-i18n-html="pricing.footer">&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
         </div>
     </footer>
 

@@ -34,6 +34,10 @@
       var t=localStorage.getItem('yt2txt-theme');
       if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
       document.documentElement.setAttribute('data-theme',t);
+      var l=localStorage.getItem('yt2txt-lang');
+      if(!l){var n=(navigator.language||'').slice(0,2).toLowerCase();l=(n==='es')?'es':'en';}
+      document.documentElement.setAttribute('data-lang',l);
+      document.documentElement.setAttribute('lang',l);
     })();
     </script>
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -63,7 +67,7 @@
     </script>
 </head>
 <body>
-    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#main" class="skip-link" data-i18n="skip-link">Skip to content</a>
 
     <nav class="navbar navbar--island" aria-label="Main navigation">
         <div class="navbar-island">
@@ -76,34 +80,34 @@
             <div class="island-divider" aria-hidden="true"></div>
 
             <div class="island-steps">
+                <a href="#transcribe" class="island-step" data-section="transcribe">
+                    <span class="island-step-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </span>
+                    <span class="island-step-label" data-i18n="nav.transcribe">Transcribe</span>
+                </a>
                 <a href="#features" class="island-step" data-section="features">
                     <span class="island-step-icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     </span>
-                    <span class="island-step-label">Features</span>
-                </a>
-                <a href="#hero" class="island-step" data-section="hero">
-                    <span class="island-step-icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    </span>
-                    <span class="island-step-label">Transcribe</span>
+                    <span class="island-step-label" data-i18n="nav.features">Features</span>
                 </a>
                 <div class="island-indicator" aria-hidden="true"></div>
             </div>
             <div class="island-divider" aria-hidden="true"></div>
 
-            <a href="pricing.html" class="island-link">Pricing</a>
-            <a href="pricing.html#faq" class="island-link">FAQ</a>
+            <a href="pricing.html" class="island-link" data-i18n="nav.pricing">Pricing</a>
+            <a href="pricing.html#faq" class="island-link" data-i18n="nav.faq">FAQ</a>
 
             <div class="island-divider" aria-hidden="true"></div>
 
             <div class="island-actions">
-                <button class="island-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="island-menu">
+                <button class="island-hamburger" aria-label="Open navigation menu" data-i18n-aria-label="hamburger.open" aria-expanded="false" aria-controls="island-menu">
                     <span class="island-hamburger-bar"></span>
                     <span class="island-hamburger-bar"></span>
                     <span class="island-hamburger-bar"></span>
                 </button>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" data-i18n-aria-label="theme.to-dark" type="button">
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -119,39 +123,42 @@
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </button>
+                <button id="lang-toggle" class="lang-toggle" aria-label="Cambiar a espa&#241;ol" type="button">
+                    <span class="lang-toggle-code" aria-hidden="true">EN</span>
+                </button>
             </div>
         </div>
 
         <div class="island-menu" id="island-menu" aria-label="Navigation menu">
+            <a href="#transcribe" class="island-menu-item" data-section="transcribe">
+                <span class="island-menu-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+                <span class="island-menu-label" data-i18n="nav.transcribe">Transcribe</span>
+            </a>
             <a href="#features" class="island-menu-item" data-section="features">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 </span>
-                <span class="island-menu-label">Features</span>
-            </a>
-            <a href="#hero" class="island-menu-item" data-section="hero">
-                <span class="island-menu-icon" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                </span>
-                <span class="island-menu-label">Transcribe</span>
+                <span class="island-menu-label" data-i18n="nav.features">Features</span>
             </a>
             <a href="pricing.html" class="island-menu-item">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </span>
-                <span class="island-menu-label">Pricing</span>
+                <span class="island-menu-label" data-i18n="nav.pricing">Pricing</span>
             </a>
             <a href="pricing.html#faq" class="island-menu-item">
                 <span class="island-menu-icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 </span>
-                <span class="island-menu-label">FAQ</span>
+                <span class="island-menu-label" data-i18n="nav.faq">FAQ</span>
             </a>
         </div>
     </nav>
 
     <main id="main">
-        <section class="landing" id="landing" aria-label="Welcome to yt2txt">
+        <section class="landing" id="transcribe" aria-label="Transcribe a video">
             <div class="landing-bg" aria-hidden="true">
                 <div class="landing-grid"></div>
                 <div class="landing-orb landing-orb--1"></div>
@@ -159,47 +166,125 @@
             </div>
             <div class="landing-content">
                 <div class="landing-text">
-                    <h1 class="landing-headline">Read any<br>YouTube video</h1>
-                    <p class="landing-sub">
-                        Paste a YouTube link. Get a transcript, AI insights, and more.
+                    <h1 class="landing-headline" data-i18n-html="hero.headline">Read any<br>YouTube video</h1>
+
+                    <p class="hero-tagline" aria-live="off">
+                        <span class="tagline-phrase tagline-phrase--active" data-i18n="hero.tagline-1">Reading your videos</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-2">Ears made of code</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-3">Actually listens to the audio</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-4">Bytes in, words out</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-5">Watching so you don't have to</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-6">No subtitles? No problem</span>
+                        <span class="tagline-phrase" aria-hidden="true" data-i18n="hero.tagline-7">...I know kung-fu</span>
                     </p>
-                    <button class="landing-cta" id="landing-cta" type="button">
-                        Start transcribing
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </button>
-                </div>
-                <div class="morph-vis" aria-hidden="true">
-                    <div class="morph-frame">
-                        <div class="morph-screen">
-                            <div class="morph-play"></div>
-                            <div class="morph-bar">
-                                <div class="morph-bar-fill"></div>
-                            </div>
+                    <noscript><p class="hero-tagline">Reading your videos.</p></noscript>
+
+                    <div class="plan-strip" role="status" aria-label="Current plan usage">
+                        <div class="plan-strip-info">
+                            <span class="plan-badge" data-i18n="plan.badge">FREE</span>
+                            <span class="plan-strip-quota" data-i18n-html="plan.quota"><strong>12 min</strong> of 30 min used</span>
                         </div>
-                        <div class="morph-doc">
-                            <div class="morph-line morph-line--title"></div>
-                            <div class="morph-line morph-line--spacer"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--med"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--short"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--med"></div>
-                            <div class="morph-line morph-line--spacer"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--short"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--med"></div>
-                            <div class="morph-line"></div>
-                            <div class="morph-line morph-line--short"></div>
+                        <div class="plan-strip-meter" aria-hidden="true">
+                            <div class="plan-strip-meter-fill" style="width: 40%"></div>
                         </div>
                     </div>
-                    <div class="morph-dot morph-dot--1"></div>
-                    <div class="morph-dot morph-dot--2"></div>
-                    <div class="morph-dot morph-dot--3"></div>
+
+                    <form class="input-group" id="transcribe-form" aria-label="Video URL">
+                        <div class="input-wrapper" id="input-wrapper">
+                            <input
+                                type="url"
+                                id="url-input"
+                                class="url-input"
+                                placeholder="https://youtube.com/watch?v=..."
+                                data-i18n-placeholder="input.placeholder"
+                                autocomplete="off"
+                                spellcheck="false"
+                                aria-label="YouTube video URL"
+                                data-i18n-aria-label="input.aria"
+                                aria-describedby="input-hint"
+                                required
+                            >
+                            <button type="button" class="add-btn" id="add-btn" aria-label="Add another video" data-i18n-aria-label="btn.add-aria" title="Add another video" data-i18n-title="btn.add-aria">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <button type="submit" class="submit-btn" id="submit-btn" aria-label="Transcribe video" data-i18n-aria-label="btn.transcribe-aria">
+                                <span class="btn-text" data-i18n="btn.transcribe">Transcribe</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="input-footer">
+                            <p class="input-hint" id="input-hint">
+                                <span class="hint-default" data-i18n="input.hint">Paste any YouTube link</span>
+                                <span class="hint-error" role="alert" aria-live="polite"></span>
+                            </p>
+                        </div>
+                        <noscript><p class="input-hint">JavaScript is required for transcription.</p></noscript>
+                    </form>
+                    <p class="input-upgrade-hint">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span data-i18n-html="upgrade.hint"><a href="pricing.html">Upgrade</a> for AI summaries, longer videos &amp; batch processing</span>
+                    </p>
+
+                    <div class="sr-only" id="status-announcer" aria-live="polite" aria-atomic="true"></div>
+
+                    <div class="processing" id="processing" role="status" aria-label="Processing" hidden>
+                        <div class="processing-content">
+                            <div class="processing-bar" aria-hidden="true">
+                                <div class="processing-bar-fill"></div>
+                            </div>
+                            <p class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Extracting audio from the video...</p>
+                        </div>
+                    </div>
+
+                    <!-- Video info (populated by JS when result appears) -->
+                    <div class="video-info" id="video-info" hidden></div>
+
+                </div>
+
+                <div class="landing-result-panel">
+                    <div class="morph-vis" aria-hidden="true">
+                        <div class="morph-frame">
+                            <div class="morph-screen">
+                                <div class="morph-play"></div>
+                                <div class="morph-bar">
+                                    <div class="morph-bar-fill"></div>
+                                </div>
+                            </div>
+                            <div class="morph-doc">
+                                <div class="morph-line morph-line--title"></div>
+                                <div class="morph-line morph-line--spacer"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--med"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--short"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--med"></div>
+                                <div class="morph-line morph-line--spacer"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--short"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--med"></div>
+                                <div class="morph-line"></div>
+                                <div class="morph-line morph-line--short"></div>
+                            </div>
+                        </div>
+                        <div class="morph-dot morph-dot--1"></div>
+                        <div class="morph-dot morph-dot--2"></div>
+                        <div class="morph-dot morph-dot--3"></div>
+                    </div>
+
+                    <section class="result" id="result" aria-label="Transcription result" hidden>
+                        <div class="results-list results-list--single" id="results-list" role="list"></div>
+
+                    </section>
                 </div>
             </div>
         </section>
@@ -208,25 +293,25 @@
             <div class="features-inner">
 
                 <div class="features-header">
-                    <h2 class="features-title">One link. Four superpowers.</h2>
-                    <p class="features-sub">Everything you need to get more from any YouTube video.</p>
+                    <h2 class="features-title" data-i18n="features.title">One link. Four superpowers.</h2>
+                    <p class="features-sub" data-i18n="features.sub">Everything you need to get more from any YouTube video.</p>
                 </div>
 
                 <div class="features-tabs" role="tablist" aria-label="Features">
                     <button class="features-tab features-tab--active" role="tab" id="tab-transcript"
-                            aria-selected="true" aria-controls="panel-transcript" data-feature="transcript">
+                            aria-selected="true" aria-controls="panel-transcript" data-feature="transcript" data-i18n="features.tab-transcript">
                         Transcript
                     </button>
                     <button class="features-tab" role="tab" id="tab-summary"
-                            aria-selected="false" aria-controls="panel-summary" data-feature="summary">
+                            aria-selected="false" aria-controls="panel-summary" data-feature="summary" data-i18n="features.tab-summary">
                         Summary
                     </button>
                     <button class="features-tab" role="tab" id="tab-keypoints"
-                            aria-selected="false" aria-controls="panel-keypoints" data-feature="keypoints">
+                            aria-selected="false" aria-controls="panel-keypoints" data-feature="keypoints" data-i18n="features.tab-keypoints">
                         Key Points
                     </button>
                     <button class="features-tab" role="tab" id="tab-translate"
-                            aria-selected="false" aria-controls="panel-translate" data-feature="translate">
+                            aria-selected="false" aria-controls="panel-translate" data-feature="translate" data-i18n="features.tab-translate">
                         Translate
                     </button>
                 </div>
@@ -240,8 +325,8 @@
                     <div class="features-panel features-panel--active" id="panel-transcript" role="tabpanel"
                          aria-labelledby="tab-transcript">
                         <div class="features-desc">
-                            <h3 class="features-desc-title">Full Transcript</h3>
-                            <p class="features-desc-body">Every word, with timestamps. Search, copy, and download in seconds.</p>
+                            <h3 class="features-desc-title" data-i18n="features.transcript-title">Full Transcript</h3>
+                            <p class="features-desc-body" data-i18n="features.transcript-body">Every word, with timestamps. Search, copy, and download in seconds.</p>
                         </div>
                         <div class="features-vis features-vis--transcript" aria-hidden="true">
                             <div class="fv-morph-frame">
@@ -265,8 +350,8 @@
                     <div class="features-panel" id="panel-summary" role="tabpanel"
                          aria-labelledby="tab-summary" hidden>
                         <div class="features-desc">
-                            <h3 class="features-desc-title">AI Summary</h3>
-                            <p class="features-desc-body">Get the gist in 3 sentences. No fluff, no filler.</p>
+                            <h3 class="features-desc-title" data-i18n="features.summary-title">AI Summary</h3>
+                            <p class="features-desc-body" data-i18n="features.summary-body">Get the gist in 3 sentences. No fluff, no filler.</p>
                         </div>
                         <div class="features-vis features-vis--summary" aria-hidden="true">
                             <div class="fv-summary-frame">
@@ -289,8 +374,8 @@
                     <div class="features-panel" id="panel-keypoints" role="tabpanel"
                          aria-labelledby="tab-keypoints" hidden>
                         <div class="features-desc">
-                            <h3 class="features-desc-title">Key Points</h3>
-                            <p class="features-desc-body">The most important ideas, extracted and listed clearly.</p>
+                            <h3 class="features-desc-title" data-i18n="features.keypoints-title">Key Points</h3>
+                            <p class="features-desc-body" data-i18n="features.keypoints-body">The most important ideas, extracted and listed clearly.</p>
                         </div>
                         <div class="features-vis features-vis--keypoints" aria-hidden="true">
                             <div class="fv-kp-frame">
@@ -317,8 +402,8 @@
                     <div class="features-panel" id="panel-translate" role="tabpanel"
                          aria-labelledby="tab-translate" hidden>
                         <div class="features-desc">
-                            <h3 class="features-desc-title">Translate</h3>
-                            <p class="features-desc-body">Turn any transcript into any language instantly.</p>
+                            <h3 class="features-desc-title" data-i18n="features.translate-title">Translate</h3>
+                            <p class="features-desc-body" data-i18n="features.translate-body">Turn any transcript into any language instantly.</p>
                         </div>
                         <div class="features-vis features-vis--translate" aria-hidden="true">
                             <div class="fv-translate-frame">
@@ -345,153 +430,40 @@
             </div>
         </section>
 
-        <section class="hero" id="hero" aria-label="Transcribe video">
-            <div class="container hero-center">
-                <p class="hero-source-label">youtube &rarr; text</p>
-                <p class="hero-tagline" aria-live="off">
-                    <span class="tagline-phrase tagline-phrase--active">Reading your videos</span>
-                    <span class="tagline-phrase" aria-hidden="true">Ears made of code</span>
-                    <span class="tagline-phrase" aria-hidden="true">Actually listens to the audio</span>
-                    <span class="tagline-phrase" aria-hidden="true">Bytes in, words out</span>
-                    <span class="tagline-phrase" aria-hidden="true">Watching so you don't have to</span>
-                    <span class="tagline-phrase" aria-hidden="true">No subtitles? No problem</span>
-                    <span class="tagline-phrase" aria-hidden="true">...I know kung-fu</span>
-                </p>
-                <noscript><p class="hero-tagline">Reading your videos.</p></noscript>
-
-                <div class="plan-strip" role="status" aria-label="Current plan usage">
-                    <div class="plan-strip-info">
-                        <span class="plan-badge">FREE</span>
-                        <span class="plan-strip-quota"><strong>12 min</strong> of 30 min used</span>
-                    </div>
-                    <div class="plan-strip-meter" aria-hidden="true">
-                        <div class="plan-strip-meter-fill" style="width: 40%"></div>
-                    </div>
-                    <a href="pricing.html" class="plan-strip-upgrade">
-                        Need more? <span class="plan-strip-upgrade-label">See plans &rarr;</span>
-                    </a>
-                </div>
-
-                <form class="input-group" id="transcribe-form" aria-label="Video URL">
-                    <div class="input-wrapper" id="input-wrapper">
-                        <input
-                            type="url"
-                            id="url-input"
-                            class="url-input"
-                            placeholder="https://youtube.com/watch?v=..."
-                            autocomplete="off"
-                            spellcheck="false"
-                            aria-label="YouTube video URL"
-                            aria-describedby="input-hint"
-                            required
-                        >
-                        <button type="button" class="add-btn" id="add-btn" aria-label="Add another video" title="Add another video">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </button>
-                        <button type="submit" class="submit-btn" id="submit-btn" aria-label="Transcribe video">
-                            <span class="btn-text">Transcribe</span>
-                            <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="input-footer">
-                        <p class="input-hint" id="input-hint">
-                            <span class="hint-default">Paste any YouTube link</span>
-                            <span class="hint-error" role="alert" aria-live="polite"></span>
-                        </p>
-                    </div>
-                    <noscript><p class="input-hint">JavaScript is required for transcription.</p></noscript>
-                </form>
-                <p class="input-upgrade-hint">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                    </svg>
-                    <a href="pricing.html">Upgrade</a> for AI summaries, longer videos &amp; batch processing
-                </p>
-
-                <div class="sr-only" id="status-announcer" aria-live="polite" aria-atomic="true"></div>
-
-                <div class="processing" id="processing" role="status" aria-label="Processing" hidden>
-                    <div class="processing-content">
-                        <div class="processing-bar" aria-hidden="true">
-                            <div class="processing-bar-fill"></div>
-                        </div>
-                        <p class="processing-text" id="processing-text" aria-live="polite" aria-atomic="true">Extracting audio from the video...</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="result" id="result" aria-label="Transcription result" hidden>
-            <div class="container">
-                <div class="results-list results-list--single" id="results-list" role="list"></div>
-
-                <aside class="upgrade-card" aria-label="Upgrade to Pro">
-                    <div class="upgrade-card-body">
-                        <p class="upgrade-card-text">
-                            <span class="upgrade-card-icon" aria-hidden="true">&#9889;</span>
-                            That's <strong>1 of 5</strong> free transcriptions today. Need more? You can upgrade, see our price plans
-                        </p>
-                        <a href="pricing.html" class="action-btn action-btn--primary upgrade-card-cta">
-                            See plans &rarr;
-                        </a>
-                    </div>
-                </aside>
-
-                <div class="result-footer">
-                    <button class="new-btn" id="new-btn" type="button" aria-label="New transcription">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <line x1="19" y1="12" x2="5" y2="12"></line>
-                            <polyline points="12 19 5 12 12 5"></polyline>
-                        </svg>
-                        New transcription
-                    </button>
-                    <p class="api-teaser">
-                        Need this in your app?
-                        <a href="pricing.html#plan-api" class="api-teaser-link">Check out the API &rarr;</a>
-                    </p>
-                </div>
-            </div>
-        </section>
 
         <div class="paywall-overlay" id="paywall-overlay" role="dialog" aria-modal="true" aria-labelledby="paywall-title" aria-describedby="paywall-subtitle" hidden>
             <div class="paywall-backdrop" id="paywall-backdrop"></div>
             <div class="paywall-modal">
-                <button class="paywall-close" id="paywall-close" type="button" aria-label="Close upgrade dialog">
+                <button class="paywall-close" id="paywall-close" type="button" aria-label="Close upgrade dialog" data-i18n-aria-label="paywall.close-aria">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-                <h2 class="paywall-title" id="paywall-title">Unlock more transcriptions</h2>
-                <p class="paywall-subtitle" id="paywall-subtitle">You've used your free quota. Choose a plan to keep going.</p>
+                <h2 class="paywall-title" id="paywall-title" data-i18n="paywall.title">Unlock more transcriptions</h2>
+                <p class="paywall-subtitle" id="paywall-subtitle" data-i18n="paywall.subtitle">You've used your free quota. Choose a plan to keep going.</p>
                 <div class="paywall-plans">
                     <div class="paywall-plan">
-                        <h3 class="paywall-plan-name">Starter</h3>
-                        <p class="paywall-plan-price">$4<span>/mo</span></p>
-                        <p class="paywall-plan-desc">60 min of transcription per month</p>
-                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Starter</a>
+                        <h3 class="paywall-plan-name" data-i18n="paywall.starter">Starter</h3>
+                        <p class="paywall-plan-price" data-i18n-html="paywall.starter-price">$4<span>/mo</span></p>
+                        <p class="paywall-plan-desc" data-i18n="paywall.starter-desc">60 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta" data-i18n="paywall.starter-cta">Get Starter</a>
                     </div>
                     <div class="paywall-plan paywall-plan--featured">
-                        <span class="paywall-plan-badge">Popular</span>
-                        <h3 class="paywall-plan-name">Standard</h3>
-                        <p class="paywall-plan-price">$9<span>/mo</span></p>
-                        <p class="paywall-plan-desc">300 min of transcription per month</p>
-                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Standard</a>
+                        <span class="paywall-plan-badge" data-i18n="paywall.popular">Popular</span>
+                        <h3 class="paywall-plan-name" data-i18n="paywall.standard">Standard</h3>
+                        <p class="paywall-plan-price" data-i18n-html="paywall.standard-price">$9<span>/mo</span></p>
+                        <p class="paywall-plan-desc" data-i18n="paywall.standard-desc">300 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta" data-i18n="paywall.standard-cta">Get Standard</a>
                     </div>
                     <div class="paywall-plan">
-                        <h3 class="paywall-plan-name">Bulk</h3>
-                        <p class="paywall-plan-price">$19<span>/mo</span></p>
-                        <p class="paywall-plan-desc">1200 min of transcription per month</p>
-                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta">Get Bulk</a>
+                        <h3 class="paywall-plan-name" data-i18n="paywall.bulk">Bulk</h3>
+                        <p class="paywall-plan-price" data-i18n-html="paywall.bulk-price">$19<span>/mo</span></p>
+                        <p class="paywall-plan-desc" data-i18n="paywall.bulk-desc">1200 min of transcription per month</p>
+                        <a href="pricing.html" class="action-btn action-btn--primary paywall-plan-cta" data-i18n="paywall.bulk-cta">Get Bulk</a>
                     </div>
                 </div>
-                <p class="paywall-footer">
+                <p class="paywall-footer" data-i18n-html="paywall.compare">
                     <a href="pricing.html">Compare all plans &rarr;</a>
                 </p>
             </div>
@@ -501,7 +473,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
+            <p data-i18n-html="footer">&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a></p>
         </div>
     </footer>
 
