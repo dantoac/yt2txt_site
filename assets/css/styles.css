@@ -1753,6 +1753,12 @@ body.has-result .landing-text > .plan-strip {
     display: none;
 }
 
+body.has-result .video-info {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: var(--space-lg);
+}
+
 @media (min-width: 769px) and (max-width: 1199px) {
     body.has-result .landing-result-panel {
         flex: 1;
