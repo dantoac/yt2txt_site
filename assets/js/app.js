@@ -87,20 +87,22 @@
             // Toolbar
             'toolbar.aria': 'Transcript actions',
             'toolbar.download-aria': 'Download transcript',
-            'toolbar.download-tooltip': 'Download',
+            'toolbar.download-tooltip': 'Download transcript',
             'toolbar.download-txt': 'Download .txt',
             'toolbar.download-md': 'Download .md',
             'toolbar.copy-aria': 'Copy transcript',
-            'toolbar.copy-tooltip': 'Copy',
+            'toolbar.copy-tooltip': 'Copy to clipboard',
             'toolbar.copied': 'Copied',
             'toolbar.copied-aria': 'Copied to clipboard',
             'toolbar.plans-aria': 'View pricing plans',
-            'toolbar.plans-tooltip': 'Plans',
+            'toolbar.plans-tooltip': 'View plans',
 
             // AI actions
             'ai.summarize': 'Summarize',
-            'ai.keypoints': 'Key points',
             'ai.translate': 'Translate',
+            'ai.chapters': 'Chapters',
+            'ai.keywords': 'Keywords',
+            'ai.quiz': 'Quiz',
             'ai.close': 'Close AI result',
             'ai.translate-label': 'Translated to Spanish',
             'ai.thinking': 'Thinking\u2026',
@@ -273,20 +275,22 @@
             // Toolbar
             'toolbar.aria': 'Acciones de transcripci\u00f3n',
             'toolbar.download-aria': 'Descargar transcripci\u00f3n',
-            'toolbar.download-tooltip': 'Descargar',
+            'toolbar.download-tooltip': 'Descargar transcripción',
             'toolbar.download-txt': 'Descargar .txt',
             'toolbar.download-md': 'Descargar .md',
             'toolbar.copy-aria': 'Copiar transcripci\u00f3n',
-            'toolbar.copy-tooltip': 'Copiar',
+            'toolbar.copy-tooltip': 'Copiar al portapapeles',
             'toolbar.copied': 'Copiado',
             'toolbar.copied-aria': 'Copiado al portapapeles',
             'toolbar.plans-aria': 'Ver planes de precios',
-            'toolbar.plans-tooltip': 'Planes',
+            'toolbar.plans-tooltip': 'Ver planes',
 
             // AI actions
             'ai.summarize': 'Resumir',
-            'ai.keypoints': 'Puntos clave',
             'ai.translate': 'Traducir',
+            'ai.chapters': 'Capítulos',
+            'ai.keywords': 'Palabras clave',
+            'ai.quiz': 'Quiz',
             'ai.close': 'Cerrar resultado IA',
             'ai.translate-label': 'Traducido al español',
             'ai.thinking': 'Pensando\u2026',
@@ -1010,20 +1014,18 @@
         card.id = 'card-' + item.id;
         card.setAttribute('role', 'listitem');
 
-        var thumbLink = document.createElement('a');
-        thumbLink.className = 'result-card-thumb';
-        thumbLink.href = item.url;
-        thumbLink.target = '_blank';
-        thumbLink.rel = 'noopener noreferrer';
-        thumbLink.setAttribute('aria-label', t('result.open-yt'));
-        thumbLink.setAttribute('data-i18n-aria-label', 'result.open-yt');
-        var thumbImg = document.createElement('img');
-        thumbImg.src = 'https://img.youtube.com/vi/' + item.videoId + '/mqdefault.jpg';
-        thumbImg.alt = item.title;
-        thumbImg.width = 560;
-        thumbImg.height = 315;
-        thumbImg.loading = 'lazy';
-        thumbLink.appendChild(thumbImg);
+        var thumbContainer = document.createElement('div');
+        thumbContainer.className = 'result-card-thumb';
+        var iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube.com/embed/' + item.videoId;
+        iframe.width = 560;
+        iframe.height = 315;
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('loading', 'lazy');
+        iframe.title = item.title;
+        thumbContainer.appendChild(iframe);
 
         var titleEl = document.createElement('h2');
         titleEl.className = 'result-card-title';
@@ -1046,7 +1048,7 @@
         if (videoInfo) {
             while (videoInfo.firstChild) videoInfo.removeChild(videoInfo.firstChild);
             videoInfo.hidden = false;
-            videoInfo.appendChild(thumbLink);
+            videoInfo.appendChild(thumbContainer);
             videoInfo.appendChild(titleEl);
             videoInfo.appendChild(infoEl);
         }
@@ -1159,9 +1161,11 @@
         toolbar.appendChild(divider1);
 
         var aiActionDefs = [
-            { action: 'summarize', label: t('ai.summarize'), tooltip: t('ai.summarize'), i18nKey: 'ai.summarize', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' },
-            { action: 'key-points', label: t('ai.keypoints'), tooltip: t('ai.keypoints'), i18nKey: 'ai.keypoints', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
-            { action: 'translate', label: t('ai.translate'), tooltip: t('ai.translate'), i18nKey: 'ai.translate', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
+            { action: 'summarize', label: t('ai.summarize'), tooltip: t('ai.summarize'), i18nKey: 'ai.summarize', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>' },
+            { action: 'translate', label: t('ai.translate'), tooltip: t('ai.translate'), i18nKey: 'ai.translate', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>' },
+            { action: 'chapters', label: t('ai.chapters'), tooltip: t('ai.chapters'), i18nKey: 'ai.chapters', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
+            { action: 'keywords', label: t('ai.keywords'), tooltip: t('ai.keywords'), i18nKey: 'ai.keywords', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>' },
+            { action: 'quiz', label: t('ai.quiz'), tooltip: t('ai.quiz'), i18nKey: 'ai.quiz', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
         ];
 
         aiActionDefs.forEach(function (ai) {

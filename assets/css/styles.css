@@ -1985,11 +1985,11 @@ body.has-result .input-upgrade-hint {
     line-height: 0;
 }
 
-.video-info .result-card-thumb img {
+.video-info .result-card-thumb iframe {
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
-    object-fit: cover;
+    border: none;
     display: block;
 }
 
