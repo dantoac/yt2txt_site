@@ -2276,8 +2276,6 @@ body.has-result .input-upgrade-hint {
     backdrop-filter: blur(16px) saturate(1.4);
     border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
     border-radius: 2rem;
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
-    mask-image: linear-gradient(#000, #000);
     padding: 6px 10px;
     box-shadow:
         0 1px 2px rgba(0,0,0,0.04),
@@ -3515,6 +3513,7 @@ body.has-result .input-upgrade-hint {
     border: none;
     box-shadow: none;
     border-radius: 0;
+    overflow: visible;
 }
 
 .results-list--single .result-card:hover {
