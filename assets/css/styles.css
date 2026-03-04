@@ -2710,16 +2710,22 @@ body.has-result .input-upgrade-hint {
 [data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
 [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
-/* Language toggle */
+/* Language dropdown */
+.lang-dropdown-group {
+    position: relative;
+    display: inline-flex;
+}
+
 .lang-toggle {
-    width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 2px;
+    padding: 0 10px;
     background: transparent;
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-sm);
     color: var(--text-secondary);
     cursor: pointer;
     flex-shrink: 0;
@@ -2740,6 +2746,64 @@ body.has-result .input-upgrade-hint {
     letter-spacing: 0.05em;
     text-transform: uppercase;
     line-height: 1;
+}
+
+.lang-chevron {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.lang-dropdown-group.open .lang-chevron {
+    transform: rotate(180deg);
+}
+
+.lang-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--surface);
+    border: var(--border-w) solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    min-width: 120px;
+    z-index: 50;
+    animation: segment-appear var(--duration-fast) var(--ease-out) both;
+}
+
+.lang-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition:
+        background var(--duration-fast),
+        color var(--duration-fast);
+}
+
+.lang-menu-item:hover {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.lang-menu-item:first-child {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.lang-menu-item:last-child {
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.lang-menu-item.active {
+    color: var(--accent);
+    font-weight: 600;
 }
 
 .unified-toolbar .ai-action-btn + .toolbar-divider {
@@ -3499,7 +3563,7 @@ body.has-result .input-upgrade-hint {
     .unified-toolbar,
     .footer,
     .theme-toggle,
-    .lang-toggle,
+    .lang-dropdown-group,
     .ai-result-panel {
         display: none;
     }

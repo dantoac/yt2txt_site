@@ -456,6 +456,9 @@
 
         applyTranslations();
 
+        // Mark active lang menu item
+        if (typeof markActiveLangItem === 'function') markActiveLangItem();
+
         // Re-measure island width after text change
         if (remeasureIsland) remeasureIsland();
     }
@@ -1490,6 +1493,10 @@
                 if (toggle) toggle.setAttribute('aria-expanded', 'false');
             }
         });
+        // Close lang dropdown on outside click
+        if (langGroup && !langGroup.contains(e.target)) {
+            closeLangMenu();
+        }
     });
 
     window.addEventListener('beforeunload', function () {
@@ -1616,12 +1623,67 @@
         observer.observe(transcribeEl);
     })();
 
-    // ── Language Toggle ──────────────────────────────────────────
+    // ── Language Dropdown ────────────────────────────────────────
     var langToggle = document.getElementById('lang-toggle');
+    var langGroup = langToggle ? langToggle.closest('.lang-dropdown-group') : null;
+    var langMenu = langGroup ? langGroup.querySelector('.lang-menu') : null;
+
+    function openLangMenu() {
+        if (!langMenu || !langToggle) return;
+        langMenu.hidden = false;
+        langGroup.classList.add('open');
+        langToggle.setAttribute('aria-expanded', 'true');
+        var firstItem = langMenu.querySelector('[role="menuitem"]');
+        if (firstItem) firstItem.focus();
+    }
+
+    function closeLangMenu() {
+        if (!langMenu || !langToggle) return;
+        langMenu.hidden = true;
+        langGroup.classList.remove('open');
+        langToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function markActiveLangItem() {
+        if (!langMenu) return;
+        var items = langMenu.querySelectorAll('.lang-menu-item');
+        for (var i = 0; i < items.length; i++) {
+            items[i].classList.toggle('active', items[i].getAttribute('data-lang') === currentLang);
+        }
+    }
+
     if (langToggle) {
-        langToggle.addEventListener('click', function () {
-            setLang(currentLang === 'en' ? 'es' : 'en');
+        langToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (langMenu.hidden) openLangMenu();
+            else closeLangMenu();
         });
+
+        langToggle.addEventListener('keydown', function (e) {
+            if ((e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') && langMenu.hidden) {
+                e.preventDefault();
+                openLangMenu();
+            }
+        });
+    }
+
+    if (langMenu) {
+        langMenu.addEventListener('keydown', function (e) {
+            var items = Array.prototype.slice.call(langMenu.querySelectorAll('[role="menuitem"]'));
+            var idx = items.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+            else if (e.key === 'Escape') { e.preventDefault(); closeLangMenu(); langToggle.focus(); }
+            else if (e.key === 'Tab') { closeLangMenu(); }
+        });
+
+        var langItems = langMenu.querySelectorAll('.lang-menu-item');
+        for (var i = 0; i < langItems.length; i++) {
+            langItems[i].addEventListener('click', function () {
+                setLang(this.getAttribute('data-lang'));
+                closeLangMenu();
+            });
+        }
     }
 
     // ── Initial i18n Setup ───────────────────────────────────────
@@ -1633,6 +1695,7 @@
         if (langCode) langCode.textContent = currentLang.toUpperCase();
         langToggle.setAttribute('aria-label', currentLang === 'en' ? t('lang.to-es') : t('lang.to-en'));
     }
+    markActiveLangItem();
 
     applyTranslations();
 
