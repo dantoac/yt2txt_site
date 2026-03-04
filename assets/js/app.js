@@ -104,10 +104,12 @@
             'ai.keywords': 'Keywords',
             'ai.quiz': 'Quiz',
             'ai.close': 'Close AI result',
+            'ai.toolbar-aria': 'AI actions',
             'ai.translate-label': 'Translated to Spanish',
             'ai.thinking': 'Thinking\u2026',
 
             // Transcript
+            'transcript.title': 'Transcript',
             'transcript.aria': 'Transcript text',
             'transcript.badge': '\u2726 Auto-enhanced',
             'transcript.badge-tooltip': 'Corrected punctuation, filler words removed, and formatting improved',
@@ -292,10 +294,12 @@
             'ai.keywords': 'Palabras clave',
             'ai.quiz': 'Quiz',
             'ai.close': 'Cerrar resultado IA',
+            'ai.toolbar-aria': 'Acciones de IA',
             'ai.translate-label': 'Traducido al español',
             'ai.thinking': 'Pensando\u2026',
 
             // Transcript
+            'transcript.title': 'Transcripci\u00f3n',
             'transcript.aria': 'Texto de la transcripci\u00f3n',
             'transcript.badge': '\u2726 Auto-mejorado',
             'transcript.badge-tooltip': 'Puntuaci\u00f3n corregida, muletillas eliminadas y formato mejorado',
@@ -884,16 +888,16 @@
                     title: 'But what is a neural network? | Deep learning, chapter 1',
                     duration: '19:13',
                     segments: [
-                        { text: 'This is a 3. It\u2019s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. This, this, and this are also recognizable as 3s, even though the specific values of each pixel are very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3. But something in that crazy-smart visual cortex of yours resolves these as representing the same idea while recognizing other images as their own distinct ideas.' },
-                        { text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math.' },
-                        { text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer.' },
-                        { text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that.' },
-                        { text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit.' },
-                        { text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer.' },
-                        { text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently.' },
-                        { text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be?' },
-                        { text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network.' },
-                        { text: 'All right, thank you, Lisha.' },
+                        { start: 0, text: 'This is a 3. It\u2019s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. This, this, and this are also recognizable as 3s, even though the specific values of each pixel are very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3. But something in that crazy-smart visual cortex of yours resolves these as representing the same idea while recognizing other images as their own distinct ideas.' },
+                        { start: 47, text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math.' },
+                        { start: 98, text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer.' },
+                        { start: 152, text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that.' },
+                        { start: 245, text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit.' },
+                        { start: 318, text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer.' },
+                        { start: 412, text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently.' },
+                        { start: 510, text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be?' },
+                        { start: 623, text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network.' },
+                        { start: 1100, text: 'All right, thank you, Lisha.' },
                     ],
                 });
             }, 4500);
@@ -1048,8 +1052,8 @@
         if (videoInfo) {
             while (videoInfo.firstChild) videoInfo.removeChild(videoInfo.firstChild);
             videoInfo.hidden = false;
-            videoInfo.appendChild(thumbContainer);
             videoInfo.appendChild(titleEl);
+            videoInfo.appendChild(thumbContainer);
             videoInfo.appendChild(infoEl);
         }
 
@@ -1058,7 +1062,7 @@
         body.id = 'card-body-' + item.id;
 
         var toolbar = document.createElement('div');
-        toolbar.className = 'unified-toolbar';
+        toolbar.className = 'transcript-toolbar';
 
         var dlGroup = document.createElement('div');
         dlGroup.className = 'download-group';
@@ -1143,51 +1147,23 @@
         copyBtn.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
         copyBtn.addEventListener('click', function () { showPaywall(true); });
 
-        var upgradeCta = document.createElement('a');
-        upgradeCta.href = 'pricing.html';
-        upgradeCta.className = 'cta-upgrade';
-        upgradeCta.setAttribute('aria-label', t('toolbar.plans-aria'));
-        upgradeCta.setAttribute('data-tooltip', t('toolbar.plans-tooltip'));
-        upgradeCta.setAttribute('data-i18n-aria-label', 'toolbar.plans-aria');
-        upgradeCta.setAttribute('data-i18n-data-tooltip', 'toolbar.plans-tooltip');
-        upgradeCta.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
+        // Transcript title + badge + download + copy (slim toolbar)
+        var toolbarTitle = document.createElement('h3');
+        toolbarTitle.className = 'transcript-toolbar-title';
+        toolbarTitle.textContent = t('transcript.title');
+        toolbarTitle.setAttribute('data-i18n', 'transcript.title');
 
+        var cleanBadge = document.createElement('span');
+        cleanBadge.className = 'transcript-clean-badge';
+        cleanBadge.textContent = t('transcript.badge');
+        cleanBadge.setAttribute('data-tooltip', t('transcript.badge-tooltip'));
+        cleanBadge.setAttribute('data-i18n', 'transcript.badge');
+        cleanBadge.setAttribute('data-i18n-data-tooltip', 'transcript.badge-tooltip');
+
+        toolbar.appendChild(toolbarTitle);
+        toolbar.appendChild(cleanBadge);
         toolbar.appendChild(dlGroup);
         toolbar.appendChild(copyBtn);
-
-        var divider1 = document.createElement('span');
-        divider1.className = 'toolbar-divider';
-        divider1.setAttribute('aria-hidden', 'true');
-        toolbar.appendChild(divider1);
-
-        var aiActionDefs = [
-            { action: 'summarize', label: t('ai.summarize'), tooltip: t('ai.summarize'), i18nKey: 'ai.summarize', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>' },
-            { action: 'translate', label: t('ai.translate'), tooltip: t('ai.translate'), i18nKey: 'ai.translate', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>' },
-            { action: 'chapters', label: t('ai.chapters'), tooltip: t('ai.chapters'), i18nKey: 'ai.chapters', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
-            { action: 'keywords', label: t('ai.keywords'), tooltip: t('ai.keywords'), i18nKey: 'ai.keywords', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>' },
-            { action: 'quiz', label: t('ai.quiz'), tooltip: t('ai.quiz'), i18nKey: 'ai.quiz', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
-        ];
-
-        aiActionDefs.forEach(function (ai) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'ai-action-btn';
-            btn.setAttribute('data-action', ai.action);
-            btn.setAttribute('data-tooltip', ai.tooltip);
-            btn.setAttribute('aria-label', ai.tooltip);
-            btn.setAttribute('data-i18n-data-tooltip', ai.i18nKey);
-            btn.setAttribute('data-i18n-aria-label', ai.i18nKey);
-            btn.appendChild(createSvgElement(ai.svg));
-            btn.addEventListener('click', function () { showPaywall(true); });
-            toolbar.appendChild(btn);
-        });
-
-        var divider2 = document.createElement('span');
-        divider2.className = 'toolbar-divider';
-        divider2.setAttribute('aria-hidden', 'true');
-        toolbar.appendChild(divider2);
-        if (planStrip) toolbar.appendChild(planStrip);
-        toolbar.appendChild(upgradeCta);
 
         var transcriptWrapper = document.createElement('div');
         transcriptWrapper.className = 'transcript-wrapper';
@@ -1198,14 +1174,6 @@
         transcript.setAttribute('tabindex', '0');
         transcript.setAttribute('aria-label', t('transcript.aria'));
         transcript.setAttribute('data-i18n-aria-label', 'transcript.aria');
-
-        var cleanBadge = document.createElement('span');
-        cleanBadge.className = 'transcript-clean-badge';
-        cleanBadge.textContent = t('transcript.badge');
-        cleanBadge.setAttribute('data-tooltip', t('transcript.badge-tooltip'));
-        cleanBadge.setAttribute('data-i18n', 'transcript.badge');
-        cleanBadge.setAttribute('data-i18n-data-tooltip', 'transcript.badge-tooltip');
-        transcript.appendChild(cleanBadge);
 
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         item.segments.forEach(function (seg, i) {
@@ -1262,7 +1230,64 @@
         toolbar.setAttribute('aria-label', t('toolbar.aria'));
         toolbar.setAttribute('data-i18n-aria-label', 'toolbar.aria');
 
+        // Plan-strip row: plan-strip + inline upgrade CTA
+        var tPlanRow = document.createElement('div');
+        tPlanRow.className = 'transcript-plan-strip';
+        if (planStrip) tPlanRow.appendChild(planStrip);
+
+        var tUpgradeCta = document.createElement('a');
+        tUpgradeCta.href = 'pricing.html';
+        tUpgradeCta.className = 'cta-upgrade cta-upgrade--inline';
+        tUpgradeCta.setAttribute('aria-label', t('toolbar.plans-aria'));
+        tUpgradeCta.setAttribute('data-i18n-aria-label', 'toolbar.plans-aria');
+        tUpgradeCta.appendChild(createSvgElement('<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
+        var tCtaLabel = document.createElement('span');
+        tCtaLabel.textContent = t('toolbar.plans-tooltip');
+        tCtaLabel.setAttribute('data-i18n', 'toolbar.plans-tooltip');
+        tUpgradeCta.appendChild(tCtaLabel);
+        tPlanRow.appendChild(tUpgradeCta);
+
+        // Transcript sidebar: vertical AI action buttons
+        var sidebar = document.createElement('div');
+        sidebar.className = 'transcript-sidebar';
+        sidebar.setAttribute('role', 'toolbar');
+        sidebar.setAttribute('aria-orientation', 'vertical');
+        sidebar.setAttribute('aria-label', t('ai.toolbar-aria'));
+        sidebar.setAttribute('data-i18n-aria-label', 'ai.toolbar-aria');
+
+        var sidebarActions = [
+            { action: 'summarize', i18nKey: 'ai.summarize', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>' },
+            { action: 'translate', i18nKey: 'ai.translate', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>' },
+            { action: 'chapters', i18nKey: 'ai.chapters', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>' },
+            { action: 'keywords', i18nKey: 'ai.keywords', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>' },
+            { action: 'quiz', i18nKey: 'ai.quiz', svg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' },
+        ];
+
+        sidebarActions.forEach(function (ai) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tsb-btn';
+            btn.setAttribute('data-action', ai.action);
+            btn.setAttribute('aria-label', t(ai.i18nKey));
+            btn.setAttribute('data-tooltip', t(ai.i18nKey));
+            btn.setAttribute('data-i18n-aria-label', ai.i18nKey);
+            btn.setAttribute('data-i18n-data-tooltip', ai.i18nKey);
+            btn.appendChild(createSvgElement(ai.svg));
+            btn.addEventListener('click', function () { showPaywall(true); });
+            sidebar.appendChild(btn);
+        });
+
+        // Assemble: toolbar → plan-strip → transcript inside wrapper
         transcriptWrapper.insertBefore(toolbar, transcript);
+        transcriptWrapper.insertBefore(tPlanRow, toolbar);
+
+        // Wrap sidebar + transcript in transcript-layout (below toolbar)
+        var transcriptLayout = document.createElement('div');
+        transcriptLayout.className = 'transcript-layout';
+        transcriptLayout.appendChild(sidebar);
+        transcriptLayout.appendChild(transcript);
+        transcriptWrapper.appendChild(transcriptLayout);
+
         body.appendChild(transcriptWrapper);
         body.appendChild(aiPanel);
         card.appendChild(body);
@@ -1441,7 +1466,7 @@
         processingEl.hidden = true;
         if (paywallTimer) clearTimeout(paywallTimer);
         dismissPaywall();
-        if (planStrip && planStrip.closest('.results-list')) {
+        if (planStrip && (planStrip.closest('.results-list') || planStrip.closest('.video-info') || planStrip.closest('.transcript-plan-strip'))) {
             if (planStripSibling && planStripSibling.parentNode === planStripParent) planStripParent.insertBefore(planStrip, planStripSibling);
             else if (planStripParent) planStripParent.appendChild(planStrip);
         }
