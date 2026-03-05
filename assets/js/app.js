@@ -1812,4 +1812,7 @@
 
     applyTranslations();
 
+    // Re-measure island width after initial translations (ES texts are wider)
+    if (remeasureIsland) remeasureIsland();
+
 })();
