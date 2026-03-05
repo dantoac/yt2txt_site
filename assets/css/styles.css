@@ -2196,18 +2196,7 @@ body.has-result .input-upgrade-hint {
     border-radius: 3px;
 }
 
-.transcript-clean-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--accent);
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    margin-bottom: var(--space-sm);
-}
+
 
 .transcript-segment {
     display: flex;
@@ -2297,61 +2286,124 @@ body.has-result .input-upgrade-hint {
     font-weight: 600;
     color: var(--text);
     margin: 0;
-    margin-right: auto;
 }
 
-.transcript-toolbar .action-btn {
-    width: 36px;
-    height: 36px;
-    min-height: unset;
-    padding: 0;
-    justify-content: center;
-    background: transparent;
-    border-color: transparent;
+
+/* --- View Toggle (segmented control) --- */
+.view-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-alt);
+}
+
+.view-toggle-btn {
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
     color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background var(--duration-fast),
+        color var(--duration-fast),
+        box-shadow var(--duration-fast);
+}
+
+.view-toggle-btn:hover {
+    color: var(--text);
+}
+
+.view-toggle-btn--active {
+    background: var(--accent);
+    color: var(--accent-contrast);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.view-toggle-btn--active:hover {
+    color: var(--accent-contrast);
+}
+
+/* --- Toolbar Actions (inline icon + label buttons) --- */
+.toolbar-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
     transition:
         color var(--duration-fast),
-        background var(--duration-fast);
+        background var(--duration-fast),
+        border-color var(--duration-fast);
 }
 
-.transcript-toolbar .action-btn:hover {
+.toolbar-action:hover {
     color: var(--accent);
+    border-color: var(--accent);
     background: var(--accent-soft);
 }
 
-.transcript-toolbar .action-btn:focus-visible {
+.toolbar-action:focus-visible {
     color: var(--accent);
+    border-color: var(--accent);
     background: var(--accent-soft);
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
 
-.transcript-toolbar .action-btn.copied {
-    border-color: transparent;
+.toolbar-action.copied {
     color: var(--success);
+    border-color: var(--success);
     background: var(--success-soft);
 }
 
-.transcript-toolbar .card-download-btn {
-    background: var(--accent);
-    border-color: transparent;
-    border-radius: 1.5rem;
-    color: var(--accent-contrast);
-    transition:
-        background var(--duration-fast),
-        color var(--duration-fast);
+.toolbar-action svg {
+    flex-shrink: 0;
 }
 
-.transcript-toolbar .card-download-btn:hover,
-.transcript-toolbar .card-download-btn:focus-visible {
-    background: var(--accent-hover);
-    border-color: transparent;
-    color: var(--accent-contrast);
+/* --- Toolbar Layout --- */
+.transcript-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
 }
 
-.transcript-toolbar .transcript-clean-badge {
-    margin-bottom: 0;
+.transcript-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+/* --- Transcript View Modes --- */
+.transcript--cleaned .transcript-paragraph {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: var(--space-sm);
+}
+
+.transcript--raw .transcript-raw-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 /* --- AI Actions Toolbar (segmented control) --- */
@@ -2784,51 +2836,6 @@ body.has-result .input-upgrade-hint {
 }
 
 
-/* --- Download Group --- */
-.download-group {
-    position: relative;
-    display: inline-flex;
-}
-
-.download-menu {
-    position: absolute;
-    left: 0;
-    top: calc(100% + 4px);
-    right: auto;
-    background: var(--surface);
-    border: var(--border-w) solid var(--border);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
-    min-width: 160px;
-    z-index: 50;
-    animation: segment-appear var(--duration-fast) var(--ease-out) both;
-}
-
-.download-menu-item {
-    display: block;
-    width: 100%;
-    padding: 0.55rem 0.85rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-align: left;
-    transition:
-        background var(--duration-fast),
-        color var(--duration-fast);
-}
-
-.download-menu-item:hover {
-    background: var(--surface-alt);
-    color: var(--text);
-}
-
-.download-menu-item:first-child {
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-}
-
-.download-menu-item:last-child {
-    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-}
 
 
 /* --- Animations --- */
@@ -3467,6 +3474,20 @@ body.has-result .input-upgrade-hint {
 
     .tsb-btn::after {
         display: none;
+    }
+
+    .transcript-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .transcript-toolbar-left,
+    .transcript-toolbar-right {
+        flex-basis: 100%;
+    }
+
+    .transcript-toolbar-right {
+        flex-wrap: wrap;
+        margin-left: 0;
     }
 }
 

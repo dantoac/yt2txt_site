@@ -113,6 +113,15 @@
             'transcript.aria': 'Transcript text',
             'transcript.badge': '\u2726 Auto-enhanced',
             'transcript.badge-tooltip': 'Corrected punctuation, filler words removed, and formatting improved',
+            'transcript.view-cleaned': 'Cleaned',
+            'transcript.view-raw': 'Raw',
+            'transcript.view-segments': 'Segments',
+
+            // Toolbar (new)
+            'toolbar.copy-label': 'Copy',
+            'toolbar.download-txt-label': 'TXT',
+            'toolbar.download-srt': 'SRT',
+            'toolbar.download-vtt': 'VTT',
 
             // Announcements
             'announce.complete': 'Transcription complete: ',
@@ -315,6 +324,15 @@
             'transcript.aria': 'Texto de la transcripci\u00f3n',
             'transcript.badge': '\u2726 Auto-mejorado',
             'transcript.badge-tooltip': 'Puntuaci\u00f3n corregida, muletillas eliminadas y formato mejorado',
+            'transcript.view-cleaned': 'Limpio',
+            'transcript.view-raw': 'Crudo',
+            'transcript.view-segments': 'Segmentos',
+
+            // Toolbar (new)
+            'toolbar.copy-label': 'Copiar',
+            'toolbar.download-txt-label': 'TXT',
+            'toolbar.download-srt': 'SRT',
+            'toolbar.download-vtt': 'VTT',
 
             // Announcements
             'announce.complete': 'Transcripci\u00f3n completa: ',
@@ -1034,6 +1052,66 @@
         }
     }
 
+    // ── Transcript View Switching ──────────────────────────────
+    function switchTranscriptView(mode, toggleContainer, transcriptEl, item) {
+        // Update toggle button states
+        var btns = toggleContainer.querySelectorAll('.view-toggle-btn');
+        btns.forEach(function (b) {
+            var isActive = b.getAttribute('data-view') === mode;
+            b.classList.toggle('view-toggle-btn--active', isActive);
+            b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+
+        // Clear transcript content
+        while (transcriptEl.firstChild) transcriptEl.removeChild(transcriptEl.firstChild);
+
+        // Remove previous view classes
+        transcriptEl.classList.remove('transcript--cleaned', 'transcript--raw', 'transcript--segments');
+        transcriptEl.classList.add('transcript--' + mode);
+
+        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (mode === 'cleaned') {
+            // Group ~5 segments per paragraph, text only
+            var chunkSize = 5;
+            for (var i = 0; i < item.segments.length; i += chunkSize) {
+                var p = document.createElement('p');
+                p.className = 'transcript-paragraph';
+                var texts = [];
+                for (var j = i; j < Math.min(i + chunkSize, item.segments.length); j++) {
+                    texts.push(item.segments[j].text);
+                }
+                p.textContent = texts.join(' ');
+                transcriptEl.appendChild(p);
+            }
+        } else if (mode === 'raw') {
+            var p = document.createElement('p');
+            p.className = 'transcript-raw-text';
+            p.textContent = item.segments.map(function (s) { return s.text; }).join(' ');
+            transcriptEl.appendChild(p);
+        } else {
+            // segments — original format with timestamps
+            item.segments.forEach(function (seg, i) {
+                var div = document.createElement('div');
+                div.className = 'transcript-segment';
+                if (!reducedMotion) div.style.animationDelay = Math.min(i * 30, 600) + 'ms';
+                if (typeof seg.start === 'number') {
+                    var timeSpan = document.createElement('span');
+                    timeSpan.className = 'segment-time';
+                    timeSpan.textContent = formatTime(seg.start);
+                    div.appendChild(timeSpan);
+                } else {
+                    div.classList.add('transcript-segment--no-time');
+                }
+                var textSpan = document.createElement('span');
+                textSpan.className = 'segment-text';
+                textSpan.textContent = seg.text;
+                div.appendChild(textSpan);
+                transcriptEl.appendChild(div);
+            });
+        }
+    }
+
     function renderResultCard(item) {
         if (!resultsList) return;
 
@@ -1088,106 +1166,105 @@
         var toolbar = document.createElement('div');
         toolbar.className = 'transcript-toolbar';
 
-        var dlGroup = document.createElement('div');
-        dlGroup.className = 'download-group';
-
-        var dlBtn = document.createElement('button');
-        dlBtn.className = 'action-btn action-btn--primary card-download-btn';
-        dlBtn.setAttribute('aria-label', t('toolbar.download-aria'));
-        dlBtn.setAttribute('data-tooltip', t('toolbar.download-tooltip'));
-        dlBtn.setAttribute('data-i18n-aria-label', 'toolbar.download-aria');
-        dlBtn.setAttribute('data-i18n-data-tooltip', 'toolbar.download-tooltip');
-        dlBtn.setAttribute('aria-haspopup', 'true');
-        dlBtn.setAttribute('aria-expanded', 'false');
-        dlBtn.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'));
-
-        var dlMenu = document.createElement('div');
-        dlMenu.className = 'download-menu';
-        dlMenu.setAttribute('role', 'menu');
-        dlMenu.hidden = true;
-
-        var dlTxt = document.createElement('button');
-        dlTxt.className = 'download-menu-item';
-        dlTxt.setAttribute('role', 'menuitem');
-        dlTxt.setAttribute('tabindex', '-1');
-        dlTxt.setAttribute('data-i18n', 'toolbar.download-txt');
-        dlTxt.textContent = t('toolbar.download-txt');
-        dlTxt.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlBtn); });
-
-        var dlMd = document.createElement('button');
-        dlMd.className = 'download-menu-item';
-        dlMd.setAttribute('role', 'menuitem');
-        dlMd.setAttribute('tabindex', '-1');
-        dlMd.setAttribute('data-i18n', 'toolbar.download-md');
-        dlMd.textContent = t('toolbar.download-md');
-        dlMd.addEventListener('click', function () { showPaywall(true); closeDownloadMenu(dlMenu, dlBtn); });
-
-        dlMenu.appendChild(dlTxt);
-        dlMenu.appendChild(dlMd);
-
-        function openDownloadMenu() {
-            dlMenu.hidden = false;
-            dlBtn.setAttribute('aria-expanded', 'true');
-            var firstItem = dlMenu.querySelector('[role="menuitem"]');
-            if (firstItem) firstItem.focus();
-        }
-
-        function closeDownloadMenu(menu, toggle) {
-            menu.hidden = true;
-            toggle.setAttribute('aria-expanded', 'false');
-        }
-
-        dlBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            if (dlMenu.hidden) openDownloadMenu();
-            else closeDownloadMenu(dlMenu, dlBtn);
-        });
-
-        dlBtn.addEventListener('keydown', function (e) {
-            if ((e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') && dlMenu.hidden) {
-                e.preventDefault();
-                openDownloadMenu();
-            }
-        });
-
-        dlMenu.addEventListener('keydown', function (e) {
-            var items = Array.prototype.slice.call(dlMenu.querySelectorAll('[role="menuitem"]'));
-            var idx = items.indexOf(document.activeElement);
-            if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
-            else if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
-            else if (e.key === 'Escape') { e.preventDefault(); closeDownloadMenu(dlMenu, dlBtn); dlBtn.focus(); }
-            else if (e.key === 'Tab') { closeDownloadMenu(dlMenu, dlBtn); }
-        });
-
-        dlGroup.appendChild(dlBtn);
-        dlGroup.appendChild(dlMenu);
-
-        var copyBtn = document.createElement('button');
-        copyBtn.className = 'action-btn';
-        copyBtn.setAttribute('aria-label', t('toolbar.copy-aria'));
-        copyBtn.setAttribute('data-tooltip', t('toolbar.copy-tooltip'));
-        copyBtn.setAttribute('data-i18n-aria-label', 'toolbar.copy-aria');
-        copyBtn.setAttribute('data-i18n-data-tooltip', 'toolbar.copy-tooltip');
-        copyBtn.appendChild(createSvgElement('<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
-        copyBtn.addEventListener('click', function () { showPaywall(true); });
-
-        // Transcript title + badge + download + copy (slim toolbar)
+        // Transcript title
         var toolbarTitle = document.createElement('h3');
         toolbarTitle.className = 'transcript-toolbar-title';
         toolbarTitle.textContent = t('transcript.title');
         toolbarTitle.setAttribute('data-i18n', 'transcript.title');
 
-        var cleanBadge = document.createElement('span');
-        cleanBadge.className = 'transcript-clean-badge';
-        cleanBadge.textContent = t('transcript.badge');
-        cleanBadge.setAttribute('data-tooltip', t('transcript.badge-tooltip'));
-        cleanBadge.setAttribute('data-i18n', 'transcript.badge');
-        cleanBadge.setAttribute('data-i18n-data-tooltip', 'transcript.badge-tooltip');
+        // View toggle (segmented control)
+        var viewToggle = document.createElement('div');
+        viewToggle.className = 'view-toggle';
+        viewToggle.setAttribute('role', 'radiogroup');
+        viewToggle.setAttribute('aria-label', 'Transcript view');
 
-        toolbar.appendChild(toolbarTitle);
-        toolbar.appendChild(cleanBadge);
-        toolbar.appendChild(dlGroup);
-        toolbar.appendChild(copyBtn);
+        var viewModes = [
+            { mode: 'cleaned', i18nKey: 'transcript.view-cleaned' },
+            { mode: 'raw', i18nKey: 'transcript.view-raw' },
+            { mode: 'segments', i18nKey: 'transcript.view-segments' }
+        ];
+
+        viewModes.forEach(function (vm, idx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'view-toggle-btn' + (idx === 0 ? ' view-toggle-btn--active' : '');
+            btn.setAttribute('role', 'radio');
+            btn.setAttribute('aria-checked', idx === 0 ? 'true' : 'false');
+            btn.setAttribute('data-view', vm.mode);
+            btn.setAttribute('data-i18n', vm.i18nKey);
+            btn.textContent = t(vm.i18nKey);
+            btn.addEventListener('click', function () {
+                switchTranscriptView(vm.mode, viewToggle, transcript, item);
+            });
+            viewToggle.appendChild(btn);
+        });
+
+        // Left side: title + view toggle
+        var toolbarLeft = document.createElement('div');
+        toolbarLeft.className = 'transcript-toolbar-left';
+        toolbarLeft.appendChild(toolbarTitle);
+        toolbarLeft.appendChild(viewToggle);
+
+        // Right side: copy + download buttons
+        var toolbarRight = document.createElement('div');
+        toolbarRight.className = 'transcript-toolbar-right';
+
+        // Copy button
+        var copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'toolbar-action';
+        copyBtn.setAttribute('aria-label', t('toolbar.copy-aria'));
+        copyBtn.setAttribute('data-i18n-aria-label', 'toolbar.copy-aria');
+        copyBtn.appendChild(createSvgElement('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
+        var copyLabel = document.createElement('span');
+        copyLabel.textContent = t('toolbar.copy-label');
+        copyLabel.setAttribute('data-i18n', 'toolbar.copy-label');
+        copyBtn.appendChild(copyLabel);
+        copyBtn.addEventListener('click', function () { handleCardCopy(copyBtn, copyLabel); });
+
+        // Download SVG template
+        var dlSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+        // TXT download
+        var dlTxt = document.createElement('button');
+        dlTxt.type = 'button';
+        dlTxt.className = 'toolbar-action';
+        dlTxt.appendChild(createSvgElement(dlSvg));
+        var dlTxtLabel = document.createElement('span');
+        dlTxtLabel.textContent = t('toolbar.download-txt-label');
+        dlTxtLabel.setAttribute('data-i18n', 'toolbar.download-txt-label');
+        dlTxt.appendChild(dlTxtLabel);
+        dlTxt.addEventListener('click', function () { showPaywall(true); });
+
+        // SRT download
+        var dlSrt = document.createElement('button');
+        dlSrt.type = 'button';
+        dlSrt.className = 'toolbar-action';
+        dlSrt.appendChild(createSvgElement(dlSvg));
+        var dlSrtLabel = document.createElement('span');
+        dlSrtLabel.textContent = t('toolbar.download-srt');
+        dlSrtLabel.setAttribute('data-i18n', 'toolbar.download-srt');
+        dlSrt.appendChild(dlSrtLabel);
+        dlSrt.addEventListener('click', function () { showPaywall(true); });
+
+        // VTT download
+        var dlVtt = document.createElement('button');
+        dlVtt.type = 'button';
+        dlVtt.className = 'toolbar-action';
+        dlVtt.appendChild(createSvgElement(dlSvg));
+        var dlVttLabel = document.createElement('span');
+        dlVttLabel.textContent = t('toolbar.download-vtt');
+        dlVttLabel.setAttribute('data-i18n', 'toolbar.download-vtt');
+        dlVtt.appendChild(dlVttLabel);
+        dlVtt.addEventListener('click', function () { showPaywall(true); });
+
+        toolbarRight.appendChild(copyBtn);
+        toolbarRight.appendChild(dlTxt);
+        toolbarRight.appendChild(dlSrt);
+        toolbarRight.appendChild(dlVtt);
+
+        toolbar.appendChild(toolbarLeft);
+        toolbar.appendChild(toolbarRight);
 
         var transcriptWrapper = document.createElement('div');
         transcriptWrapper.className = 'transcript-wrapper';
@@ -1199,25 +1276,8 @@
         transcript.setAttribute('aria-label', t('transcript.aria'));
         transcript.setAttribute('data-i18n-aria-label', 'transcript.aria');
 
-        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        item.segments.forEach(function (seg, i) {
-            var div = document.createElement('div');
-            div.className = 'transcript-segment';
-            if (!reducedMotion) div.style.animationDelay = Math.min(i * 30, 600) + 'ms';
-            if (typeof seg.start === 'number') {
-                var timeSpan = document.createElement('span');
-                timeSpan.className = 'segment-time';
-                timeSpan.textContent = formatTime(seg.start);
-                div.appendChild(timeSpan);
-            } else {
-                div.classList.add('transcript-segment--no-time');
-            }
-            var textSpan = document.createElement('span');
-            textSpan.className = 'segment-text';
-            textSpan.textContent = seg.text;
-            div.appendChild(textSpan);
-            transcript.appendChild(div);
-        });
+        // Render initial view (cleaned by default)
+        switchTranscriptView('cleaned', viewToggle, transcript, item);
 
         transcriptWrapper.appendChild(transcript);
 
