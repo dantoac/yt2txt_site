@@ -1722,8 +1722,13 @@ body.has-result .landing {
 }
 
 body.has-result .landing-content {
+    grid-template-columns: auto 1fr;
     align-items: start;
     padding-top: calc(var(--navbar-height) + var(--space-md));
+}
+
+body.has-result .landing-text {
+    padding-right: var(--space-xl);
 }
 
 body.has-result .landing-result-panel .morph-vis {
@@ -2961,6 +2966,11 @@ body.has-result .input-upgrade-hint {
 
     body.has-result .landing-result-panel {
         padding-right: clamp(3rem, 6vw, 6rem);
+    }
+
+    body.has-result .landing-content {
+        max-width: 1600px;
+        margin-inline: auto;
     }
 
     .morph-vis {
