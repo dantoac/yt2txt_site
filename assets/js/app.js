@@ -217,7 +217,7 @@
             'nav.transcribe': 'Transcribir',
             'nav.features': 'Funciones',
             'nav.pricing': 'Precios',
-            'nav.faq': 'Preguntas frecuentes',
+            'nav.faq': 'FAQ',
 
             // Theme toggle
             'theme.to-light': 'Cambiar a modo claro',
