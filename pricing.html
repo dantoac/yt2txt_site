@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing — yt2txt</title>
-    <meta name="description" content="yt2txt pricing — 30 free minutes every month. Buy additional transcription credits when you need more.">
+    <meta name="description" content="yt2txt pricing — 300 free minutes every month. Subscription plans from $10/mo. Buy additional credits when you need more.">
 
     <meta property="og:title" content="Pricing — yt2txt">
-    <meta property="og:description" content="30 free minutes every month. Buy more when you need them.">
+    <meta property="og:description" content="300 free minutes every month. Plans from $10/mo.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://yt2txt.com/assets/img/logo.png">
     <meta property="og:url" content="https://yt2txt.com/pricing">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Pricing — yt2txt">
-    <meta name="twitter:description" content="30 free minutes every month. Buy more when you need them.">
+    <meta name="twitter:description" content="300 free minutes every month. Plans from $10/mo.">
     <meta name="twitter:image" content="https://yt2txt.com/assets/img/logo.png">
 
     <link rel="canonical" href="https://yt2txt.com/pricing.html">
@@ -42,7 +42,7 @@
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Pricing — yt2txt",
-      "description": "yt2txt pricing — 30 free minutes every month. Buy additional transcription credits when you need more.",
+      "description": "yt2txt pricing — 300 free minutes every month. Subscription plans from $10/mo.",
       "url": "https://yt2txt.com/pricing.html",
       "isPartOf": {
         "@type": "WebApplication",
@@ -67,7 +67,7 @@
           "name": "How many free minutes do I get?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Every account gets 30 free minutes of transcription per month. You can purchase additional minutes if you need more."
+            "text": "Every account gets 300 free minutes of transcription per month. You can purchase additional minutes or subscribe to a plan if you need more."
           }
         },
         {
@@ -184,7 +184,7 @@
         <section class="pricing-hero" aria-label="Pricing overview">
             <div class="pricing-container">
                 <h1 class="pricing-title" data-i18n-html="pricing.title">Billing &amp; Credits</h1>
-                <p class="pricing-subtitle" data-i18n="pricing.subtitle">30 free minutes every month. Buy more when you need them.</p>
+                <p class="pricing-subtitle" data-i18n="pricing.subtitle">300 free minutes every month. Buy more when you need them.</p>
             </div>
         </section>
 
@@ -194,15 +194,69 @@
                     <div class="pricing-current-plan-info">
                         <span class="pricing-plan-badge" data-i18n="pricing.plan-badge">Free Tier</span>
                         <h2 class="pricing-card-name" data-i18n="pricing.free-name">FREE</h2>
-                        <p class="pricing-current-plan-quota" data-i18n-html="pricing.free-quota">30 minutes <span>/ month</span></p>
+                        <p class="pricing-current-plan-quota" data-i18n-html="pricing.free-quota">300 minutes <span>/ month</span></p>
                     </div>
                     <ul class="pricing-features">
-                        <li data-i18n="pricing.feature-1">Standard queue</li>
-                        <li data-i18n-html="pricing.feature-2">.txt &amp; .md downloads</li>
-                        <li data-i18n="pricing.feature-3">AI-powered transcription</li>
-                        <li data-i18n="pricing.feature-4">Batch transcription</li>
+                        <li data-i18n="pricing.feature-1">300 minutes/month</li>
+                        <li data-i18n="pricing.feature-2">10 minutes/day</li>
+                        <li data-i18n="pricing.feature-3">5 requests/hour</li>
+                        <li data-i18n="pricing.feature-4">YouTube transcription</li>
+                        <li data-i18n="pricing.feature-5">AI actions (via UI)</li>
                     </ul>
                     <a href="index.html" class="action-btn pricing-cta" data-i18n="pricing.start-cta">Start transcribing</a>
+                </div>
+            </div>
+        </section>
+
+        <section aria-label="Subscription plans">
+            <div class="pricing-container">
+                <h2 class="pricing-section-heading" data-i18n="pricing.plans-heading">Subscription Plans</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3 class="pricing-card-name" data-i18n="pricing.plan-starter-name">Starter</h3>
+                        <p class="pricing-card-price">$10<span>/mo</span></p>
+                        <p class="pricing-card-desc" data-i18n="pricing.plan-starter-sub">For regular content consumers</p>
+                        <ul class="pricing-features">
+                            <li>5,000 minutes/month</li>
+                            <li>100 minutes/day</li>
+                            <li>30 requests/hour</li>
+                            <li>YouTube transcription</li>
+                            <li>AI actions (via UI)</li>
+                        </ul>
+                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Starter plan — coming soon" data-i18n="pricing.plan-starter-btn">Coming Soon</button>
+                    </div>
+
+                    <div class="pricing-card pricing-card--featured">
+                        <span class="pricing-card-badge" data-i18n="pricing.popular">Popular</span>
+                        <h3 class="pricing-card-name" data-i18n="pricing.plan-pro-name">Pro</h3>
+                        <p class="pricing-card-price">$20<span>/mo</span></p>
+                        <p class="pricing-card-desc" data-i18n="pricing.plan-pro-sub">For power users and professionals</p>
+                        <ul class="pricing-features">
+                            <li>15,000 minutes/month</li>
+                            <li>300 minutes/day</li>
+                            <li>120 requests/hour</li>
+                            <li>YouTube transcription</li>
+                            <li>AI actions (via UI &amp; API)</li>
+                            <li>API key access</li>
+                        </ul>
+                        <button type="button" class="action-btn action-btn--primary pricing-cta pricing-cta--disabled" disabled aria-label="Pro plan — coming soon" data-i18n="pricing.plan-pro-btn">Coming Soon</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <h3 class="pricing-card-name" data-i18n="pricing.plan-max-name">Max</h3>
+                        <p class="pricing-card-price">$50<span>/mo</span></p>
+                        <p class="pricing-card-desc" data-i18n="pricing.plan-max-sub">Unlimited transcription for teams</p>
+                        <ul class="pricing-features">
+                            <li>Unlimited minutes/month</li>
+                            <li>500 minutes/day</li>
+                            <li>300 requests/hour</li>
+                            <li>YouTube transcription</li>
+                            <li>AI actions (via UI &amp; API)</li>
+                            <li>API key access</li>
+                            <li>Priority support</li>
+                        </ul>
+                        <button type="button" class="action-btn pricing-cta pricing-cta--disabled" disabled aria-label="Max plan — coming soon" data-i18n="pricing.plan-max-btn">Coming Soon</button>
+                    </div>
                 </div>
             </div>
         </section>
