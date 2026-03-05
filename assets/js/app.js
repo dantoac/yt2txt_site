@@ -128,20 +128,20 @@
             'announce.error': 'Error: ',
 
             // Features section
-            'features.title': 'One link. Four superpowers.',
-            'features.sub': 'Everything you need to get more from any YouTube video.',
-            'features.tab-transcript': 'Transcript',
-            'features.tab-summary': 'Summary',
-            'features.tab-keypoints': 'Key Points',
-            'features.tab-translate': 'Translate',
+            'features.title': 'Everything you need. Nothing you don\'t.',
+            'features.sub': 'Six real features, zero fluff.',
             'features.transcript-title': 'Full Transcript',
-            'features.transcript-body': 'Every word, with timestamps. Search, copy, and download in seconds.',
-            'features.summary-title': 'AI Summary',
-            'features.summary-body': 'Get the gist in 3 sentences. No fluff, no filler.',
-            'features.keypoints-title': 'Key Points',
-            'features.keypoints-body': 'The most important ideas, extracted and listed clearly.',
-            'features.translate-title': 'Translate',
-            'features.translate-body': 'Turn any transcript into any language instantly.',
+            'features.transcript-desc': 'Every word with timestamps. Copy, search, and download in seconds.',
+            'features.formats-title': 'Multiple Formats',
+            'features.formats-desc': 'Download as TXT, SRT, or VTT. Ready for any workflow.',
+            'features.batch-title': 'Batch Queue',
+            'features.batch-desc': 'Queue up to 10 videos. They process one by one, automatically.',
+            'features.theme-title': 'Dark & Light Mode',
+            'features.theme-desc': 'Auto-detects your preference. Toggle anytime.',
+            'features.bilingual-title': 'Bilingual',
+            'features.bilingual-desc': 'Full interface in English and Spanish.',
+            'features.free-title': 'Free & Fast',
+            'features.free-desc': 'No sign-up, no API key. Paste a link and go.',
 
             // Paywall
             'paywall.close-aria': 'Close upgrade dialog',
@@ -339,20 +339,20 @@
             'announce.error': 'Error: ',
 
             // Features section
-            'features.title': 'Un link. Cuatro superpoderes.',
-            'features.sub': 'Todo lo que necesitas para sacar m\u00e1s de cualquier video de YouTube.',
-            'features.tab-transcript': 'Transcripci\u00f3n',
-            'features.tab-summary': 'Resumen',
-            'features.tab-keypoints': 'Puntos clave',
-            'features.tab-translate': 'Traducir',
+            'features.title': 'Todo lo que necesitas. Nada que no.',
+            'features.sub': 'Seis funciones reales, cero relleno.',
             'features.transcript-title': 'Transcripci\u00f3n completa',
-            'features.transcript-body': 'Cada palabra, con marcas de tiempo. Busca, copia y descarga en segundos.',
-            'features.summary-title': 'Resumen con IA',
-            'features.summary-body': 'La esencia en 3 oraciones. Sin relleno.',
-            'features.keypoints-title': 'Puntos clave',
-            'features.keypoints-body': 'Las ideas m\u00e1s importantes, extra\u00eddas y listadas con claridad.',
-            'features.translate-title': 'Traducir',
-            'features.translate-body': 'Convierte cualquier transcripci\u00f3n a cualquier idioma al instante.',
+            'features.transcript-desc': 'Cada palabra con marcas de tiempo. Copia, busca y descarga en segundos.',
+            'features.formats-title': 'M\u00faltiples formatos',
+            'features.formats-desc': 'Descarga como TXT, SRT o VTT. Listo para cualquier flujo de trabajo.',
+            'features.batch-title': 'Cola de lotes',
+            'features.batch-desc': 'Agrega hasta 10 videos. Se procesan uno a uno, autom\u00e1ticamente.',
+            'features.theme-title': 'Modo oscuro y claro',
+            'features.theme-desc': 'Detecta tu preferencia autom\u00e1ticamente. Cambia cuando quieras.',
+            'features.bilingual-title': 'Biling\u00fce',
+            'features.bilingual-desc': 'Interfaz completa en ingl\u00e9s y espa\u00f1ol.',
+            'features.free-title': 'Gratis y r\u00e1pido',
+            'features.free-desc': 'Sin registro, sin API key. Pega un link y listo.',
 
             // Paywall
             'paywall.close-aria': 'Cerrar di\u00e1logo de mejora',
@@ -1617,57 +1617,6 @@
     });
 
     startTagline();
-
-    // ── Features Carousel ────────────────────────────────────────
-    var featureTabs = document.querySelectorAll('.features-tab');
-    var featurePanels = document.querySelectorAll('.features-panel');
-    var featuresProgressFill = document.querySelector('.features-progress-fill');
-    var featureIndex = 0;
-    var FEATURE_INTERVAL = 5000;
-    var featureTimer = null;
-
-    function activateFeature(index) {
-        featureTabs.forEach(function (t, i) { t.classList.toggle('features-tab--active', i === index); t.setAttribute('aria-selected', i === index ? 'true' : 'false'); t.setAttribute('tabindex', i === index ? '0' : '-1'); });
-        featurePanels.forEach(function (p, i) { p.classList.toggle('features-panel--active', i === index); if (i === index) p.removeAttribute('hidden'); else p.setAttribute('hidden', ''); });
-        featureIndex = index;
-    }
-
-    function startFeatureProgress() {
-        if (!featuresProgressFill) return;
-        featuresProgressFill.style.transition = 'none';
-        featuresProgressFill.style.width = '0%';
-        requestAnimationFrame(function () { requestAnimationFrame(function () { featuresProgressFill.style.transition = 'width ' + FEATURE_INTERVAL + 'ms linear'; featuresProgressFill.style.width = '100%'; }); });
-    }
-
-    function startFeatureCarousel() {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        clearInterval(featureTimer);
-        startFeatureProgress();
-        featureTimer = setInterval(function () { var next = (featureIndex + 1) % featureTabs.length; activateFeature(next); startFeatureProgress(); }, FEATURE_INTERVAL);
-    }
-
-    function stopFeatureCarousel() { clearInterval(featureTimer); featureTimer = null; if (featuresProgressFill) { featuresProgressFill.style.transition = 'none'; featuresProgressFill.style.width = '0%'; } }
-
-    var featuresSection = document.getElementById('features');
-    if (featuresSection && featureTabs.length > 0) {
-        featuresSection.addEventListener('mouseenter', stopFeatureCarousel);
-        featuresSection.addEventListener('mouseleave', startFeatureCarousel);
-        featuresSection.addEventListener('focusin', stopFeatureCarousel);
-        featuresSection.addEventListener('focusout', function (e) { if (!featuresSection.contains(e.relatedTarget)) startFeatureCarousel(); });
-        featureTabs.forEach(function (tab, i) { tab.addEventListener('click', function () { activateFeature(i); startFeatureCarousel(); }); });
-        featureTabs.forEach(function (tab, i) {
-            tab.setAttribute('tabindex', i === featureIndex ? '0' : '-1');
-            tab.addEventListener('keydown', function (e) {
-                var len = featureTabs.length; var newIndex = -1;
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); newIndex = (i + 1) % len; }
-                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); newIndex = (i - 1 + len) % len; }
-                else if (e.key === 'Home') { e.preventDefault(); newIndex = 0; }
-                else if (e.key === 'End') { e.preventDefault(); newIndex = len - 1; }
-                if (newIndex >= 0) { featureTabs.forEach(function (t, j) { t.setAttribute('tabindex', j === newIndex ? '0' : '-1'); }); featureTabs[newIndex].focus(); activateFeature(newIndex); startFeatureCarousel(); }
-            });
-        });
-        startFeatureCarousel();
-    }
 
     // ── Floating Island: Scroll-linked Active State ──────────────
     var islandSteps = document.querySelectorAll('.island-step[data-section]');
