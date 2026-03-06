@@ -2892,6 +2892,10 @@ body.has-result .input-upgrade-hint {
     padding-bottom: var(--space-2xl);
 }
 
+.pricing-grid--4col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .pricing-card {
     position: relative;
     background: var(--surface);
@@ -3222,16 +3226,17 @@ body.has-result .input-upgrade-hint {
 }
 
 @media (max-width: 900px) {
-    .pricing-grid {
+    .pricing-grid,
+    .pricing-grid--4col {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 600px) {
-    .pricing-grid {
+    .pricing-grid,
+    .pricing-grid--4col {
         grid-template-columns: 1fr;
     }
-
 }
 
 
@@ -3518,7 +3523,7 @@ body.has-result .landing-text > .plan-strip {
     border-radius: var(--radius-lg);
     padding: var(--space-xl) var(--space-2xl);
     box-shadow: var(--shadow-lg);
-    max-width: 920px;
+    max-width: 1100px;
     width: 100%;
     animation: result-reveal 0.4s var(--ease-out) both;
 }
@@ -3562,7 +3567,7 @@ body.has-result .landing-text > .plan-strip {
 
 .paywall-plans {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
 }
@@ -3665,6 +3670,12 @@ body.has-result .landing-text > .plan-strip {
 
 .paywall-footer a:hover {
     color: var(--accent);
+}
+
+@media (max-width: 1024px) {
+    .paywall-plans {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
