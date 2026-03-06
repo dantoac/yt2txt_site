@@ -1094,27 +1094,14 @@
         resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // ── Transcript View Switching ──────────────────────────────
-    function switchTranscriptView(mode, toggleContainer, transcriptEl, item) {
-        // Update toggle button states
-        var btns = toggleContainer.querySelectorAll('.view-toggle-btn');
-        btns.forEach(function (b) {
-            var isActive = b.getAttribute('data-view') === mode;
-            b.classList.toggle('view-toggle-btn--active', isActive);
-            b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-
-        // Clear transcript content
-        while (transcriptEl.firstChild) transcriptEl.removeChild(transcriptEl.firstChild);
-
-        // Remove previous view classes
-        transcriptEl.classList.remove('transcript--cleaned', 'transcript--raw', 'transcript--segments');
-        transcriptEl.classList.add('transcript--' + mode);
+    // ── Transcript View Building & Switching ─────────────────────
+    function buildTranscriptView(mode, item) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'transcript--' + mode;
 
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (mode === 'cleaned') {
-            // Group ~5 segments per paragraph, text only
             var chunkSize = 5;
             for (var i = 0; i < item.segments.length; i += chunkSize) {
                 var p = document.createElement('p');
@@ -1124,15 +1111,14 @@
                     texts.push(item.segments[j].text);
                 }
                 p.textContent = texts.join(' ');
-                transcriptEl.appendChild(p);
+                wrapper.appendChild(p);
             }
         } else if (mode === 'raw') {
             var p = document.createElement('p');
             p.className = 'transcript-raw-text';
             p.textContent = item.segments.map(function (s) { return s.text; }).join(' ');
-            transcriptEl.appendChild(p);
+            wrapper.appendChild(p);
         } else {
-            // segments — original format with timestamps
             item.segments.forEach(function (seg, i) {
                 var div = document.createElement('div');
                 div.className = 'transcript-segment';
@@ -1149,9 +1135,22 @@
                 textSpan.className = 'segment-text';
                 textSpan.textContent = seg.text;
                 div.appendChild(textSpan);
-                transcriptEl.appendChild(div);
+                wrapper.appendChild(div);
             });
         }
+
+        return wrapper;
+    }
+
+    function switchTranscriptView(mode, toggleContainer, transcriptEl, item) {
+        var btns = toggleContainer.querySelectorAll('.view-toggle-btn');
+        btns.forEach(function (b) {
+            var isActive = b.getAttribute('data-view') === mode;
+            b.classList.toggle('view-toggle-btn--active', isActive);
+            b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+        var views = transcriptEl.querySelectorAll('[data-view]');
+        views.forEach(function (v) { v.hidden = v.getAttribute('data-view') !== mode; });
     }
 
     function renderResultCard(item) {
@@ -1318,8 +1317,13 @@
         transcript.setAttribute('aria-label', t('transcript.aria'));
         transcript.setAttribute('data-i18n-aria-label', 'transcript.aria');
 
-        // Render initial view (cleaned by default)
-        switchTranscriptView('cleaned', viewToggle, transcript, item);
+        // Pre-build all 3 views; only 'cleaned' is visible initially
+        ['cleaned', 'raw', 'segments'].forEach(function(mode) {
+            var view = buildTranscriptView(mode, item);
+            view.setAttribute('data-view', mode);
+            view.hidden = (mode !== 'cleaned');
+            transcript.appendChild(view);
+        });
 
         transcriptWrapper.appendChild(transcript);
 

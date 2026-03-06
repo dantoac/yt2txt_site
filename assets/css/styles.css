@@ -73,19 +73,44 @@
     --duration-normal: 300ms;
     --duration-slow: 500ms;
 
+    /* Letter-spacing */
+    --ls-tighter: -0.035em;
+    --ls-tight: -0.02em;
+    --ls-snug: -0.01em;
+    --ls-wide: 0.04em;
+    --ls-wider: 0.05em;
+    --ls-widest: 0.06em;
+
     /* Island navbar */
     --gutter: clamp(1.25rem, 5vw, 3rem);
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --island-bg: color-mix(in srgb, var(--surface) 90%, transparent);
-    --island-border: var(--border);
-    --island-border-strong: var(--border-strong);
-    --island-accent: var(--accent);
     --island-accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
-    --island-accent-15: var(--accent-15);
-    --island-accent-30: var(--accent-30);
     --island-top-offset: 0px;
     --navbar-height: 48px;
+
+    /* Shadows — island & toggle */
+    --shadow-island: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.03);
+    --shadow-island-dark: 0 1px 2px rgba(0,0,0,0.20), 0 4px 16px rgba(0,0,0,0.25);
+    --shadow-toggle: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
+
+/* --- Breakpoints Reference ---
+   480px  — small mobile (island: icon-only steps)
+   600px  — large mobile (input stacks, result compact)
+   640px  — bento grid: 1→2 cols
+   768px  — tablet (hamburger, hero stack, input mobile)
+   900px  — pricing grid: 3→2 cols
+   960px  — bento grid: 2→3 cols
+   1024px — paywall grid breakpoint
+   1200px — landing two-col layout, paywall 5-col
+   1600px — max container width
+   Island-specific compound queries:
+     481-768px  — island icons only, no labels
+     601-768px  — paywall plan strip
+     769-1023px — island hides links
+     769-1199px — pricing 2-col
+*/
 
 /* --- Dark Theme --- */
 [data-theme="dark"] {
@@ -301,20 +326,14 @@ body.scrolled-past-hero .navbar-island {
     padding: 4px 6px;
     border-radius: 2rem;
     background: var(--island-bg);
-    border-color: var(--island-border-strong);
-    box-shadow:
-        0 1px 2px rgba(0,0,0,0.04),
-        0 4px 16px rgba(0,0,0,0.06),
-        0 12px 40px rgba(0,0,0,0.03);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-island);
 }
 
 body.scrolled-past-hero .navbar-island::before { opacity: 1; }
 
 [data-theme="dark"] body.scrolled-past-hero .navbar-island {
-    box-shadow:
-        0 1px 2px rgba(0,0,0,0.20),
-        0 4px 16px rgba(0,0,0,0.25),
-        0 0 40px var(--island-accent-15);
+    box-shadow: var(--shadow-island-dark), 0 0 40px var(--accent-15);
 }
 
 /* No-transition guard */
@@ -352,14 +371,14 @@ body.scrolled-past-hero .navbar-island::before { opacity: 1; }
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 0.95rem;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--ls-tight);
 }
 
 /* Dividers */
 .island-divider {
     width: 1px;
     height: 20px;
-    background: var(--island-border);
+    background: var(--border);
     flex-shrink: 0;
     transition: height 300ms var(--ease-out-expo);
 }
@@ -563,12 +582,12 @@ a.island-step {
 }
 
 .island-menu-item--active {
-    color: var(--island-accent);
+    color: var(--accent);
     background: var(--island-accent-soft);
 }
 
 .island-menu-item--active:hover {
-    color: var(--island-accent);
+    color: var(--accent);
     background: var(--island-accent-soft);
 }
 
@@ -655,12 +674,8 @@ a.island-step {
         background: var(--island-bg);
         -webkit-backdrop-filter: blur(20px) saturate(1.4);
         backdrop-filter: blur(20px) saturate(1.4);
-        border: 1px solid var(--island-border-strong);
-        box-shadow:
-            0 1px 2px rgba(0,0,0,0.04),
-            0 4px 16px rgba(0,0,0,0.06),
-            0 12px 40px rgba(0,0,0,0.03),
-            0 0 40px var(--island-accent-15);
+        border: 1px solid var(--border-strong);
+        box-shadow: var(--shadow-island), 0 0 40px var(--accent-15);
     }
 
     .navbar-island.island-open ~ .island-menu { display: flex; }
@@ -685,7 +700,7 @@ a.island-step {
     font-family: var(--font-display);
     font-size: clamp(2.4rem, 5vw, 3.4rem);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--ls-tight);
     transition: opacity var(--duration-fast);
     margin-bottom: var(--space-sm);
 }
@@ -826,7 +841,7 @@ a.island-step {
     font-family: var(--font-display);
     font-size: 1.05rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ls-snug);
     box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-xl);
 }
@@ -846,7 +861,7 @@ a.island-step {
     font-family: var(--font-display);
     font-size: clamp(2.8rem, 7vw, 5rem);
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: var(--ls-tighter);
     line-height: 1.08;
     color: var(--text);
     margin-bottom: var(--space-lg);
@@ -946,6 +961,7 @@ a.island-step {
     align-items: center;
     justify-content: center;
     gap: 18px;
+    will-change: opacity;
     animation: morph-screen-fade 7s var(--ease-in-out) infinite;
 }
 
@@ -996,6 +1012,7 @@ a.island-step {
     padding: 20px 18px;
     gap: 7px;
     opacity: 0;
+    will-change: opacity;
     animation: morph-doc-fade 7s var(--ease-in-out) infinite;
 }
 
@@ -1035,6 +1052,7 @@ a.island-step {
 .morph-dot {
     position: absolute;
     border-radius: 50%;
+    will-change: transform;
 }
 
 .morph-dot--1 {
@@ -1256,7 +1274,7 @@ a.island-step {
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 700;
     color: var(--text);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--ls-tight);
     margin-bottom: var(--space-sm);
 }
 
@@ -1323,7 +1341,7 @@ a.island-step {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--text);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--ls-snug);
 }
 
 .bento-card--hero .bento-card-title {
@@ -1441,7 +1459,7 @@ a.island-step {
 
 /* --- Tagline (inside landing-text) --- */
 .hero-tagline {
-    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-size: clamp(0.95rem, 1.8vw + 0.2rem, 1.3rem);
     color: var(--text-secondary);
     margin-bottom: var(--space-xl);
     line-height: 1.5;
@@ -1818,6 +1836,7 @@ body.has-result .input-upgrade-hint {
     width: 30%;
     background: var(--accent);
     border-radius: 2px;
+    will-change: transform;
     animation: progress-slide 1.8s var(--ease-in-out) infinite;
 }
 
@@ -2092,7 +2111,7 @@ body.has-result .input-upgrade-hint {
 .view-toggle-btn--active {
     background: var(--accent);
     color: var(--accent-contrast);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-toggle);
 }
 
 .view-toggle-btn--active:hover {
@@ -2317,7 +2336,7 @@ body.has-result .input-upgrade-hint {
     font-weight: 600;
     color: var(--accent);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: var(--ls-wide);
 }
 
 .ai-result-close {
@@ -2576,7 +2595,7 @@ body.has-result .input-upgrade-hint {
     font-family: var(--font-display);
     font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--ls-wider);
     text-transform: uppercase;
     line-height: 1;
 }
@@ -2883,7 +2902,7 @@ body.has-result .input-upgrade-hint {
     font-size: clamp(1.5rem, 4vw, 2.2rem);
     font-weight: 600;
     color: var(--text);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--ls-tight);
     margin-bottom: var(--space-sm);
 }
 
@@ -3048,7 +3067,7 @@ body.has-result .input-upgrade-hint {
     font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--ls-widest);
     color: var(--accent);
     background: var(--accent-soft);
     border-radius: 999px;
@@ -3419,7 +3438,7 @@ a[target="_blank"]::after {
     font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--ls-widest);
     color: var(--morph-color);
     background: color-mix(in srgb, var(--morph-color) 12%, transparent);
     border-radius: 999px;
