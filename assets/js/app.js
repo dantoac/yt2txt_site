@@ -231,7 +231,7 @@
             'pricing.faq-q3': 'What formats can I download transcripts in?',
             'pricing.faq-a3': 'You can download transcripts as plain text (.txt) or Markdown (.md) files.',
             'pricing.still-questions': 'Still have questions?',
-            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.'
+            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@ainvirion.com">hello@ainvirion.com</a>.'
         },
         es: {
             // Page titles
@@ -461,17 +461,19 @@
             'pricing.faq-q3': '\u00bfEn qu\u00e9 formatos puedo descargar las transcripciones?',
             'pricing.faq-a3': 'Puedes descargar transcripciones como archivos de texto plano (.txt) o Markdown (.md).',
             'pricing.still-questions': '\u00bfA\u00fan tienes preguntas?',
-            'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.',
+            'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:hello@ainvirion.com">hello@ainvirion.com</a>.',
         }
     };
 
     var currentLang = 'en';
 
+    var VALID_LANGS = { en: true, es: true };
+
     function getPreferredLang() {
         var stored = localStorage.getItem('yt2txt-lang');
-        if (stored && translations[stored]) return stored;
+        if (stored && VALID_LANGS[stored]) return stored;
         var nav = (navigator.language || '').slice(0, 2).toLowerCase();
-        return translations[nav] ? nav : 'en';
+        return VALID_LANGS[nav] ? nav : 'en';
     }
 
     function t(key) {
@@ -557,9 +559,11 @@
     document.documentElement.setAttribute('lang', currentLang);
 
     // ── Theme Toggle ─────────────────────────────────────────────
+    var VALID_THEMES = { light: true, dark: true };
+
     function getPreferredTheme() {
         var stored = localStorage.getItem('yt2txt-theme');
-        if (stored) return stored;
+        if (stored && VALID_THEMES[stored]) return stored;
         return window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
     }
 
@@ -642,12 +646,12 @@
 
         window.addEventListener('scroll', checkScroll, { passive: true });
 
-        var resizeTimer;
+        var resizeRaf;
         window.addEventListener('resize', function () {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function () {
+            if (resizeRaf) cancelAnimationFrame(resizeRaf);
+            resizeRaf = requestAnimationFrame(function () {
                 remeasureIsland();
-            }, 150);
+            });
         });
     })();
 
@@ -707,6 +711,7 @@
     var activeFocusTrap = null;
 
     function trapFocus(container) {
+        releaseFocusTrap();
         var focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
         function handleKeydown(e) {
@@ -750,6 +755,7 @@
     function startTagline() {
         if (taglinePhrases.length < 2) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (taglineTimer) clearInterval(taglineTimer);
 
         taglineTimer = setInterval(function () {
             taglinePhrases[taglineIndex].classList.remove('tagline-phrase--active');
@@ -1085,9 +1091,7 @@
         submitBtn.disabled = false;
         if (paywallTimer) clearTimeout(paywallTimer);
         paywallTimer = setTimeout(showPaywall, 3000);
-        if (window.innerWidth <= 768) {
-            resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     // ── Transcript View Switching ──────────────────────────────
@@ -1671,8 +1675,11 @@
     }
 
     var islandMenuItems = document.querySelectorAll('.island-menu-item[data-section]');
+    var lastActiveSection = undefined;
 
     function setActiveIslandStep(sectionName) {
+        if (sectionName === lastActiveSection) return;
+        lastActiveSection = sectionName;
         islandSteps.forEach(function (link) { var isActive = sectionName && link.getAttribute('data-section') === sectionName; link.classList.toggle('island-step--active', isActive); if (isActive) updateIslandIndicator(link); });
         islandMenuItems.forEach(function (item) { var isActive = sectionName && item.getAttribute('data-section') === sectionName; item.classList.toggle('island-menu-item--active', isActive); });
         if (islandIndicator) islandIndicator.style.opacity = sectionName ? '1' : '0';

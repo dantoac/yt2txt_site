@@ -63,6 +63,7 @@
     /* Z-index scale */
     --z-dropdown: 50;
     --z-navbar: 200;
+    --z-paywall: 250;
     --z-skip: 300;
 
     /* Transitions */
@@ -1081,6 +1082,13 @@ a.island-step {
     50% { transform: translate(5px, -9px); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .morph-frame { animation: none; }
+    .morph-screen { animation: none; }
+    .morph-bar-fill { animation: none; width: 50%; }
+    .morph-doc { animation: none; }
+    .morph-dot { animation: none; }
+}
 
 @media (max-width: 768px) {
     .landing {
@@ -2593,7 +2601,7 @@ body.has-result .input-upgrade-hint {
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-md);
     min-width: 120px;
-    z-index: 50;
+    z-index: var(--z-dropdown);
     animation: segment-appear var(--duration-fast) var(--ease-out) both;
 }
 
@@ -2654,8 +2662,8 @@ body.has-result .input-upgrade-hint {
 }
 
 @keyframes upgrade-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-    50% { box-shadow: 0 0 16px 2px rgba(245, 158, 11, 0.25); }
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--warning-hover) 0%, transparent); }
+    50% { box-shadow: 0 0 16px 2px color-mix(in srgb, var(--warning-hover) 25%, transparent); }
 }
 
 .cta-upgrade:hover {
@@ -2759,7 +2767,7 @@ body.has-result .input-upgrade-hint {
     .submit-btn {
         justify-content: center;
         padding: 0.85rem;
-        border-top: 1px solid rgba(255,255,255,0.15);
+        border-top: 1px solid color-mix(in srgb, #fff 15%, transparent);
     }
 
     .result-header {
@@ -3348,6 +3356,12 @@ body.has-result .input-upgrade-hint {
 
 
 /* --- Print --- */
+/* External link indicator */
+a[target="_blank"]::after {
+    content: " \2197";
+    font-size: 0.75em;
+}
+
 @media print {
     .landing,
     .processing,
@@ -3355,10 +3369,19 @@ body.has-result .input-upgrade-hint {
     .transcript-plan-strip,
     .transcript-sidebar,
     .footer,
+    .site-footer,
     .theme-toggle,
     .lang-dropdown-group,
-    .ai-result-panel {
+    .ai-result-panel,
+    .navbar,
+    .paywall-overlay {
         display: none;
+    }
+
+    body {
+        font-size: 12pt;
+        color: #000;
+        background: #fff;
     }
 
     .result {
@@ -3369,6 +3392,7 @@ body.has-result .input-upgrade-hint {
         border: none;
         box-shadow: none;
         background: transparent;
+        page-break-inside: avoid;
     }
 
     .result-card-body {
@@ -3380,6 +3404,10 @@ body.has-result .input-upgrade-hint {
         box-shadow: none;
         max-height: none;
         padding: 0;
+    }
+
+    .transcript-segment {
+        page-break-inside: avoid;
     }
 }
 
@@ -3412,8 +3440,8 @@ body.has-result .input-upgrade-hint {
     width: 100%;
     max-width: 560px;
     padding: 0.6rem 1rem;
-    background: rgba(229, 160, 0, 0.08);
-    border: var(--border-w) solid rgba(229, 160, 0, 0.25);
+    background: color-mix(in srgb, var(--morph-color) 8%, transparent);
+    border: var(--border-w) solid color-mix(in srgb, var(--morph-color) 25%, transparent);
     border-radius: var(--radius-sm);
     margin-bottom: var(--space-md);
 }
@@ -3497,7 +3525,7 @@ body.has-result .landing-text > .plan-strip {
 .paywall-overlay {
     position: fixed;
     inset: 0;
-    z-index: 200;
+    z-index: var(--z-paywall);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3511,7 +3539,7 @@ body.has-result .landing-text > .plan-strip {
 .paywall-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: color-mix(in srgb, #000 50%, transparent);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
 }
