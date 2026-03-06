@@ -2928,6 +2928,15 @@ body.has-result .input-upgrade-hint {
     pointer-events: none;
 }
 
+.pricing-cta--danger {
+    background: var(--error);
+    color: #fff;
+}
+
+.pricing-cta--danger:hover {
+    background: color-mix(in srgb, var(--error) 85%, #000);
+}
+
 /* --- Current Plan --- */
 .pricing-current-plan {
     background: var(--surface);
@@ -3434,7 +3443,7 @@ body.has-result .landing-text > .plan-strip {
     border-radius: var(--radius-lg);
     padding: var(--space-xl) var(--space-2xl);
     box-shadow: var(--shadow-lg);
-    max-width: 740px;
+    max-width: 920px;
     width: 100%;
     animation: result-reveal 0.4s var(--ease-out) both;
 }
@@ -3478,7 +3487,7 @@ body.has-result .landing-text > .plan-strip {
 
 .paywall-plans {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
 }
@@ -3498,6 +3507,18 @@ body.has-result .landing-text > .plan-strip {
 
 .paywall-plan:hover {
     box-shadow: var(--shadow-md);
+}
+
+.paywall-plan--current {
+    border-style: dashed;
+    opacity: 0.75;
+}
+
+.paywall-plan-cta--current {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    cursor: default;
+    pointer-events: none;
 }
 
 .paywall-plan--featured {
