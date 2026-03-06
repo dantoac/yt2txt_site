@@ -167,7 +167,11 @@
             'paywall.compare': '<a href="pricing.html">Compare all plans &rarr;</a>',
 
             // Footer
-            'footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a>',
+            'footer.tagline': 'YouTube transcription, simplified',
+            'footer.report': 'Report an issue',
+            'footer.legal': '&copy; 2026 AInvirion LLC &middot; Spokane, WA',
+            'footer.privacy': 'Privacy Policy',
+            'footer.terms': 'Terms of Service',
 
             // Pricing page
             'pricing.title': 'Billing &amp; Credits',
@@ -215,8 +219,7 @@
             'pricing.faq-q3': 'What formats can I download transcripts in?',
             'pricing.faq-a3': 'You can download transcripts as plain text (.txt) or Markdown (.md) files.',
             'pricing.still-questions': 'Still have questions?',
-            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.',
-            'pricing.footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Pricing</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Report an issue (opens GitHub)">Report an issue</a>'
+            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.'
         },
         es: {
             // Page titles
@@ -382,7 +385,11 @@
             'paywall.compare': '<a href="pricing.html">Comparar todos los planes &rarr;</a>',
 
             // Footer
-            'footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html">Precios</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Reportar un problema (abre GitHub)">Reportar un problema</a>',
+            'footer.tagline': 'Transcripción de YouTube, simplificada',
+            'footer.report': 'Reportar un problema',
+            'footer.legal': '&copy; 2026 AInvirion LLC &middot; Spokane, WA',
+            'footer.privacy': 'Política de Privacidad',
+            'footer.terms': 'Términos de Servicio',
 
             // Pricing page
             'pricing.title': 'Facturaci\u00f3n y cr\u00e9ditos',
@@ -431,7 +438,6 @@
             'pricing.faq-a3': 'Puedes descargar transcripciones como archivos de texto plano (.txt) o Markdown (.md).',
             'pricing.still-questions': '\u00bfA\u00fan tienes preguntas?',
             'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:hello@yt2txt.com">hello@yt2txt.com</a>.',
-            'pricing.footer': '&copy; 2026 yt2txt &middot; <a href="pricing.html" aria-current="page">Precios</a> &middot; <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer" aria-label="Reportar un problema (abre GitHub)">Reportar un problema</a>'
         }
     };
 
