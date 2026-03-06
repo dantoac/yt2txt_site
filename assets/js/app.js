@@ -231,7 +231,7 @@
             'pricing.faq-q3': 'What formats can I download transcripts in?',
             'pricing.faq-a3': 'You can download transcripts as plain text (.txt) or Markdown (.md) files.',
             'pricing.still-questions': 'Still have questions?',
-            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:hello@ainvirion.com">hello@ainvirion.com</a>.'
+            'pricing.still-text': 'Open an issue on <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> or email us at <a href="mailto:support@ainvirion.com">support@ainvirion.com</a>.'
         },
         es: {
             // Page titles
@@ -461,7 +461,7 @@
             'pricing.faq-q3': '\u00bfEn qu\u00e9 formatos puedo descargar las transcripciones?',
             'pricing.faq-a3': 'Puedes descargar transcripciones como archivos de texto plano (.txt) o Markdown (.md).',
             'pricing.still-questions': '\u00bfA\u00fan tienes preguntas?',
-            'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:hello@ainvirion.com">hello@ainvirion.com</a>.',
+            'pricing.still-text': 'Abre un issue en <a href="https://github.com/AInvirion/youtube-transcriber/issues" target="_blank" rel="noopener noreferrer">GitHub</a> o escr\u00edbenos a <a href="mailto:support@ainvirion.com">support@ainvirion.com</a>.',
         }
     };
 
