@@ -41,7 +41,8 @@
 
             // Plan strip
             'plan.badge': 'FREE',
-            'plan.quota': '<strong>120 min</strong> of 300 min used',
+            'plan.quota': '<strong>{used} min</strong> of {limit} min used',
+            'plan.quota.unlimited': '<strong>{used} min</strong> used — unlimited plan',
 
             // Input
             'input.placeholder': 'https://youtube.com/watch?v=...',
@@ -277,7 +278,8 @@
 
             // Plan strip
             'plan.badge': 'GRATIS',
-            'plan.quota': '<strong>120 min</strong> de 300 min usados',
+            'plan.quota': '<strong>{used} min</strong> de {limit} min usados',
+            'plan.quota.unlimited': '<strong>{used} min</strong> usados — plan ilimitado',
 
             // Input
             'input.placeholder': 'https://youtube.com/watch?v=...',
@@ -494,6 +496,14 @@
         return translations.en[key] || key;
     }
 
+    function tReplace(key, replacements) {
+        var str = t(key);
+        Object.keys(replacements).forEach(function (k) {
+            str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), replacements[k]);
+        });
+        return str;
+    }
+
     function applyTranslations() {
         // textContent updates
         document.querySelectorAll('[data-i18n]').forEach(function (el) {
@@ -557,6 +567,7 @@
         }
 
         applyTranslations();
+        updatePlanStrip();
 
         // Mark active lang menu item
         if (typeof markActiveLangItem === 'function') markActiveLangItem();
@@ -997,6 +1008,61 @@
         return headers;
     }
 
+    // ── Plan Strip ──────────────────────────────────────────────
+    function renderPlanStrip(used, limit, badge, unlimited) {
+        var badgeEl = document.querySelector('.plan-badge');
+        var quotaEl = document.querySelector('.plan-strip-quota');
+        var meterFill = document.querySelector('.plan-strip-meter-fill');
+        var meter = document.querySelector('.plan-strip-meter');
+        if (!badgeEl || !quotaEl || !meterFill) return;
+
+        badgeEl.textContent = badge;
+
+        var quotaKey = unlimited ? 'plan.quota.unlimited' : 'plan.quota';
+        var quotaHtml = tReplace(quotaKey, { used: used, limit: limit });
+        // Safe: quotaHtml comes from trusted i18n strings with numeric replacements, never user input
+        var tmpl = document.createElement('template');
+        tmpl.innerHTML = quotaHtml;
+        while (quotaEl.firstChild) quotaEl.removeChild(quotaEl.firstChild);
+        quotaEl.appendChild(tmpl.content.cloneNode(true));
+
+        var pct = unlimited ? Math.min((used / 1000) * 100, 100) : (limit > 0 ? Math.min((used / limit) * 100, 100) : 0);
+        meterFill.style.width = pct + '%';
+
+        if (meter) {
+            meter.setAttribute('aria-valuenow', used);
+            meter.setAttribute('aria-valuemax', unlimited ? '' : limit);
+            meter.setAttribute('aria-label', unlimited
+                ? used + ' minutes used — unlimited plan'
+                : 'Plan usage: ' + used + ' of ' + limit + ' minutes');
+        }
+    }
+
+    function updatePlanStrip() {
+        if (!isAuthenticated()) {
+            renderPlanStrip(0, 300, t('plan.badge'), false);
+            return;
+        }
+
+        fetch('/billing/current', {
+            headers: authHeaders()
+        })
+        .then(function (res) {
+            if (!res.ok) throw new Error('billing fetch failed');
+            return res.json();
+        })
+        .then(function (data) {
+            var used = Math.round(data.minutes_used || 0);
+            var limit = Math.round(data.minutes_limit || 300);
+            var badge = (data.plan_name || 'FREE').toUpperCase();
+            var unlimited = !!data.is_unlimited_monthly;
+            renderPlanStrip(used, limit, badge, unlimited);
+        })
+        .catch(function () {
+            renderPlanStrip(0, 300, t('plan.badge'), false);
+        });
+    }
+
     function validateTranscriptResponse(data) {
         if (!data || typeof data !== 'object') return false;
         if (typeof data.title !== 'string' || !data.title) return false;
@@ -1145,6 +1211,7 @@
                 renderResultCard(currentItem);
                 announce(t('announce.complete') + data.title);
                 showResultSection();
+                updatePlanStrip();
                 isProcessing = false;
             })
             .catch(function (err) {
@@ -2011,6 +2078,7 @@
     markActiveLangItem();
 
     applyTranslations();
+    updatePlanStrip();
 
     // Re-measure island width after initial translations (ES texts are wider)
     if (remeasureIsland) remeasureIsland();
