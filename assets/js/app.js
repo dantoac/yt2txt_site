@@ -52,6 +52,9 @@
             'btn.add-aria': 'Add another video',
             'upgrade.hint': '<a href="pricing.html">Upgrade</a> for AI summaries, longer videos &amp; batch processing',
 
+            // Demo
+            'demo.trigger': 'Try a demo',
+
             // Validation errors
             'validation.empty': 'Paste a YouTube URL to get started.',
             'validation.invalid': 'Paste a full YouTube URL (e.g. https://youtube.com/watch?v=...)',
@@ -284,6 +287,9 @@
             'btn.transcribe-aria': 'Transcribir video',
             'btn.add-aria': 'Agregar otro video',
             'upgrade.hint': '<a href="pricing.html">Mejora tu plan</a> para res\u00famenes con IA, videos m\u00e1s largos y procesamiento por lotes',
+
+            // Demo
+            'demo.trigger': 'Probar demo',
 
             // Validation errors
             'validation.empty': 'Pega una URL de YouTube para comenzar.',
@@ -1841,15 +1847,46 @@
         requestAnimationFrame(function () { updateIslandActive(); });
     }
 
-    // ── Demo Mode: Typewriter + Auto-submit ────────────────────
+    // ── Demo Mode: Typewriter + Mock Result ─────────────────────
+    var demoTrigger = document.getElementById('demo-trigger');
+    var demoTypeTimer = null;
+
+    function stopDemo() {
+        if (demoTypeTimer) { clearTimeout(demoTypeTimer); demoTypeTimer = null; }
+        var cursor = inputWrapper ? inputWrapper.querySelector('.demo-cursor') : null;
+        if (cursor && cursor.parentNode) cursor.parentNode.removeChild(cursor);
+        if (form) form.classList.remove('demo-mode');
+        demoInProgress = false;
+        urlInput.removeAttribute('readonly');
+        submitBtn.disabled = false;
+    }
+
     function runDemo() {
         if (demoPlayed || demoInProgress) return;
         if (!urlInput || !form) return;
         demoPlayed = true; demoInProgress = true;
+        if (demoTrigger) demoTrigger.hidden = true;
         urlInput.setAttribute('readonly', ''); urlInput.placeholder = '';
         form.classList.add('demo-mode'); submitBtn.disabled = true;
+
+        function onInterrupt() {
+            urlInput.removeEventListener('focus', onInterrupt);
+            urlInput.removeEventListener('click', onInterrupt);
+            stopDemo();
+            urlInput.value = '';
+            urlInput.focus();
+        }
+        urlInput.addEventListener('focus', onInterrupt);
+        urlInput.addEventListener('click', onInterrupt);
+
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reducedMotion) { urlInput.value = DEMO_URL; setTimeout(demoSubmit, 300); return; }
+        if (reducedMotion) {
+            urlInput.value = DEMO_URL;
+            urlInput.removeEventListener('focus', onInterrupt);
+            urlInput.removeEventListener('click', onInterrupt);
+            setTimeout(demoSubmit, 300);
+            return;
+        }
         var cursor = document.createElement('span'); cursor.className = 'demo-cursor'; cursor.setAttribute('aria-hidden', 'true');
         if (inputWrapper) inputWrapper.appendChild(cursor);
         var measureCanvas = document.createElement('canvas'); var ctx = measureCanvas.getContext('2d');
@@ -1857,22 +1894,47 @@
         var charIndex = 0;
         function positionCursor() { var textWidth = ctx.measureText(urlInput.value).width; var inputPadding = parseFloat(inputStyles.paddingLeft) || 0; cursor.style.left = (inputPadding + textWidth) + 'px'; }
         function typeNextChar() {
-            if (charIndex < DEMO_URL.length) { urlInput.value += DEMO_URL[charIndex]; charIndex++; positionCursor(); setTimeout(typeNextChar, DEMO_CHAR_DELAY_MIN + Math.random() * (DEMO_CHAR_DELAY_MAX - DEMO_CHAR_DELAY_MIN)); }
-            else { if (cursor.parentNode) cursor.parentNode.removeChild(cursor); setTimeout(demoSubmit, DEMO_POST_TYPE_DELAY); }
+            if (!demoInProgress) return;
+            if (charIndex < DEMO_URL.length) {
+                urlInput.value += DEMO_URL[charIndex]; charIndex++; positionCursor();
+                demoTypeTimer = setTimeout(typeNextChar, DEMO_CHAR_DELAY_MIN + Math.random() * (DEMO_CHAR_DELAY_MAX - DEMO_CHAR_DELAY_MIN));
+            } else {
+                if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+                urlInput.removeEventListener('focus', onInterrupt);
+                urlInput.removeEventListener('click', onInterrupt);
+                demoTypeTimer = setTimeout(demoSubmit, DEMO_POST_TYPE_DELAY);
+            }
         }
         positionCursor(); typeNextChar();
     }
 
-    function demoSubmit() { if (form) form.classList.remove('demo-mode'); demoInProgress = false; runTranscription(DEMO_URL); }
+    function demoSubmit() {
+        if (form) form.classList.remove('demo-mode');
+        demoInProgress = false;
+        urlInput.removeAttribute('readonly');
+        submitBtn.disabled = false;
 
-    (function () {
-        var transcribeEl = document.getElementById('transcribe');
-        if (!transcribeEl || typeof IntersectionObserver === 'undefined') return;
-        var observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) { if (entry.isIntersecting && !demoPlayed) { setTimeout(runDemo, 400); observer.disconnect(); } });
-        }, { threshold: 0.5 });
-        observer.observe(transcribeEl);
-    })();
+        currentItem = {
+            id: 1, url: DEMO_URL, videoId: extractVideoId(DEMO_URL),
+            status: 'done',
+            title: 'But what is a neural network? | Chapter 1, Deep learning',
+            channel: '3Blue1Brown', duration: '19:13',
+            segments: [
+                { start: 0, text: 'This is the number three. It\'s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3.' },
+                { start: 18, text: 'And I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly.' },
+                { start: 25, text: 'I mean, this, this and this are also recognizable as 3s, even though the specific values of each pixel is very different from one image to the next.' },
+                { start: 36, text: 'The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3.' }
+            ],
+            text: 'This is the number three. It\'s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3.\n\nAnd I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly.\n\nI mean, this, this and this are also recognizable as 3s, even though the specific values of each pixel is very different from one image to the next.\n\nThe particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3.',
+            raw_text: 'This is the number three. It\'s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. And I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. I mean, this, this and this are also recognizable as 3s, even though the specific values of each pixel is very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3.'
+        };
+        renderResultCard(currentItem);
+        showResultSection();
+    }
+
+    if (demoTrigger) {
+        demoTrigger.addEventListener('click', runDemo);
+    }
 
     // ── Language Dropdown ────────────────────────────────────────
     var langToggle = document.getElementById('lang-toggle');

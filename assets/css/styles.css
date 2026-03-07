@@ -2025,6 +2025,32 @@ body.has-result .input-upgrade-hint {
 }
 
 
+/* --- Demo Trigger --- */
+.demo-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-sm);
+    padding: 6px 14px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--ff-body);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color var(--duration-fast), background var(--duration-fast);
+}
+.demo-trigger:hover {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.demo-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.demo-trigger[hidden] { display: none; }
+
 /* --- Demo Mode --- */
 @keyframes demo-cursor-blink {
     0%, 100% { opacity: 1; }
