@@ -65,6 +65,9 @@
             'error.server': 'Server error. Our team has been notified \u2014 please try again later.',
             'error.malformed': 'Received an unexpected response from the server.',
             'error.not-found': 'Video not found. It may be private or unavailable.',
+            'error.unauthorized': 'Please sign in to transcribe videos.',
+            'error.quota-exceeded': 'You\u2019ve reached your plan\u2019s transcription limit.',
+            'error.daily-limit': 'Daily transcription limit reached. Try again tomorrow.',
             'error.generic': 'Transcription failed. Try again.',
 
             // Processing status
@@ -295,6 +298,9 @@
             'error.server': 'Error del servidor. Nuestro equipo fue notificado \u2014 intenta m\u00e1s tarde.',
             'error.malformed': 'Respuesta inesperada del servidor.',
             'error.not-found': 'Video no encontrado. Puede ser privado o no estar disponible.',
+            'error.unauthorized': 'Inicia sesi\u00f3n para transcribir videos.',
+            'error.quota-exceeded': 'Has alcanzado el l\u00edmite de transcripciones de tu plan.',
+            'error.daily-limit': 'L\u00edmite diario de transcripciones alcanzado. Intenta ma\u00f1ana.',
             'error.generic': 'La transcripci\u00f3n fall\u00f3. Intenta de nuevo.',
 
             // Processing status
@@ -933,15 +939,16 @@
     }
 
     // ── Transcription API ──────────────────────────────────────
-    var API_BASE = '';
-    var API_TIMEOUT_MS = 30000;
     var API_ERROR = {
-        NETWORK:   'NETWORK',
-        TIMEOUT:   'TIMEOUT',
-        RATE_LIMIT:'RATE_LIMIT',
-        SERVER:    'SERVER',
-        MALFORMED: 'MALFORMED',
-        NOT_FOUND: 'NOT_FOUND'
+        NETWORK:        'NETWORK',
+        TIMEOUT:        'TIMEOUT',
+        RATE_LIMIT:     'RATE_LIMIT',
+        SERVER:         'SERVER',
+        MALFORMED:      'MALFORMED',
+        NOT_FOUND:      'NOT_FOUND',
+        UNAUTHORIZED:   'UNAUTHORIZED',
+        QUOTA_EXCEEDED: 'QUOTA_EXCEEDED',
+        DAILY_LIMIT:    'DAILY_LIMIT'
     };
 
     var API_ERROR_KEY_MAP = {};
@@ -949,80 +956,140 @@
     API_ERROR_KEY_MAP[API_ERROR.TIMEOUT]    = 'error.timeout';
     API_ERROR_KEY_MAP[API_ERROR.RATE_LIMIT] = 'error.rate-limit';
     API_ERROR_KEY_MAP[API_ERROR.SERVER]     = 'error.server';
-    API_ERROR_KEY_MAP[API_ERROR.MALFORMED]  = 'error.malformed';
-    API_ERROR_KEY_MAP[API_ERROR.NOT_FOUND]  = 'error.not-found';
+    API_ERROR_KEY_MAP[API_ERROR.MALFORMED]       = 'error.malformed';
+    API_ERROR_KEY_MAP[API_ERROR.NOT_FOUND]       = 'error.not-found';
+    API_ERROR_KEY_MAP[API_ERROR.UNAUTHORIZED]    = 'error.unauthorized';
+    API_ERROR_KEY_MAP[API_ERROR.QUOTA_EXCEEDED]  = 'error.quota-exceeded';
+    API_ERROR_KEY_MAP[API_ERROR.DAILY_LIMIT]     = 'error.daily-limit';
 
     function ApiError(type, message) {
         this.type = type;
         this.message = message || t(API_ERROR_KEY_MAP[type] || 'error.generic');
     }
 
+    var AUTH_TOKEN_KEY = 'auth_token';
+    var POLL_INTERVAL_MS = 3000;
+    var POLL_MAX_ATTEMPTS = 200;
+
+    function getAuthToken() {
+        return localStorage.getItem(AUTH_TOKEN_KEY);
+    }
+
+    function isAuthenticated() {
+        return !!getAuthToken();
+    }
+
+    function redirectToLogin() {
+        window.location.href = '/static/login.html';
+    }
+
+    function authHeaders() {
+        var headers = { 'Content-Type': 'application/json' };
+        var token = getAuthToken();
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+        if (currentLang) headers['X-Language'] = currentLang;
+        return headers;
+    }
+
     function validateTranscriptResponse(data) {
         if (!data || typeof data !== 'object') return false;
         if (typeof data.title !== 'string' || !data.title) return false;
         if (typeof data.duration !== 'string') return false;
-        if (!Array.isArray(data.segments) || data.segments.length === 0) return false;
-        return data.segments.every(function (seg) {
-            return typeof seg.text === 'string' && (seg.start === undefined || typeof seg.start === 'number');
+        if (!Array.isArray(data.segments)) return false;
+        return true;
+    }
+
+    function pollJob(jobId, controller) {
+        var attempts = 0;
+        return new Promise(function (resolve, reject) {
+            function poll() {
+                if (controller && controller.signal.aborted) {
+                    return reject(new ApiError(API_ERROR.TIMEOUT));
+                }
+                fetch('/v1/jobs/' + jobId, {
+                    headers: authHeaders(),
+                    signal: controller ? controller.signal : undefined
+                })
+                .then(function (res) {
+                    if (res.status === 401) { redirectToLogin(); throw new ApiError(API_ERROR.UNAUTHORIZED); }
+                    if (!res.ok) throw new ApiError(API_ERROR.SERVER);
+                    return res.json();
+                })
+                .then(function (job) {
+                    if (job.status === 'completed') return resolve(job);
+                    if (job.status === 'failed') {
+                        var code = job.error_code || 'SERVER';
+                        var msg = job.error_message || undefined;
+                        return reject(new ApiError(API_ERROR[code] || API_ERROR.SERVER, msg));
+                    }
+                    attempts++;
+                    if (attempts >= POLL_MAX_ATTEMPTS) return reject(new ApiError(API_ERROR.TIMEOUT));
+                    setTimeout(poll, POLL_INTERVAL_MS);
+                })
+                .catch(function (err) {
+                    if (err instanceof ApiError) return reject(err);
+                    if (err.name === 'AbortError') return reject(new ApiError(API_ERROR.TIMEOUT));
+                    reject(new ApiError(API_ERROR.NETWORK));
+                });
+            }
+            poll();
         });
     }
 
-    function mockTranscribe(_url) {
-        return new Promise(function (resolve) {
-            setTimeout(function () {
-                resolve({
-                    title: 'But what is a neural network? | Deep learning, chapter 1',
-                    duration: '19:13',
-                    segments: [
-                        { start: 0, text: 'This is a 3. It\u2019s sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly. This, this, and this are also recognizable as 3s, even though the specific values of each pixel are very different from one image to the next. The particular light-sensitive cells in your eye that are firing when you see this 3 are very different from the ones firing when you see this 3. But something in that crazy-smart visual cortex of yours resolves these as representing the same idea while recognizing other images as their own distinct ideas.' },
-                        { start: 47, text: 'If I told you to sit down and write a program that takes in a grid of 28x28 pixels like this and outputs a single number between 0 and 10, telling you what it thinks the digit is, the task goes from comically trivial to dauntingly difficult. Unless you\u2019ve been living under a rock, I think I hardly need to motivate the relevance and importance of machine learning and neural networks to the present and future. What I want to do here is show you what a neural network actually is, assuming no background, and help visualize what it\u2019s doing\u2014not as a buzzword but as a piece of math.' },
-                        { start: 98, text: 'What we\u2019re going to do is put together a neural network that can learn to recognize handwritten digits. This is a somewhat classic example for introducing the topic, and I\u2019m happy to stick with the status quo here because at the end of the two videos I want to point you to a couple of good resources where you can learn more and where you can download the code that does this and play with it on your own computer.' },
-                        { start: 152, text: 'As the name suggests, neural networks are inspired by the brain, but let\u2019s break that down. What are the neurons, and in what sense are they linked together? Right now, when I say neuron, all I want you to think about is a thing that holds a number, specifically a number between 0 and 1. It\u2019s really not more than that.' },
-                        { start: 245, text: 'Now, jumping over to the last layer, this has 10 neurons, each representing one of the digits. The activation in these neurons, again some number between 0 and 1, represents how much the system thinks that a given image corresponds with a given digit.' },
-                        { start: 318, text: 'The way the network operates is that activations in one layer determine the activations of the next layer. The heart of the network as an information processing mechanism comes down to exactly how those activations from one layer bring about activations in the next layer.' },
-                        { start: 412, text: 'Before jumping into the math for how one layer influences the next or how training works, let\u2019s talk about why it\u2019s even reasonable to expect a layered structure like this to behave intelligently.' },
-                        { start: 510, text: 'Of course, that just kicks the problem down the road because how would you recognize these subcomponents or even learn what the right subcomponents should be?' },
-                        { start: 623, text: 'Whether or not this is what our final network actually does is another question, one that I\u2019ll come back to once we see how to train the network.' },
-                        { start: 1100, text: 'All right, thank you, Lisha.' },
-                    ],
-                });
-            }, 4500);
-        });
+    function mapBackendResponse(job) {
+        var v = job.video;
+        var tr = job.transcription;
+        return {
+            title: v.title,
+            channel: v.channel,
+            duration: formatTime(v.duration_seconds),
+            thumbnail_url: v.thumbnail_url,
+            segments: tr.segments,
+            text: tr.text,
+            raw_text: tr.raw_text,
+            word_count: tr.word_count,
+            language: tr.language,
+            job_id: String(job.job_id),
+            usage: job.usage
+        };
     }
 
     function transcribe(url) {
-        if (!API_BASE) return mockTranscribe(url);
+        if (!isAuthenticated()) {
+            redirectToLogin();
+            return Promise.reject(new ApiError(API_ERROR.UNAUTHORIZED));
+        }
 
         var controller = new AbortController();
         currentController = controller;
 
-        var timeoutId = setTimeout(function () { controller.abort(); }, API_TIMEOUT_MS);
-
-        return fetch(API_BASE + '/transcribe', {
+        return fetch('/v1/transcribe', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: url }),
+            headers: authHeaders(),
+            body: JSON.stringify({ url: url, async: true }),
             signal: controller.signal
         })
         .then(function (res) {
-            clearTimeout(timeoutId);
-            currentController = null;
-
+            if (res.status === 401) { redirectToLogin(); throw new ApiError(API_ERROR.UNAUTHORIZED); }
+            if (res.status === 402) throw new ApiError(API_ERROR.QUOTA_EXCEEDED);
             if (res.status === 404) throw new ApiError(API_ERROR.NOT_FOUND);
             if (res.status === 429) throw new ApiError(API_ERROR.RATE_LIMIT);
             if (res.status >= 500) throw new ApiError(API_ERROR.SERVER);
-            if (!res.ok) throw new ApiError(API_ERROR.SERVER, 'Unexpected status: ' + res.status);
-
+            if (!res.ok) throw new ApiError(API_ERROR.SERVER);
             return res.json();
+        })
+        .then(function (data) {
+            return pollJob(data.job_id, controller);
+        })
+        .then(function (job) {
+            return mapBackendResponse(job);
         })
         .then(function (data) {
             if (!validateTranscriptResponse(data)) throw new ApiError(API_ERROR.MALFORMED);
             return data;
         })
         .catch(function (err) {
-            clearTimeout(timeoutId);
             currentController = null;
-
             if (err instanceof ApiError) throw err;
             if (err.name === 'AbortError') throw new ApiError(API_ERROR.TIMEOUT);
             throw new ApiError(API_ERROR.NETWORK);
@@ -1065,6 +1132,10 @@
                 currentItem.title = data.title;
                 currentItem.duration = data.duration;
                 currentItem.segments = data.segments;
+                currentItem.job_id = data.job_id;
+                currentItem.text = data.text;
+                currentItem.raw_text = data.raw_text;
+                currentItem.channel = data.channel;
                 renderResultCard(currentItem);
                 announce(t('announce.complete') + data.title);
                 showResultSection();
@@ -1102,21 +1173,33 @@
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (mode === 'cleaned') {
-            var chunkSize = 5;
-            for (var i = 0; i < item.segments.length; i += chunkSize) {
-                var p = document.createElement('p');
-                p.className = 'transcript-paragraph';
-                var texts = [];
-                for (var j = i; j < Math.min(i + chunkSize, item.segments.length); j++) {
-                    texts.push(item.segments[j].text);
+            if (item.text) {
+                var paragraphs = item.text.split(/\n\n+/);
+                paragraphs.forEach(function (para) {
+                    if (!para.trim()) return;
+                    var p = document.createElement('p');
+                    p.className = 'transcript-paragraph';
+                    p.textContent = para.trim();
+                    wrapper.appendChild(p);
+                });
+            } else {
+                var chunkSize = 5;
+                for (var i = 0; i < item.segments.length; i += chunkSize) {
+                    var p = document.createElement('p');
+                    p.className = 'transcript-paragraph';
+                    var texts = [];
+                    for (var j = i; j < Math.min(i + chunkSize, item.segments.length); j++) {
+                        texts.push(item.segments[j].text);
+                    }
+                    p.textContent = texts.join(' ');
+                    wrapper.appendChild(p);
                 }
-                p.textContent = texts.join(' ');
-                wrapper.appendChild(p);
             }
         } else if (mode === 'raw') {
+            var rawContent = item.raw_text || item.segments.map(function (s) { return s.text; }).join(' ');
             var p = document.createElement('p');
             p.className = 'transcript-raw-text';
-            p.textContent = item.segments.map(function (s) { return s.text; }).join(' ');
+            p.textContent = rawContent;
             wrapper.appendChild(p);
         } else {
             item.segments.forEach(function (seg, i) {
@@ -1275,7 +1358,7 @@
         dlTxtLabel.textContent = t('toolbar.download-txt-label');
         dlTxtLabel.setAttribute('data-i18n', 'toolbar.download-txt-label');
         dlTxt.appendChild(dlTxtLabel);
-        dlTxt.addEventListener('click', function () { showPaywall(true); });
+        dlTxt.addEventListener('click', function () { handleCardDownload('txt'); });
 
         // SRT download
         var dlSrt = document.createElement('button');
@@ -1286,7 +1369,7 @@
         dlSrtLabel.textContent = t('toolbar.download-srt');
         dlSrtLabel.setAttribute('data-i18n', 'toolbar.download-srt');
         dlSrt.appendChild(dlSrtLabel);
-        dlSrt.addEventListener('click', function () { showPaywall(true); });
+        dlSrt.addEventListener('click', function () { handleCardDownload('srt'); });
 
         // VTT download
         var dlVtt = document.createElement('button');
@@ -1297,7 +1380,7 @@
         dlVttLabel.textContent = t('toolbar.download-vtt');
         dlVttLabel.setAttribute('data-i18n', 'toolbar.download-vtt');
         dlVtt.appendChild(dlVttLabel);
-        dlVtt.addEventListener('click', function () { showPaywall(true); });
+        dlVtt.addEventListener('click', function () { handleCardDownload('vtt'); });
 
         toolbarRight.appendChild(copyBtn);
         toolbarRight.appendChild(dlTxt);
@@ -1403,7 +1486,7 @@
             btn.setAttribute('data-i18n-aria-label', ai.i18nKey);
             btn.setAttribute('data-i18n-data-tooltip', ai.i18nKey);
             btn.appendChild(createSvgElement(ai.svg));
-            btn.addEventListener('click', function () { showPaywall(true); });
+            btn.addEventListener('click', function () { handleCardAIAction(ai.action, card); });
             sidebar.appendChild(btn);
         });
 
@@ -1464,12 +1547,63 @@
         document.body.removeChild(ta);
     }
 
+    function buildSrtForItem(item) {
+        if (!item || !item.segments || !item.segments.length) return '';
+        return item.segments.map(function (seg, i) {
+            var start = typeof seg.start === 'number' ? seg.start : 0;
+            var end = (item.segments[i + 1] && typeof item.segments[i + 1].start === 'number')
+                ? item.segments[i + 1].start : start + 5;
+            return (i + 1) + '\n' + formatSrtTime(start) + ' --> ' + formatSrtTime(end) + '\n' + seg.text;
+        }).join('\n\n');
+    }
+
+    function buildVttForItem(item) {
+        if (!item || !item.segments || !item.segments.length) return '';
+        var lines = ['WEBVTT', ''];
+        item.segments.forEach(function (seg, i) {
+            var start = typeof seg.start === 'number' ? seg.start : 0;
+            var end = (item.segments[i + 1] && typeof item.segments[i + 1].start === 'number')
+                ? item.segments[i + 1].start : start + 5;
+            lines.push(formatVttTime(start) + ' --> ' + formatVttTime(end));
+            lines.push(seg.text);
+            lines.push('');
+        });
+        return lines.join('\n');
+    }
+
+    function formatSrtTime(seconds) {
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var s = Math.floor(seconds % 60);
+        var ms = Math.round((seconds % 1) * 1000);
+        return pad2(h) + ':' + pad2(m) + ':' + pad2(s) + ',' + pad3(ms);
+    }
+
+    function formatVttTime(seconds) {
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var s = Math.floor(seconds % 60);
+        var ms = Math.round((seconds % 1) * 1000);
+        return pad2(h) + ':' + pad2(m) + ':' + pad2(s) + '.' + pad3(ms);
+    }
+
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function pad3(n) { return n < 10 ? '00' + n : n < 100 ? '0' + n : '' + n; }
+
     function handleCardDownload(format) {
         if (!currentItem) return;
         var item = currentItem;
         format = format || 'txt';
         var text, mime, ext;
-        if (format === 'md') {
+        if (format === 'srt') {
+            text = buildSrtForItem(item);
+            mime = 'application/x-subrip;charset=utf-8';
+            ext  = '.srt';
+        } else if (format === 'vtt') {
+            text = buildVttForItem(item);
+            mime = 'text/vtt;charset=utf-8';
+            ext  = '.vtt';
+        } else if (format === 'md') {
             text = buildMarkdownTextForItem(item);
             mime = 'text/markdown;charset=utf-8';
             ext  = '.md';
@@ -1492,36 +1626,6 @@
     }
 
     // ── AI Actions (per card) ────────────────────────────────────
-    var AI_ACTIONS = {
-        summarize: { label: 'Summary', icon: '\u26A1', delay: 2000, render: function () {
-            var frag = document.createDocumentFragment();
-            var p1 = document.createElement('p');
-            p1.textContent = 'This introductory lecture covers the fundamentals of artificial intelligence. Starting with AI\u2019s origins at the 1956 Dartmouth conference, it traces the field through periods of excitement and \u201CAI winters\u201D to the modern deep learning revolution.';
-            var p2 = document.createElement('p');
-            p2.textContent = 'Key topics include computer vision, NLP, and AI-powered speech recognition. The course will progress from basic neural networks to transformers, with practical assignments using Python, NumPy, and PyTorch.';
-            frag.appendChild(p1); frag.appendChild(p2); return frag;
-        }},
-        'key-points': { label: 'Key Points', icon: '\u2261', delay: 1800, render: function () {
-            var ul = document.createElement('ul');
-            ['AI originated at the 1956 Dartmouth conference','The field has gone through cycles of enthusiasm and \u201CAI winters\u201D','Recent computational power and data availability drove breakthroughs','Deep learning revolutionized vision, NLP, and speech recognition','AI-powered speech recognition enables multilingual audio transcription','Course covers neural networks \u2192 transformers','Prerequisites: Python, NumPy, PyTorch'].forEach(function (text) { var li = document.createElement('li'); li.textContent = text; ul.appendChild(li); });
-            return ul;
-        }},
-        translate: { label: 'Translation', icon: '\uD83C\uDF10', delay: 2500, render: function () {
-            var frag = document.createDocumentFragment();
-            var lbl = document.createElement('p'); lbl.style.fontSize = '0.75rem'; lbl.style.color = 'var(--text-muted)'; lbl.style.marginBottom = 'var(--space-sm)'; lbl.textContent = t('ai.translate-label'); frag.appendChild(lbl);
-            ['Bienvenidos a esta primera clase sobre inteligencia artificial.','La inteligencia artificial es un campo de la inform\u00E1tica que busca crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.','Esto incluye el aprendizaje, el razonamiento, la percepci\u00F3n y la comprensi\u00F3n del lenguaje natural.'].forEach(function (text) { var p = document.createElement('p'); p.textContent = text; frag.appendChild(p); });
-            return frag;
-        }},
-        rewrite: { label: 'Rewrite', icon: '\u270F\uFE0F', delay: 2500, render: function () {
-            var frag = document.createDocumentFragment();
-            var h4 = document.createElement('h4'); h4.style.marginBottom = 'var(--space-sm)'; h4.textContent = 'The Rise of Artificial Intelligence: From Dartmouth to Deep Learning';
-            var p1 = document.createElement('p'); p1.textContent = 'Artificial intelligence, once a niche academic pursuit born at a small workshop in Dartmouth in 1956, has become one of the most transformative technologies of our time.';
-            var p2 = document.createElement('p'); p2.textContent = 'The journey was far from linear. Periods of intense optimism gave way to so-called "AI winters," where funding dried up and progress stalled.';
-            var p3 = document.createElement('p'); p3.textContent = 'Today, deep learning has revolutionized fields from computer vision to natural language processing and speech recognition.';
-            frag.appendChild(h4); frag.appendChild(p1); frag.appendChild(p2); frag.appendChild(p3); return frag;
-        }}
-    };
-
     function buildLoadingIndicator() {
         var wrap = document.createElement('div');
         wrap.className = 'ai-result-loading';
@@ -1534,25 +1638,61 @@
     }
 
     function handleCardAIAction(action, cardEl) {
-        if (!currentItem) return;
+        if (!currentItem || !currentItem.job_id) return;
         var item = currentItem;
         if (item.activeAI === action) { closeCardAIResult(cardEl); return; }
+
+        if (!isAuthenticated()) { redirectToLogin(); return; }
+
         item.activeAI = action;
-        var config = AI_ACTIONS[action];
-        if (!config) return;
-        var btns = cardEl.querySelectorAll('.ai-action-btn');
-        btns.forEach(function (btn) { btn.classList.toggle('ai-action-btn--active', btn.getAttribute('data-action') === action); });
+        var btns = cardEl.querySelectorAll('.tsb-btn');
+        btns.forEach(function (btn) { btn.classList.toggle('tsb-btn--active', btn.getAttribute('data-action') === action); });
         var panel = cardEl.querySelector('.ai-result-panel');
         var badge = cardEl.querySelector('.ai-result-badge');
         var aiBody = cardEl.querySelector('.ai-result-body');
         if (!panel || !badge || !aiBody) return;
-        badge.textContent = config.icon + ' ' + config.label;
+
+        badge.textContent = t('ai.' + action);
         panel.hidden = false;
         clearElement(aiBody);
-        if (config.delay > 0) {
-            aiBody.appendChild(buildLoadingIndicator());
-            setTimeout(function () { if (item.activeAI === action) { clearElement(aiBody); aiBody.appendChild(config.render()); } }, config.delay);
-        } else { aiBody.appendChild(config.render()); }
+        aiBody.appendChild(buildLoadingIndicator());
+
+        var body = {};
+        if (action === 'translate') {
+            body.language = currentLang === 'en' ? 'es' : 'en';
+        }
+
+        fetch('/v1/jobs/' + item.job_id + '/actions/' + action, {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(body)
+        })
+        .then(function (res) {
+            if (res.status === 401) { redirectToLogin(); throw new ApiError(API_ERROR.UNAUTHORIZED); }
+            if (res.status === 402) throw new ApiError(API_ERROR.QUOTA_EXCEEDED);
+            if (!res.ok) return res.json().then(function (d) {
+                var msg = (d.detail && d.detail.error && d.detail.error.message) || 'Action failed';
+                throw new Error(msg);
+            });
+            return res.json();
+        })
+        .then(function (data) {
+            if (item.activeAI !== action) return;
+            clearElement(aiBody);
+            var div = document.createElement('div');
+            div.className = 'ai-result-text';
+            div.textContent = data.result;
+            aiBody.appendChild(div);
+        })
+        .catch(function (err) {
+            if (item.activeAI !== action) return;
+            clearElement(aiBody);
+            var errEl = document.createElement('p');
+            errEl.className = 'ai-result-error';
+            errEl.textContent = err.message || t('error.generic');
+            aiBody.appendChild(errEl);
+        });
+
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -1562,7 +1702,7 @@
         var aiBody = cardEl.querySelector('.ai-result-body');
         if (panel) panel.hidden = true;
         if (aiBody) clearElement(aiBody);
-        cardEl.querySelectorAll('.ai-action-btn').forEach(function (btn) { btn.classList.remove('ai-action-btn--active'); });
+        cardEl.querySelectorAll('.tsb-btn').forEach(function (btn) { btn.classList.remove('tsb-btn--active'); });
     }
 
     // ── Paywall Modal ────────────────────────────────────────────
